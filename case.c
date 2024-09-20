@@ -48,40 +48,5 @@ cell **create_maze(const int width, const int height) {
 
 void print_maze(cell **maze, const int width, const int height)
 {
-    for(unsigned int i = 0; i < height; i++)
-    {
-        for(unsigned int j = 0; j < width; j++)
-        {
-            if(maze[i][j].wall_up)
-            {
-                printf(" _");
-            }
-            else
-            {
-                printf("  ");
-            }
-        }
-        printf("\n");
-        for(unsigned int j = 0; j < width; j++)
-        {
-            if(maze[i][j].wall_left)
-            {
-                printf("|");
-            }
-            else
-            {
-                printf(" ");
-            }
-            printf(" ");
-            if(maze[i][j].wall_right)
-            {
-                printf("|");
-            }
-            else
-            {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
+    printf("Not ready yet\n");
 }
