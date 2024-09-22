@@ -1,4 +1,6 @@
 #include "case.h"
+#include <stdio.h>
+#include <SDL2/SDL.h>
 
 // Create a maze of width x height cells
 cell **create_basic_maze(const int width, const int height) {
