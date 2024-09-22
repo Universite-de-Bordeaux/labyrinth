@@ -24,3 +24,4 @@ cleangch :
 deftest :
 	@make
 	@./main
+	 @if [ $$? -eq 0 ]; then echo "Test ok"; else echo "UNEXPECTED ERROR"; fi
