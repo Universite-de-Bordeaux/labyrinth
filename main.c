@@ -1,7 +1,9 @@
 #include "case.h"
 
 int main() {
-    cell **test = create_maze(5, 5);
-    print_maze(test, 5, 5);
+    const int width = 25;
+    const int height = 25;
+    cell **test = create_maze(width, height);
+    print_maze(test, width, height);
     return 0;
 }
