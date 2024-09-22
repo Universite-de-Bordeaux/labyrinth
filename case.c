@@ -1,7 +1,7 @@
 #include "case.h"
 
 // Create a maze of width x height cells
-cell **create_maze(const int width, const int height) {
+cell **create_basic_maze(const int width, const int height) {
     cell **maze = malloc(sizeof(cell *) * height);
     for (int i = 0; i < height; i++) {
         maze[i] = malloc(sizeof(cell) * width);
@@ -47,6 +47,10 @@ cell **create_maze(const int width, const int height) {
     maze[width/2][height/2].wall_up = true;
     maze[width/2][height/2].wall_left = true;
     maze[width/2][height/2].wall_right = true;
+    maze[width/2 - 1][height/2].wall_down = true;
+    maze[width/2 + 1][height/2].wall_up = true;
+    maze[width/2][height/2 - 1].wall_right = true;
+    maze[width/2][height/2 + 1].wall_left = true;
     return maze;
 }
 
