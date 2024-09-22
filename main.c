@@ -1,9 +1,12 @@
 #include "case.h"
 
 int main() {
-    const int width = 25;
-    const int height = 25;
+    const int width = 5;
+    const int height = 5;
     cell **test = create_maze(width, height);
-    print_maze(test, width, height);
+    if(print_maze(test, width, height) == -1)
+    {
+        return 1;
+    }
     return 0;
 }
