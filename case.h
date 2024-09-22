@@ -15,5 +15,5 @@ struct cell {
 
 typedef struct cell cell;
 cell **create_maze(int width, int height);
-void print_maze(cell **maze, const int width, const int height);
+int print_maze(cell **maze, const int width, const int height);
 #endif //CASE_H
