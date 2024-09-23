@@ -8,5 +8,12 @@ int main() {
     {
         return 1;
     }
+    free_maze(test);
+    test = maze_from_file("testy");
+    if(print_maze(test) == -1)
+    {
+        return 1;
+    }
+    free_maze(test);
     return 0;
 }
