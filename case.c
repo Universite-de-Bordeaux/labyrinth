@@ -3,102 +3,110 @@
 #include <SDL2/SDL.h>
 
 // Create a maze of width x height cells
-cell **create_basic_maze(const int width, const int height) {
-    cell **maze = malloc(sizeof(cell *) * height);
+maze_t create_basic_maze(const int width, const int height) {
+    cell** start = malloc(sizeof(cell *) * height);
     for (int i = 0; i < height; i++) {
-        maze[i] = malloc(sizeof(cell) * width);
+        start[i] = malloc(sizeof(cell) * width);
     }
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++)
         {
             if(i == 0)
             {
-                maze[i][j].wall_up = true;
+                start[i][j].wall_up = true;
             }
             else
             {
-                maze[i][j].wall_up = false;
+                start[i][j].wall_up = false;
             }
             if(i == height - 1)
             {
-                maze[i][j].wall_down = true;
+                start[i][j].wall_down = true;
             }
             else
             {
-                maze[i][j].wall_down = false;
+                start[i][j].wall_down = false;
             }
             if(j == 0)
             {
-                maze[i][j].wall_left = true;
+                start[i][j].wall_left = true;
             }
             else
             {
-                maze[i][j].wall_left = false;
+                start[i][j].wall_left = false;
             }
             if(j == width - 1)
             {
-                maze[i][j].wall_right = true;
+                start[i][j].wall_right = true;
             }
             else
             {
-                maze[i][j].wall_right = false;
+                start[i][j].wall_right = false;
             }
         }
     }
+    maze_t maze = {width, height, start};
     return maze;
 }
 
-void wall_up(cell **maze, int x, int y, int width, int height)
+void free_maze(maze_t maze) {
+    for (int i = 0; i < maze.height; i++) {
+        free(maze.cells[i]);
+    }
+    free(maze.cells);
+}
+
+void wall_up(maze_t maze, int x, int y)
 {
     if(y > 0)
     {
-        maze[y][x].wall_up = true;
-        maze[y - 1][x].wall_down = true;
+        maze.cells[y][x].wall_up = true;
+        maze.cells[y - 1][x].wall_down = true;
     }
     else
       {
-        maze[y][x].wall_up = true;
+        maze.cells[y][x].wall_up = true;
       }
 }
 
-void wall_down(cell **maze, int x, int y, int width, int height)
+void wall_down(maze_t maze, int x, int y)
 {
-    if(y < height - 1)
+    if(y < maze.height - 1)
     {
-        maze[y][x].wall_down = true;
-        maze[y + 1][x].wall_up = true;
+        maze.cells[y][x].wall_down = true;
+        maze.cells[y + 1][x].wall_up = true;
     }
     else
     {
-        maze[y][x].wall_down = true;
+        maze.cells[y][x].wall_down = true;
     }
 }
-void wall_left(cell **maze, int x, int y, int width, int height)
+void wall_left(maze_t maze, int x, int y)
 {
     if(x > 0)
     {
-        maze[y][x].wall_left = true;
-        maze[y][x - 1].wall_right = true;
+        maze.cells[y][x].wall_left = true;
+        maze.cells[y][x - 1].wall_right = true;
     }
     else
     {
-        maze[y][x].wall_left = true;
+        maze.cells[y][x].wall_left = true;
     }
 }
-void wall_right(cell **maze, int x, int y, int width, int height)
+void wall_right(maze_t maze, int x, int y)
 {
-    if(x < width - 1)
+    if(x < maze.width - 1)
     {
-        maze[y][x].wall_right = true;
-        maze[y][x + 1].wall_left = true;
+        maze.cells[y][x].wall_right = true;
+        maze.cells[y][x + 1].wall_left = true;
     }
     else
     {
-        maze[y][x].wall_right = true;
+        maze.cells[y][x].wall_right = true;
     }
 }
 
-int print_maze(cell **maze, const int width, const int height)
+int print_maze(maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
@@ -107,7 +115,7 @@ int print_maze(cell **maze, const int width, const int height)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width * 20, height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     if(renderer == NULL)
     {
@@ -122,26 +130,26 @@ int print_maze(cell **maze, const int width, const int height)
             return -1;
         }
     }
-    SDL_Delay(1000); //pause de 1 secondes
+    SDL_Delay(100); //pause de 1 secondes
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
 
-    for(int x = 0; x < width; x++)
+    for(int x = 0; x < maze.width; x++)
     {
-        for(int y = 0; y < height; y++)
+        for(int y = 0; y < maze.height; y++)
         {
-            if(maze[y][x].wall_up)
+            if(maze.cells[y][x].wall_up)
             {
                 SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20);
             }
-            if(maze[y][x].wall_down)
+            if(maze.cells[y][x].wall_down)
             {
                 SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19);
             }
-            if(maze[y][x].wall_left)
+            if(maze.cells[y][x].wall_left)
             {
                 SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19);
             }
-            if(maze[y][x].wall_right)
+            if(maze.cells[y][x].wall_right)
             {
                 SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19);
             }
@@ -149,19 +157,19 @@ int print_maze(cell **maze, const int width, const int height)
     }
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(500); //pause de 0.5 secondes
+    SDL_Delay(1); //pause de 0.001 secondes
     SDL_SetRenderDrawColor(renderer, 0, 255, 100, 255); //on définit la couleur en vert
     SDL_RenderDrawLine(renderer, 0, 0, 0, 20); //l'entrée en vert
     SDL_RenderDrawLine(renderer, 0, 0, 20, 0); //l'entrée en vert
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(500); //pause de 0.5 secondes
+    SDL_Delay(1); //pause de 0.001 secondes
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on définit la couleur en bleu
-    SDL_RenderDrawLine(renderer, (width * 20) - 1, (height * 20) - 20, (width * 20) - 1, (height * 20)); //la sortie en bleu
-    SDL_RenderDrawLine(renderer, (width * 20) - 20, (height * 20) - 1, (width * 20), (height * 20) - 1); //la sortie en bleu
+    SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
+    SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(3000); //pause de 3 secondes
+    SDL_Delay(2500); //pause de 2.5 secondes
 
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)

@@ -10,11 +10,20 @@ struct cell {
     bool wall_right;
 };
 
+struct maze {
+    int width;
+    int height;
+    struct cell **cells;
+};
+
 typedef struct cell cell;
-cell **create_basic_maze(int width, int height);
-int print_maze(cell **maze, const int width, const int height);
-void wall_up(cell **maze, int x, int y, int width, int height);
-void wall_down(cell **maze, int x, int y, int width, int height);
-void wall_left(cell **maze, int x, int y, int width, int height);
-void wall_right(cell **maze, int x, int y, int width, int height);
+typedef struct maze maze_t;
+
+maze_t create_basic_maze(int width, int height);
+void free_maze(maze_t maze);
+int print_maze(maze_t maze);
+void wall_up(maze_t lab, int x, int y);
+void wall_down(maze_t , int x, int y);
+void wall_left(maze_t maze, int x, int y);
+void wall_right(maze_t maze, int x, int y);
 #endif //CASE_H
