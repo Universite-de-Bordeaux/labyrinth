@@ -13,4 +13,8 @@ struct cell {
 typedef struct cell cell;
 cell **create_basic_maze(int width, int height);
 int print_maze(cell **maze, const int width, const int height);
+void wall_up(cell **maze, int x, int y, int width, int height);
+void wall_down(cell **maze, int x, int y, int width, int height);
+void wall_left(cell **maze, int x, int y, int width, int height);
+void wall_right(cell **maze, int x, int y, int width, int height);
 #endif //CASE_H

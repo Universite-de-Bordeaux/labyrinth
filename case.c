@@ -45,15 +45,57 @@ cell **create_basic_maze(const int width, const int height) {
             }
         }
     }
-    maze[width/2][height/2].wall_down = true;
-    maze[width/2][height/2].wall_up = true;
-    maze[width/2][height/2].wall_left = true;
-    maze[width/2][height/2].wall_right = true;
-    maze[width/2 - 1][height/2].wall_down = true;
-    maze[width/2 + 1][height/2].wall_up = true;
-    maze[width/2][height/2 - 1].wall_right = true;
-    maze[width/2][height/2 + 1].wall_left = true;
     return maze;
+}
+
+void wall_up(cell **maze, int x, int y, int width, int height)
+{
+    if(y > 0)
+    {
+        maze[y][x].wall_up = true;
+        maze[y - 1][x].wall_down = true;
+    }
+    else
+      {
+        maze[y][x].wall_up = true;
+      }
+}
+
+void wall_down(cell **maze, int x, int y, int width, int height)
+{
+    if(y < height - 1)
+    {
+        maze[y][x].wall_down = true;
+        maze[y + 1][x].wall_up = true;
+    }
+    else
+    {
+        maze[y][x].wall_down = true;
+    }
+}
+void wall_left(cell **maze, int x, int y, int width, int height)
+{
+    if(x > 0)
+    {
+        maze[y][x].wall_left = true;
+        maze[y][x - 1].wall_right = true;
+    }
+    else
+    {
+        maze[y][x].wall_left = true;
+    }
+}
+void wall_right(cell **maze, int x, int y, int width, int height)
+{
+    if(x < width - 1)
+    {
+        maze[y][x].wall_right = true;
+        maze[y][x + 1].wall_left = true;
+    }
+    else
+    {
+        maze[y][x].wall_right = true;
+    }
 }
 
 int print_maze(cell **maze, const int width, const int height)
