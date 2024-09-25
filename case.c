@@ -50,10 +50,10 @@ maze_t create_basic_maze(const int width, const int height) {
 }
 
 void free_maze(maze_t maze) {
-    for (int i = 0; i < maze.height; i++) {
-        free(maze.cells[i]);
-    }
-    free(maze.cells);
+  for (int i = 0; i < maze.height; i++) {
+    free(maze.cells[i]);
+  }
+  free(maze.cells);
 }
 
 void wall_up(maze_t maze, int x, int y)
