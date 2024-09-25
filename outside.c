@@ -1,4 +1,6 @@
 #include "outside.h"
+
+#include <inttypes.h>
 #include <string.h>
 
 maze_t maze_from_file(const char *filename) {
@@ -9,33 +11,37 @@ maze_t maze_from_file(const char *filename) {
     }
     char *line = malloc(6 * sizeof(char)); //allouer une ligne de 6 caractères
     fgets(line, 6, file); //récupérer la première ligne
-    int width, height;
-    width = atoi(strtok(line, " ")); //récupérer la largeur
+    const int width = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la largeur
     printf("width = %d\n", width); //pour debbuguer au cas où
-    height = atoi(strtok(NULL, " ")); //récupérer la hauteur
+    const int height = (int)strtol(strtok(line, " ")+3, NULL, 10); //récupérer la hauteur)
     printf("height = %d\n", height); //pour le debbug au cas où
-    maze_t maze = create_basic_maze(width, height); //créer un labyrinthe de base
+    const maze_t maze = create_basic_maze(width, height); //créer un labyrinthe de base
 
-    char *line2;
-    line2 = line;
-    int x, y;
-    char *wall;
-    fgets(line, 6, file);
-    while(line2 != line)
+    while(fgets(line, 6, file) != NULL && line != NULL)
     {
-    	x = atoi(strtok(line, " "));
-    	y = atoi(strtok(NULL, " "));
-    	wall = strtok(NULL, " ");
-    	if(strcmp(wall, "h") == 0)
-     	{
-      		wall_down(maze, x, y);
-      	}
-    	if(strcmp(wall, "v") == 0)
-      	{
-      		wall_right(maze, x, y);
-      	}
+        int x = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la coordonnée x
+        int y = (int)strtol(strtok(line, " ")+2, NULL, 10); //récupérer la coordonnée y
+        char* wall = strtok(line, " ")+4; //récupérer la lettre correspondant au mur
+        printf("x = %d, y = %d, wall = %s\n", x, y, wall); //pour le debbug au cas où
+        if(wall == NULL) //si le mur n'est pas spécifié
+        {
+            fprintf(stderr, "Error: invalid file format\n");
+            free(line);
+            fclose(file);
+            free_maze(maze);
+            exit(1);
+        }
+        else if(strcmp(wall, "v") == 0) //si le mur est vertical
+        {
+            wall_up(maze, x, y);
+        }
+        else if(strcmp(wall, "h") == 0) //si le mur est horizontal
+        {
+            wall_right(maze, x, y);
+        }
     }
 
+    free(line);
     fclose(file); //désallouer le fichier
     return maze;
 }
