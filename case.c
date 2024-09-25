@@ -45,18 +45,18 @@ maze_t create_basic_maze(const int width, const int height) {
             }
         }
     }
-    maze_t maze = {width, height, start};
+    const maze_t maze = {width, height, start};
     return maze;
 }
 
-void free_maze(maze_t maze) {
+void free_maze(const maze_t maze) {
   for (int i = 0; i < maze.height; i++) {
     free(maze.cells[i]);
   }
   free(maze.cells);
 }
 
-void wall_up(maze_t maze, int x, int y)
+void wall_up(maze_t const maze, const int x, const int y)
 {
     if(y > 0)
     {
@@ -69,7 +69,7 @@ void wall_up(maze_t maze, int x, int y)
       }
 }
 
-void wall_down(maze_t maze, int x, int y)
+void wall_down(const maze_t maze, int x, int y)
 {
     if(y < maze.height - 1)
     {
@@ -81,7 +81,7 @@ void wall_down(maze_t maze, int x, int y)
         maze.cells[y][x].wall_down = true;
     }
 }
-void wall_left(maze_t maze, int x, int y)
+void wall_left(const maze_t maze, const int x, const int y)
 {
     if(x > 0)
     {
@@ -93,7 +93,7 @@ void wall_left(maze_t maze, int x, int y)
         maze.cells[y][x].wall_left = true;
     }
 }
-void wall_right(maze_t maze, int x, int y)
+void wall_right(const maze_t maze, const int x, const int y)
 {
     if(x < maze.width - 1)
     {
@@ -106,7 +106,59 @@ void wall_right(maze_t maze, int x, int y)
     }
 }
 
-int print_maze(maze_t maze)
+void unwall_up(const maze_t maze, const int x, const int y)
+{
+    if(y > 0)
+    {
+        maze.cells[y][x].wall_up = false;
+        maze.cells[y - 1][x].wall_down = false;
+    }
+    else
+    {
+        maze.cells[y][x].wall_up = false;
+    }
+}
+
+void unwall_down(const maze_t maze, const int x, const int y)
+{
+    if(y < maze.height - 1)
+    {
+        maze.cells[y][x].wall_down = false;
+        maze.cells[y + 1][x].wall_up = false;
+    }
+    else
+    {
+        maze.cells[y][x].wall_down = false;
+    }
+}
+
+void unwall_left(const maze_t maze, const int x, const int y)
+{
+    if(x > 0)
+    {
+        maze.cells[y][x].wall_left = false;
+        maze.cells[y][x - 1].wall_right = false;
+    }
+    else
+    {
+        maze.cells[y][x].wall_left = false;
+    }
+}
+
+void unwall_right(const maze_t maze, const int x, const int y)
+{
+    if(x < maze.width - 1)
+    {
+        maze.cells[y][x].wall_right = false;
+        maze.cells[y][x + 1].wall_left = false;
+    }
+    else
+    {
+        maze.cells[y][x].wall_right = false;
+    }
+}
+
+int print_maze(maze_t const maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
