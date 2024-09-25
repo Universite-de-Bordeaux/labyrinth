@@ -2,6 +2,8 @@
 
 #include <inttypes.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 maze_t maze_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
@@ -19,9 +21,9 @@ maze_t maze_from_file(const char *filename) {
 
     while(fgets(line, 6, file) != NULL && line != NULL)
     {
-        int x = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la coordonnée x
-        int y = (int)strtol(strtok(line, " ")+2, NULL, 10); //récupérer la coordonnée y
-        char* wall = strtok(line, " ")+4; //récupérer la lettre correspondant au mur
+        const int x = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la coordonnée x
+        const int y = (int)strtol(strtok(line, " ")+2, NULL, 10); //récupérer la coordonnée y
+        const char* wall = strtok(line, " ")+4; //récupérer la lettre correspondant au mur
         printf("x = %d, y = %d, wall = %s\n", x, y, wall); //pour le debbug au cas où
         if(wall == NULL) //si le mur n'est pas spécifié
         {
