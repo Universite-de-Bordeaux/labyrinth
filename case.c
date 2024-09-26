@@ -49,6 +49,8 @@ maze_t create_basic_maze(const int width, const int height) {
     return maze;
 }
 
+//désalloue la mémoire allouée pour le labyrinthe
+//maze : le labyrinthe à désallouer
 void free_maze(const maze_t maze) {
   for (int i = 0; i < maze.height; i++) {
     free(maze.cells[i]);
@@ -56,8 +58,18 @@ void free_maze(const maze_t maze) {
   free(maze.cells);
 }
 
+//ajoute un mur en haut de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_up(maze_t const maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(y > 0)
     {
         maze.cells[y][x].wall_up = true;
@@ -65,12 +77,22 @@ void wall_up(maze_t const maze, const int x, const int y)
     }
     else
       {
-        maze.cells[y][x].wall_up = true;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d up\n", x, y);
       }
 }
 
+//ajoute un mur en bas de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_down(const maze_t maze, int x, int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(y < maze.height - 1)
     {
         maze.cells[y][x].wall_down = true;
@@ -78,11 +100,22 @@ void wall_down(const maze_t maze, int x, int y)
     }
     else
     {
-        maze.cells[y][x].wall_down = true;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d down\n", x, y);
     }
 }
+
+//ajoute un mur à gauche de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_left(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(x > 0)
     {
         maze.cells[y][x].wall_left = true;
@@ -90,11 +123,22 @@ void wall_left(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_left = true;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d left\n", x, y);
     }
 }
+
+//ajoute un mur à droite de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_right(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(x < maze.width - 1)
     {
         maze.cells[y][x].wall_right = true;
@@ -102,12 +146,22 @@ void wall_right(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_right = true;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d right\n", x, y);
     }
 }
 
+//retire le mur du haut de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_up(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(y > 0)
     {
         maze.cells[y][x].wall_up = false;
@@ -115,12 +169,22 @@ void unwall_up(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_up = false;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d up\n", x, y);
     }
 }
 
+//retire le mur du bas de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_down(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(y < maze.height - 1)
     {
         maze.cells[y][x].wall_down = false;
@@ -128,12 +192,22 @@ void unwall_down(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_down = false;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d down\n", x, y);
     }
 }
 
+//retire le mur à gauche de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_left(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(x > 0)
     {
         maze.cells[y][x].wall_left = false;
@@ -141,12 +215,22 @@ void unwall_left(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_left = false;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d left\n", x, y);
     }
 }
 
+//retire le mur à droite de la cellule x, y
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_right(const maze_t maze, const int x, const int y)
 {
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        return;
+    }
     if(x < maze.width - 1)
     {
         maze.cells[y][x].wall_right = false;
@@ -154,10 +238,14 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
     else
     {
-        maze.cells[y][x].wall_right = false;
+        fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d right\n", x, y);
     }
 }
 
+//affiche le labyrinthe, renvoie -1 en cas d'erreur
+//maze : le labyrinthe à afficher
+//les murs d'entré sont en vert, les murs de sortie en bleu
+//chaque cellule est de taille 20x20 pixels
 int print_maze(maze_t const maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
