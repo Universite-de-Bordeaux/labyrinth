@@ -244,9 +244,10 @@ void unwall_right(const maze_t maze, const int x, const int y)
 
 //affiche le labyrinthe, renvoie -1 en cas d'erreur
 //maze : le labyrinthe à afficher
+//filename : le nom de la fenêtre
 //les murs d'entré sont en vert, les murs de sortie en bleu
 //chaque cellule est de taille 20x20 pixels
-int print_maze(maze_t const maze)
+int print_maze(maze_t const maze, const char* filename)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
@@ -255,7 +256,7 @@ int print_maze(maze_t const maze)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow(filename, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     if(renderer == NULL)
     {
