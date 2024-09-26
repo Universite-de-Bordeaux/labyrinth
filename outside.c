@@ -1,49 +1,95 @@
 #include "outside.h"
-
-#include <inttypes.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+// crée et renvoie un labyrinthe selon les configurations spécifiées dans le fichier
+// filename : le nom du fichier
 maze_t maze_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
-    if (file == NULL) {
-        fprintf(stderr, "Error: could not open file %s\n", filename);
+    if (file == NULL)
+    {
+        fprintf(stderr, "Error: impossible d'ouvrir le fichier %s\n", filename);
         exit(1);
     }
-    char *line = malloc(6 * sizeof(char)); //allouer une ligne de 6 caractères
-    fgets(line, 6, file); //récupérer la première ligne
-    const int width = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la largeur
-    printf("width = %d\n", width); //pour debbuguer au cas où
-    const int height = (int)strtol(strtok(line, " ")+3, NULL, 10); //récupérer la hauteur)
-    printf("height = %d\n", height); //pour le debbug au cas où
-    const maze_t maze = create_basic_maze(width, height); //créer un labyrinthe de base
-
-    while(fgets(line, 6, file) != NULL && line != NULL)
+    int c = fgetc(file); //lire le premier caractère
+    int width = 0;
+    while(c != EOF && c != ' ') //tant que le caractère n'est pas la fin du fichier ou un espace
     {
-        const int x = (int)strtol(strtok(line, " "), NULL, 10); //récupérer la coordonnée x
-        const int y = (int)strtol(strtok(line, " ")+2, NULL, 10); //récupérer la coordonnée y
-        const char* wall = strtok(line, " ")+4; //récupérer la lettre correspondant au mur
-        printf("x = %d, y = %d, wall = %s\n", x, y, wall); //pour le debbug au cas où
-        if(wall == NULL) //si le mur n'est pas spécifié
+        width *= 10;
+        width += c - '0'; //convertir le caractère en entier
+        c = fgetc(file); //lire le caractère suivant
+    }
+    int height = 0;
+    c = fgetc(file); //lire le caractère suivant
+    while(c != EOF && c != '\n') //tant que le caractère n'est pas la fin du fichier ou un retour à la ligne
+    {
+        height *= 10;
+        height += c - '0'; //convertir le caractère en entier
+        c = fgetc(file); //lire le caractère suivant
+    }
+    const maze_t maze = create_basic_maze(width, height); //créer un labyrinthe de la taille spécifiée
+
+    c = fgetc(file); //lire le caractère suivant
+    int x = 0, y = 0;
+    while(c != EOF)
+    {
+        x = 0;
+        y = 0;
+        while(c != ' ')
         {
-            fprintf(stderr, "Error: invalid file format\n");
-            free(line);
-            fclose(file);
+            x *= 10; //transformer les unités en dizaines
+            x += c - '0'; //convertir le caractère en entier
+            c = fgetc(file); //lire le caractère suivant
+        }
+        if(x > width - 1) //vérifier que x est dans les limites du labyrinthe
+        {
+            fprintf(stderr, "Erreur: x a été calculé à %d, mais la largeur du labyrinthe est de %d\n", x, width);
             free_maze(maze);
+            fclose(file);
             exit(1);
         }
-        else if(strcmp(wall, "v") == 0) //si le mur est vertical
+        c = fgetc(file); //lire le caractère suivant
+        while(c != ' ')
         {
-            wall_up(maze, x, y);
+            y *= 10; //transformer les unités en dizaines
+            y += c - '0'; //convertir le caractère en entier
+            c = fgetc(file); //lire le caractère suivant
         }
-        else if(strcmp(wall, "h") == 0) //si le mur est horizontal
+        if(y > height - 1) //vérifier que y est dans les limites du labyrinthe
+        {
+            fprintf(stderr, "Errer: y a été calculé à %d, mais la dimension du labyrinthe est de %d\n", y, height);
+            free_maze(maze);
+            fclose(file);
+            exit(1);
+        }
+        c = fgetc(file); //lire le caractère suivant
+        if(c == 'h') //mur horizontal
+        {
+            wall_down(maze, x, y);
+        }
+        else if(c == 'v') //mur vertical
         {
             wall_right(maze, x, y);
         }
+        else //caractère invalide ou bug du programme
+        {
+            fprintf(stderr, "Erreur: caractère invalide ou inconnu : '%c'. Attendu : 'v' ou 'h'\n", c);
+            free_maze(maze);
+            fclose(file);
+            exit(1);
+        }
+        fgetc(file); //on passe le '\n'
+        c = fgetc(file); //lire le caractère suivant
     }
-
-    free(line);
     fclose(file); //désallouer le fichier
     return maze;
+}
+
+// écrit le labyrinthe dans un fichier texte
+// maze : le labyrinthe
+// filename : le nom du fichier où écrire le labyrinthe, sera écrasé s'il existe déjà
+void maze_to_file(maze_t maze, const char *filename)
+{
+    //Ana je te laisse gérer ;)
 }
