@@ -23,3 +23,24 @@ maze_t line_maze(const int width, const int height)
     }
     return maze;
 }
+
+//Crée un labyrinthe parfait de taille width x height
+//tous les murs sont horizontaux
+maze_t column_maze(const int width, const int height)
+{
+    const time_t t = time(NULL);
+    srand(t);
+    const maze_t maze = create_basic_maze(width, height);
+    for(int i = 0; i < height - 1; i++)
+    {
+        const int break_wall = rand() % width;
+        for(int j = 0; j < width; j++)
+        {
+            if(j != break_wall)
+            {
+                wall_down(maze, j, i);
+            }
+        }
+    }
+    return maze;
+}
