@@ -3,13 +3,7 @@
 #include "solveur.h"
 
 int main() {
-    maze_t test = maze_from_file("test");
-    if(print_maze(test, "lecture") == -1)
-    {
-        free_maze(test);
-        return 1;
-    }
-    test = line_maze(10, 10);
+    const maze_t test = column_maze(6, 6);
     minigame1(test);
     free_maze(test);
 
