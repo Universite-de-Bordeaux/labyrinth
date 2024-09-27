@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
+//une mini-jeu où il faut trouver la sortie 
+//maze : le labyrinthe
 int minigame1(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -36,28 +38,28 @@ int minigame1(const maze_t maze)
         }
         else if(event.key.keysym.sym == SDLK_z)
         {
-            if(pos_y > 0)
+            if(!maze[y][x].wall_up)
             {
                 pos_y--;
             }
         }
         else if(event.key.keysym.sym == SDLK_s)
         {
-            if(pos_y < maze.height - 1)
+            if(!maze[y][x].wall_down)
             {
                 pos_y++;
             }
         }
         else if(event.key.keysym.sym == SDLK_q)
         {
-            if(pos_x > 0)
+            if(!maze[y][x].wall_left)
             {
                 pos_x--;
             }
         }
         else if(event.key.keysym.sym == SDLK_d)
         {
-            if(pos_x < maze.width - 1)
+            if(!maze[y][x].wall_right)
             {
                 pos_x--;
             }
