@@ -82,7 +82,7 @@ int minigame1(const maze_t maze)
             SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19);
             }
         SDL_RenderPresent(renderer); //on met à jour l'affichage
-        SDL_Delay(1); //pause de 0.001 secondes
+        SDL_Delay(250); //pause de 0.25 secondes
     }
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
