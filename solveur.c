@@ -59,28 +59,28 @@ int minigame1(const maze_t maze)
             SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13);
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
             SDL_Delay(10);
-            if(event.key.keysym.sym == SDLK_z)
+            if(event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_UP)
             {
                 if(!maze.cells[pos_y][pos_x].wall_up)
                 {
                     pos_y--;
                 }
             }
-            else if(event.key.keysym.sym == SDLK_s)
+            else if(event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
             {
                 if(!maze.cells[pos_y][pos_x].wall_down)
                 {
                     pos_y++;
                 }
             }
-            else if(event.key.keysym.sym == SDLK_q)
+            else if(event.key.keysym.sym == SDLK_q || event.key.keysym.sym == SDLK_LEFT)
             {
                 if(!maze.cells[pos_y][pos_x].wall_left)
                 {
                     pos_x--;
                 }
             }
-            else if(event.key.keysym.sym == SDLK_d)
+            else if(event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
             {
                 if(!maze.cells[pos_y][pos_x].wall_right)
                 {
