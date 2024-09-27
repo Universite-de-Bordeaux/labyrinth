@@ -5,7 +5,7 @@ SDLFLAGS = `sdl2-config --cflags --libs`
 
 ALL : main
 
-main : main.o case.o outside.o mazemaker.o
+main : main.o case.o outside.o mazemaker.o solveur.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 
 main.o : main.c case.h
@@ -18,6 +18,9 @@ outside.o : outside.c outside.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
 mazemaker.o : mazemaker.c mazemaker.h
+	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
+
+solveur.o : solveur.c solveur.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
 .PHONY : clean
