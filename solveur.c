@@ -14,8 +14,25 @@ int minigame1(const maze_t maze)
         return -1;
     }
     SDL_Window *fenetre = SDL_CreateWindow("maze_game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(fenetre == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de création de la fenetre : %s\n", error);
+        SDL_Quit();
+        return -1;
+    }
+
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
+
+    if(renderer == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de création du renderer : %s\n", error);
+        SDL_DestroyWindow(fenetre);
+        SDL_Quit();
+        return -1;
+    }
 
     SDL_RenderDrawLine(renderer, 0, 0, 19, 0);
     SDL_RenderDrawLine(renderer, 0, 0, 0, 19);
