@@ -91,5 +91,5 @@ maze_t maze_from_file(const char *filename) {
 // filename : le nom du fichier où écrire le labyrinthe, sera écrasé s'il existe déjà
 void maze_to_file(maze_t maze, const char *filename)
 {
-    //Ana je te laisse gérer ;)
+    //Anna je te laisse gérer ;)
 }
