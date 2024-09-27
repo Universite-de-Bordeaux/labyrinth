@@ -15,7 +15,22 @@ int minigame1(const maze_t maze)
     }
     SDL_Window *fenetre = SDL_CreateWindow("maze_game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
+
+    SDL_RenderDrawLine(renderer, 0, 0, 19, 0);
+    SDL_RenderDrawLine(renderer, 0, 0, 0, 19);
+    SDL_RenderDrawLine(renderer, 7, 10, 13, 10);
+    SDL_RenderDrawLine(renderer, 10, 7, 10, 13);
+    if(maze.cells[0][0].wall_right)
+    {
+        SDL_RenderDrawLine(renderer, 19, 0, 19, 19);
+    }
+    if(maze.cells[0][0].wall_down)
+    {
+        SDL_RenderDrawLine(renderer, 0, 19, 19, 19);
+    }
+    SDL_Delay(10);
+    SDL_RenderPresent(renderer);
 
     int pos_x = 0;
     int pos_y = 0;
@@ -36,53 +51,69 @@ int minigame1(const maze_t maze)
                 SDL_WaitEvent(&event);
             }
         }
-        else if(event.key.keysym.sym == SDLK_z)
+        if(event.type == SDL_KEYUP)
         {
-            if(!maze[y][x].wall_up)
+            SDL_Delay(1);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10);
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13);
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
+            SDL_Delay(10);
+            if(event.key.keysym.sym == SDLK_z)
             {
-                pos_y--;
+                if(!maze.cells[pos_y][pos_x].wall_up)
+                {
+                    pos_y--;
+                }
             }
-        }
-        else if(event.key.keysym.sym == SDLK_s)
-        {
-            if(!maze[y][x].wall_down)
+            else if(event.key.keysym.sym == SDLK_s)
             {
-                pos_y++;
+                if(!maze.cells[pos_y][pos_x].wall_down)
+                {
+                    pos_y++;
+                }
             }
-        }
-        else if(event.key.keysym.sym == SDLK_q)
-        {
-            if(!maze[y][x].wall_left)
+            else if(event.key.keysym.sym == SDLK_q)
             {
-                pos_x--;
+                if(!maze.cells[pos_y][pos_x].wall_left)
+                {
+                    pos_x--;
+                }
             }
-        }
-        else if(event.key.keysym.sym == SDLK_d)
-        {
-            if(!maze[y][x].wall_right)
+            else if(event.key.keysym.sym == SDLK_d)
             {
-                pos_x--;
+                if(!maze.cells[pos_y][pos_x].wall_right)
+                {
+                    pos_x++;
+                }
             }
-        }
-        if(maze.cells[pos_y][pos_x].wall_up)
+            if(maze.cells[pos_y][pos_x].wall_up)
             {
-            SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, (pos_x * 20) + 19, pos_y * 20);
+                SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, (pos_x * 20) + 19, pos_y * 20);
             }
-        if(maze.cells[pos_y][pos_x].wall_down)
+            if(maze.cells[pos_y][pos_x].wall_down)
             {
-            SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19);
             }
-        if(maze.cells[pos_y][pos_x].wall_left)
+            if(maze.cells[pos_y][pos_x].wall_left)
             {
-            SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19);
             }
 
-        if(maze.cells[pos_y][pos_x].wall_right)
+            if(maze.cells[pos_y][pos_x].wall_right)
             {
-            SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19);
             }
-        SDL_RenderPresent(renderer); //on met à jour l'affichage
-        SDL_Delay(250); //pause de 0.25 secondes
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10);
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13);
+            SDL_Delay(250); //pause de 0.25 secondes
+            SDL_RenderPresent(renderer); //on met à jour l'affichage
+        }
+        if(pos_x == maze.width - 1 && pos_y == maze.height - 1)
+        {
+            is_gaming = false;
+            print_maze(maze, "victoire !!");
+        }
     }
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
