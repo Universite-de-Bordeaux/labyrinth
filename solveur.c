@@ -36,24 +36,26 @@ int minigame1(const maze_t maze)
         return -1;
     }
 
-    SDL_RenderDrawLine(renderer, 0, 0, 19, 0);
-    SDL_RenderDrawLine(renderer, 0, 0, 0, 19);
-    SDL_RenderDrawLine(renderer, 7, 10, 13, 10);
-    SDL_RenderDrawLine(renderer, 10, 7, 10, 13);
+    SDL_RenderDrawLine(renderer, 0, 0, 19, 0); //on dessine le mur du haut
+    SDL_RenderDrawLine(renderer, 0, 0, 0, 19); //on dessine le mur de gauche
+    SDL_RenderDrawLine(renderer, 7, 10, 13, 10); //on dessine le joueur
+    SDL_RenderDrawLine(renderer, 10, 7, 10, 13); //on dessine le joueur
     if(maze.cells[0][0].wall_right)
     {
         SDL_RenderDrawLine(renderer, 19, 0, 19, 19);
+        SDL_RenderDrawLine(renderer, 20, 0, 20, 19);
     }
     if(maze.cells[0][0].wall_down)
     {
         SDL_RenderDrawLine(renderer, 0, 19, 19, 19);
+        SDL_RenderDrawLine(renderer, 0, 20, 19, 20);
     }
-    SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255);
-    SDL_RenderDrawLine(renderer, (maze.width-1) * 20, ((maze.height-1) * 20) + 19, ((maze.width-1) * 20) + 19, ((maze.height-1) * 20) + 19);
-    SDL_RenderDrawLine(renderer, (maze.width-1) * 20 + 19, (maze.height-1) * 20, (maze.width-1) * 20 + 19, (maze.height-1) * 20 + 19);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_Delay(10);
-    SDL_RenderPresent(renderer);
+    SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on choisit la couleur du renderer
+    SDL_RenderDrawLine(renderer, (maze.width-1) * 20, ((maze.height-1) * 20) + 19, ((maze.width-1) * 20) + 19, ((maze.height-1) * 20) + 19); //on dessine la sortie
+    SDL_RenderDrawLine(renderer, (maze.width-1) * 20 + 19, (maze.height-1) * 20, (maze.width-1) * 20 + 19, (maze.height-1) * 20 + 19); //on dessine la sortie
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on remet la couleur du renderer en blanc
+    SDL_Delay(10); //pause pour éviter que certains anacronismes ne se produisent
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
 
     int pos_x = 0;
     int pos_y = 0;
@@ -112,20 +114,24 @@ int minigame1(const maze_t maze)
             }
             if(maze.cells[pos_y][pos_x].wall_up)
             {
-                SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, (pos_x * 20) + 19, pos_y * 20);
+                SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20 + 19, pos_y * 20);
+                SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20 -1, pos_x * 20 + 19, pos_y * 20 -1);
             }
             if(maze.cells[pos_y][pos_x].wall_down)
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 20, (pos_x * 20) + 19, (pos_y * 20) + 20);
             }
             if(maze.cells[pos_y][pos_x].wall_left)
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, pos_x * 20 - 1, pos_y * 20, pos_x * 20 - 1, (pos_y * 20) + 19);
             }
 
             if(maze.cells[pos_y][pos_x].wall_right)
             {
                 SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19);
+                SDL_RenderDrawLine(renderer, (pos_x * 20) + 20, pos_y * 20, (pos_x * 20) + 20, (pos_y * 20) + 19);
             }
             SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10);
             SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13);
@@ -151,7 +157,7 @@ int minigame1(const maze_t maze)
 int rminigame1(const int width, const int height)
 {
     srand(time(NULL));
-    const int r = rand() % 3;
+    const int r = rand() % 2;
     if(r == 0)
     {
         const maze_t maze = line_maze(width, height);
