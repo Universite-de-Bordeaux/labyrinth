@@ -310,7 +310,7 @@ int print_maze(maze_t const maze, const char* filename)
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(2500); //pause de 2.5 secondes
+    SDL_WaitEvent(NULL); //on attend un event pour fermer la fenetre
 
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
