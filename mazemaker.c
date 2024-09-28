@@ -44,3 +44,15 @@ maze_t column_maze(const int width, const int height)
     }
     return maze;
 }
+
+//Crée un labyrinthe parfait de taille width x height
+//les murs sont en carrés, centrés sur l'entrée
+maze_t box_maze(const int width, const int height)
+{
+    const time_t t = time(NULL);
+    srand(t);
+    const maze_t maze = create_basic_maze(width, height);
+    int size = width < height ? width : height;
+
+    return maze;
+}
