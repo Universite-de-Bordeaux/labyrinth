@@ -151,7 +151,7 @@ int minigame1(const maze_t maze)
 int rminigame1(const int width, const int height)
 {
     srand(time(NULL));
-    const int r = rand() % 2; // NOLINT(*-msc50-cpp)
+    const int r = rand() % 3;
     if(r == 0)
     {
         const maze_t maze = line_maze(width, height);
@@ -160,6 +160,11 @@ int rminigame1(const int width, const int height)
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
+        return minigame1(maze);
+    }
+    else if (r == 2)
+    {
+        const maze_t maze = box_maze(width, height);
         return minigame1(maze);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
