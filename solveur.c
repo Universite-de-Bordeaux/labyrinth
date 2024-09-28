@@ -46,6 +46,10 @@ int minigame1(const maze_t maze)
     {
         SDL_RenderDrawLine(renderer, 0, 19, 19, 19);
     }
+    SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255);
+    SDL_RenderDrawLine(renderer, (maze.width-1) * 20, ((maze.height-1) * 20) + 19, ((maze.width-1) * 20) + 19, ((maze.height-1) * 20) + 19);
+    SDL_RenderDrawLine(renderer, (maze.width-1) * 20 + 19, (maze.height-1) * 20, (maze.width-1) * 20 + 19, (maze.height-1) * 20 + 19);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_Delay(10);
     SDL_RenderPresent(renderer);
 
