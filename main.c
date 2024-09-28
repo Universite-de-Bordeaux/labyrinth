@@ -3,8 +3,12 @@
 #include "solveur.h"
 
 int main() {
-    const maze_t test = line_maze(2, 3);
-    minigame1(test);
+    const maze_t test = box_maze(10, 10);
+if(print_maze(test, "test") != 0)
+    {
+        free_maze(test);
+        return -1;
+    }
     free_maze(test);
 
     return 0;
