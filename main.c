@@ -3,7 +3,7 @@
 #include "solveur.h"
 
 int main() {
-    const maze_t test = maze_from_file("test");
+    const maze_t test = line_maze(2, 3);
     minigame1(test);
     free_maze(test);
 
