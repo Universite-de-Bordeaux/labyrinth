@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <SDL2/SDL.h>
-#define NB_GENERATEURS 3
+#define NB_GENERATEURS 2
 
 //une mini-jeu où il faut trouver la sortie
 //version de base
