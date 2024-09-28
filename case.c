@@ -310,7 +310,12 @@ int print_maze(maze_t const maze, const char* filename)
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_WaitEvent(NULL); //on attend un event pour fermer la fenetre
+    SDL_Delay(100); //pause de 0.001 secondes
+    SDL_Event event = {0}; //on initialise l'event
+    while(event.type != SDL_QUIT && event.type != SDL_WINDOWEVENT_CLOSE && event.type != SDL_KEYDOWN) //tant que l'utilisateur n'a pas fermé la fenetre
+    {
+        SDL_WaitEvent(&event); //on attend un event pour fermer la fenetre
+    }
 
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
