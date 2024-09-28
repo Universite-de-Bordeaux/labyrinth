@@ -133,6 +133,7 @@ int minigame1(const maze_t maze)
         if(pos_x == maze.width - 1 && pos_y == maze.height - 1)
         {
             is_gaming = false;
+            SDL_Delay(100);
             print_maze(maze, "victoire !!");
         }
     }
