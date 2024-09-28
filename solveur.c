@@ -1,8 +1,10 @@
 #include "solveur.h"
+#include "mazemaker.h"
 #include <stdio.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 
-//une mini-jeu où il faut trouver la sortie 
+//une mini-jeu où il faut trouver la sortie
 //maze : le labyrinthe
 int minigame1(const maze_t maze)
 {
@@ -141,4 +143,25 @@ int minigame1(const maze_t maze)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
     return 0;
+}
+
+//lance minigame1 avec un générateur de labyrinthe aléatoire
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+int rminigame1(const int width, const int height)
+{
+    srand(time(NULL));
+    const int r = rand() % 2; // NOLINT(*-msc50-cpp)
+    if(r == 0)
+    {
+        const maze_t maze = line_maze(width, height);
+        return minigame1(maze);
+    }
+    else if(r == 1)
+    {
+        const maze_t maze = column_maze(width, height);
+        return minigame1(maze);
+    }
+    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
+    return -1;
 }
