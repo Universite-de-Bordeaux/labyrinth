@@ -316,6 +316,14 @@ int print_maze(maze_t const maze, const char* filename)
         return -1;
     }
     SDL_Window *fenetre = SDL_CreateWindow(filename, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(fenetre == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de creation de la fenetre : %s\n", error);
+        SDL_DestroyWindow(fenetre);
+        SDL_Quit();
+        return -1;
+    }
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     if(renderer == NULL)
     {
