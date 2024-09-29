@@ -303,7 +303,7 @@ void free_booltab(const bool_tab tab)
 //affiche le labyrinthe, renvoie -1 en cas d'erreur
 //maze : le labyrinthe à afficher
 //filename : le nom de la fenêtre
-//les murs d'entré sont en vert, les murs de sortie en bleu
+//les murs d'entré sont en bleu, les murs de sortie en vert
 //chaque cellule est de taille 20x20 pixels
 //le programme se ferme uand on appuie sur ECHAP, ENTRER, ou tente de fermer la fenetre
 int print_maze(maze_t const maze, const char* filename)
@@ -347,38 +347,38 @@ int print_maze(maze_t const maze, const char* filename)
         {
             if(maze.cells[y][x].wall_up)
             {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20);
+                SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20); //on dessine un mur en haut
             }
             if(maze.cells[y][x].wall_down)
             {
-                SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19);
+                SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19); //on dessine un mur en bas
             }
             if(maze.cells[y][x].wall_left)
             {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19);
+                SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19); //on dessine un mur à gauche
             }
             if(maze.cells[y][x].wall_right)
             {
-                SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19);
+                SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19); //on dessine un mur à droite
             }
         }
     }
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
     SDL_Delay(1); //pause de 0.001 secondes
-    SDL_SetRenderDrawColor(renderer, 0, 255, 100, 255); //on définit la couleur en vert
+    SDL_SetRenderDrawColor(renderer, 0, 50, 255, 255); //on définit la couleur en bleu
     SDL_RenderDrawLine(renderer, 0, 0, 0, 20); //l'entrée en vert
     SDL_RenderDrawLine(renderer, 0, 0, 20, 0); //l'entrée en vert
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
     SDL_Delay(1); //pause de 0.001 secondes
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on définit la couleur en bleu
+    SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
     SDL_Delay(100); //pause de 0.1 secondes
-    SDL_Event event; //on crée un event
+    SDL_Event event = {0}; //on crée un event
     while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
         (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
             event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))) //tant que l'utilisateur n'a pas fermé la fenetre
