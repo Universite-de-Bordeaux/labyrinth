@@ -4,7 +4,6 @@
 
 maze_t line_maze(const int width, const int height);
 maze_t column_maze(const int width, const int height);
-maze_t box_maze(const int width, const int height);
 maze_t one_way_maze(const int width, const int height);
 
 #endif //MAZEMAKER_H

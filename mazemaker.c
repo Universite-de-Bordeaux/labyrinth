@@ -46,13 +46,44 @@ maze_t column_maze(const int width, const int height)
 }
 
 //Crée un labyrinthe parfait de taille width x height
-//les murs sont en carrés, centrés sur l'entrée
-maze_t box_maze(const int width, const int height)
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+//seuls le chemins de sortie possèdent des embranchements
+maze_t one_way_maze(const int width, const int height)
 {
+    maze_t maze = create_basic_maze(width, height);
     const time_t t = time(NULL);
     srand(t);
-    const maze_t maze = create_basic_maze(width, height);
-    int size = width < height ? width : height;
-
+    const int exit = rand() % 2;
+    if(exit == 0)
+    {
+        for(int i = 0; i < width - 1; i++)
+        {
+            wall_right(maze, i, 0);
+        }
+        for(int i = 0; i < height - 1; i++)
+        {
+            wall_down(maze, width - 1, i);
+        }
+        for(int i = 0; i < width - 1; i++)
+        {
+            wall_right(maze, i, height - 1);
+        }
+    }
+    else
+    {
+        for(int i = 0; i < height - 1; i++)
+        {
+            wall_down(maze, 0, i);
+        }
+        for(int i = 0; i < width - 1; i++)
+        {
+            wall_right(maze, i, height - 1);
+        }
+        for(int i = 0; i < height - 1; i++)
+        {
+            wall_down(maze, width - 1, i);
+        }
+    }
     return maze;
 }
