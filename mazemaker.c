@@ -106,6 +106,7 @@ maze_t semiperfect_one_way_maze(const int width, const int height)
             }
         }
     }
+    free_booltab(visited);
     return maze;
 }
 
@@ -180,5 +181,6 @@ maze_t perfect_one_way_maze(const int width, const int height)
             }
         }
     }
+    free_booltab(visited);
     return maze;
 }
