@@ -40,6 +40,7 @@ typedef struct bool_tab bool_tab;
 bool_tab create_booltab(int width, int height);
 void free_booltab(bool_tab tab);
 maze_t create_basic_maze(int width, int height);
+maze_t create_wall_maze(int width, int height);
 void free_maze(maze_t maze);
 int print_maze(maze_t maze, const char* filename);
 void wall_up(maze_t maze, int x, int y);

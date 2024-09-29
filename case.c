@@ -3,6 +3,10 @@
 #include <SDL2/SDL.h>
 
 // Create a maze of width x height cells
+// width : width of the maze
+// height : height of the maze
+// tous les murs sont ouverts (hors limites)
+// returns the maze
 maze_t create_basic_maze(const int width, const int height) {
     cell** start = malloc(sizeof(cell *) * height);
     for (int i = 0; i < height; i++) {
@@ -43,6 +47,30 @@ maze_t create_basic_maze(const int width, const int height) {
             {
                 start[i][j].wall_right = false;
             }
+        }
+    }
+    const maze_t maze = {width, height, start};
+    return maze;
+}
+
+// Create a maze of width x height cells
+// width : width of the maze
+// height : height of the maze
+// tous les murs sont fermés
+// returns the maze
+maze_t create_wall_maze(const int width, const int height) {
+    cell** start = malloc(sizeof(cell *) * height);
+    for (int i = 0; i < height; i++) {
+        start[i] = malloc(sizeof(cell) * width);
+    }
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            start[i][j].wall_up = true;
+            start[i][j].wall_down = true;
+            start[i][j].wall_left = true;
+            start[i][j].wall_right = true;
         }
     }
     const maze_t maze = {width, height, start};
