@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+#define NB_MAZE_GENERATOR 4
+#define NB_PERFECT_MAZE_GENERATOR 3
+#define NB_IMPERFECT_MAZE_GENERATOR 1
 
 //Crée un labyrinthe parfait de taille width x height
 //tous les murs sont verticaux
@@ -183,4 +186,60 @@ maze_t perfect_one_way_maze(const int width, const int height)
     }
     free_booltab(visited);
     return maze;
+}
+
+//Crée un labyrinthe à l'aide d'une méthode existante chosie aléatoirement
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+maze_t rmaze(const int width, const int height)
+{
+    const int choice = rand() % NB_MAZE_GENERATOR;
+    if(choice == 0)
+    {
+        return line_maze(width, height);
+    }
+    else if(choice == 1)
+    {
+        return column_maze(width, height);
+    }
+    else if(choice == 2)
+    {
+        return imperfect_one_way_maze(width, height);
+    }
+    else
+    {
+        return perfect_one_way_maze(width, height);
+    }
+}
+
+//Crée un labyrinthe parfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+maze_t rperfect_maze(const int width, const int height)
+{
+    const int choice = rand() % NB_PERFECT_MAZE_GENERATOR;
+    if(choice == 0)
+    {
+        return line_maze(width, height);
+    }
+    else if(choice == 1)
+    {
+        return column_maze(width, height);
+    }
+    else
+    {
+        return perfect_one_way_maze(width, height);
+    }
+}
+
+//Crée un labyrinthe imparfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+maze_t rimperfect_maze(const int width, const int height)
+{
+    const int choice = rand() % NB_IMPERFECT_MAZE_GENERATOR;
+    if(choice == 0)
+    {
+        return imperfect_one_way_maze(width, height);
+    }
 }
