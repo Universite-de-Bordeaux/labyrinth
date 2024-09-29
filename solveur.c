@@ -19,7 +19,7 @@ int minigame1(const maze_t maze)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("maze_game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("easy mode", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();
@@ -45,13 +45,13 @@ int minigame1(const maze_t maze)
     SDL_RenderDrawLine(renderer, 10, 7, 10, 13); //on dessine le joueur
     if(maze.cells[0][0].wall_right)
     {
-        SDL_RenderDrawLine(renderer, 19, 0, 19, 19);
-        SDL_RenderDrawLine(renderer, 20, 0, 20, 19);
+        SDL_RenderDrawLine(renderer, 19, 0, 19, 19); //on dessine le mur de droite
+        SDL_RenderDrawLine(renderer, 20, 0, 20, 19); //on dessine le mur de droite
     }
     if(maze.cells[0][0].wall_down)
     {
-        SDL_RenderDrawLine(renderer, 0, 19, 19, 19);
-        SDL_RenderDrawLine(renderer, 0, 20, 19, 20);
+        SDL_RenderDrawLine(renderer, 0, 19, 19, 19); //on dessine le mur du bas
+        SDL_RenderDrawLine(renderer, 0, 20, 19, 20); //on dessine le mur du bas
     }
     SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on choisit la couleur du renderer
     SDL_RenderDrawLine(renderer, (maze.width-1) * 20, ((maze.height-1) * 20) + 19, ((maze.width-1) * 20) + 19, ((maze.height-1) * 20) + 19); //on dessine la sortie
@@ -200,7 +200,7 @@ int minigame2(const maze_t maze)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("maze_game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("semi-blind mode", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();
@@ -392,7 +392,7 @@ int minigame3(const maze_t maze)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("maze_game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("full-blind mode", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();
