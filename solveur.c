@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <SDL2/SDL.h>
-#define NB_GENERATEURS 2
+#define NB_GENERATEURS 4
 
 //une mini-jeu où il faut trouver la sortie
 //version de base
@@ -170,6 +170,16 @@ int rminigame1(const int width, const int height)
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
+        return minigame1(maze);
+    }
+    else if(r == 2)
+    {
+        const maze_t maze = semiperfect_one_way_maze(width, height);
+        return minigame1(maze);
+    }
+    else if(r == 3)
+    {
+        const maze_t maze = perfect_one_way_maze(width, height);
         return minigame1(maze);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
@@ -355,6 +365,16 @@ int rminigame2(const int width, const int height)
         const maze_t maze = column_maze(width, height);
         return minigame2(maze);
     }
+    else if(r == 2)
+    {
+        const maze_t maze = semiperfect_one_way_maze(width, height);
+        return minigame2(maze);
+    }
+    else if(r == 3)
+    {
+        const maze_t maze = perfect_one_way_maze(width, height);
+        return minigame2(maze);
+    }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
 }
@@ -490,6 +510,16 @@ int rminigame3(const int width, const int height)
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
+        return minigame3(maze);
+    }
+    else if(r == 2)
+    {
+        const maze_t maze = semiperfect_one_way_maze(width, height);
+        return minigame3(maze);
+    }
+    else if(r == 3)
+    {
+        const maze_t maze = perfect_one_way_maze(width, height);
         return minigame3(maze);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
