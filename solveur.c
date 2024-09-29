@@ -9,6 +9,7 @@
 //version de base
 //le chemin apparaît au fur et à mesure que le joueur avance
 //maze : le labyrinthe
+//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
 int minigame1(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -184,6 +185,7 @@ int rminigame1(const int width, const int height)
 //le chemin n'apparaît que sur la case où le joueur est
 //version mi-blind
 //maze : le labyrinthe
+//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
 int minigame2(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -343,6 +345,7 @@ int minigame2(const maze_t maze)
 //lance minigame2 avec un générateur de labyrinthe aléatoire
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
+//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
 int rminigame2(const int width, const int height)
 {
     srand(time(NULL));
@@ -503,6 +506,29 @@ int rminigame3(const int width, const int height)
     {
         const maze_t maze = box_maze(width, height);
         return minigame3(maze);
+    }
+    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
+    return -1;
+}
+
+//lance un mini-jeu avec un générateur de labyrinthe et une difficulté aléatoires
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+int rminigame(const int width, const int height)
+{
+    srand(time(NULL));
+    const int r = rand() % 3;
+    if(r == 0)
+    {
+        return rminigame1(width, height);
+    }
+    else if(r == 1)
+    {
+        return rminigame2(width, height);
+    }
+    else if (r == 2)
+    {
+        return rminigame3(width, height);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
