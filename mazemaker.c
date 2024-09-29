@@ -144,28 +144,38 @@ maze_t perfect_one_way_maze(const int width, const int height)
             y = next_y;
         }
     }
-    for(int i = 0; i < width; i++)
+    visited.tab[width - 1][height - 1] = true;
+    bool is_done = false;
+    while(!is_done)
     {
-        for(int j = 0; j < height; j++)
+        is_done = true;
+        for(int i = 0; i < width; i++)
         {
-            if(!visited.tab[i][j])
+            for(int j = 0; j < height; j++)
             {
-                int direction = rand() % 4;
-                if(direction == 0 && i > 0)
+                if(!visited.tab[i][j])
                 {
-                    unwall_left(maze, i, j);
-                }
-                else if(direction == 1 && i < width - 1)
-                {
-                    unwall_right(maze, i, j);
-                }
-                else if(direction == 2 && j > 0)
-                {
-                    unwall_up(maze, i, j);
-                }
-                else if(direction == 3 && j < height - 1)
-                {
-                    unwall_down(maze, i, j);
+                    is_done = false;
+                    if(j < height - 1 && visited.tab[i][j + 1])
+                    {
+                        unwall_down(maze, i, j);
+                        visited.tab[i][j] = true;
+                    }
+                    else if(j > 0 && visited.tab[i][j - 1])
+                    {
+                        unwall_up(maze, i, j);
+                        visited.tab[i][j] = true;
+                    }
+                    else if(i < width - 1 && visited.tab[i + 1][j])
+                    {
+                        unwall_right(maze, i, j);
+                        visited.tab[i][j] = true;
+                    }
+                    else if(i > 0 && visited.tab[i - 1][j])
+                    {
+                        unwall_left(maze, i, j);
+                        visited.tab[i][j] = true;
+                    }
                 }
             }
         }
