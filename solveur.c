@@ -548,3 +548,25 @@ int rminigame(const int width, const int height)
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
 }
+
+//lance un mini-jeu avec un labyrinthe donné et une difficulté aléatoire
+//maze : le labyrinthe
+int r_minigame(const maze_t maze)
+{
+    srand(time(NULL));
+    const int r = rand() % 3;
+    if(r == 0)
+    {
+        return minigame1(maze);
+    }
+    else if(r == 1)
+    {
+        return minigame2(maze);
+    }
+    else if (r == 2)
+    {
+        return minigame3(maze);
+    }
+    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
+    return -1;
+}
