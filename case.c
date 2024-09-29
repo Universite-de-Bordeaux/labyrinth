@@ -274,7 +274,7 @@ void unwall_right(const maze_t maze, const int x, const int y)
 //width : largeur du tableau
 //height : hauteur du tableau
 //renvoie le tableau de booléens
-bool_tab create_booltab(int width, int height)
+bool_tab create_booltab(const int width, const int height)
 {
     bool** booltab = malloc(sizeof(bool *) * height);
     for(int i = 0; i < height; i++)
@@ -285,7 +285,7 @@ bool_tab create_booltab(int width, int height)
             booltab[i][j] = false;
         }
     }
-    bool_tab tab = {width, height, booltab};
+    const bool_tab tab = {width, height, booltab};
     return tab;
 }
 
