@@ -45,11 +45,11 @@ maze_t column_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe semi-parfait de taille width x height
+//Crée un labyrinthe imparfait de taille width x height
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 //seuls le chemins de sortie possèdent des embranchements
-maze_t semiperfect_one_way_maze(const int width, const int height)
+maze_t imperfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab visited = create_booltab(width, height);
