@@ -247,6 +247,7 @@ void unwall_right(const maze_t maze, const int x, const int y)
 //filename : le nom de la fenêtre
 //les murs d'entré sont en vert, les murs de sortie en bleu
 //chaque cellule est de taille 20x20 pixels
+//le programme se ferme uand on appuie sur ECHAP, ENTRER, ou tente de fermer la fenetre
 int print_maze(maze_t const maze, const char* filename)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -310,13 +311,14 @@ int print_maze(maze_t const maze, const char* filename)
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(100); //pause de 0.001 secondes
-    SDL_Event event = {0}; //on initialise l'event
-    while(event.type != SDL_QUIT && event.type != SDL_WINDOWEVENT_CLOSE && event.type != SDL_KEYDOWN) //tant que l'utilisateur n'a pas fermé la fenetre
+    SDL_Delay(100); //pause de 0.1 secondes
+    SDL_Event event; //on crée un event
+    while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
+        (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
+            event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))) //tant que l'utilisateur n'a pas fermé la fenetre
     {
-        SDL_WaitEvent(&event); //on attend un event pour fermer la fenetre
+        SDL_WaitEvent(&event); //on attend un event
     }
-
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
