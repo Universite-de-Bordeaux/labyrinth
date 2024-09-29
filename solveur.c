@@ -165,22 +165,30 @@ int rminigame1(const int width, const int height)
     if(r == 0)
     {
         const maze_t maze = line_maze(width, height);
-        return minigame1(maze);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
-        return minigame1(maze);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 2)
     {
-        const maze_t maze = semiperfect_one_way_maze(width, height);
-        return minigame1(maze);
+        const maze_t maze = imperfect_one_way_maze(width, height);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
-        return minigame1(maze);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
@@ -358,22 +366,30 @@ int rminigame2(const int width, const int height)
     if(r == 0)
     {
         const maze_t maze = line_maze(width, height);
-        return minigame2(maze);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
-        return minigame2(maze);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 2)
     {
-        const maze_t maze = semiperfect_one_way_maze(width, height);
-        return minigame2(maze);
+        const maze_t maze = imperfect_one_way_maze(width, height);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
-        return minigame2(maze);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
@@ -505,22 +521,30 @@ int rminigame3(const int width, const int height)
     if(r == 0)
     {
         const maze_t maze = line_maze(width, height);
-        return minigame3(maze);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 1)
     {
         const maze_t maze = column_maze(width, height);
-        return minigame3(maze);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 2)
     {
-        const maze_t maze = semiperfect_one_way_maze(width, height);
-        return minigame3(maze);
+        const maze_t maze = imperfect_one_way_maze(width, height);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
     }
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
-        return minigame3(maze);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
