@@ -242,6 +242,36 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
 }
 
+//crée un tableau de booléens sur false de taille width x height
+//width : largeur du tableau
+//height : hauteur du tableau
+//renvoie le tableau de booléens
+bool_tab create_booltab(int width, int height)
+{
+    bool** booltab = malloc(sizeof(bool *) * height);
+    for(int i = 0; i < height; i++)
+    {
+        booltab[i] = malloc(sizeof(bool) * width);
+        for(int j = 0; j < width; j++)
+        {
+            booltab[i][j] = false;
+        }
+    }
+    bool_tab tab = {width, height, booltab};
+    return tab;
+}
+
+//désalloue la mémoire allouée pour le tableau de booléens
+//tab : le tableau de booléens à désallouer
+void free_booltab(const bool_tab tab)
+{
+    for(int i = 0; i < tab.height; i++)
+    {
+        free(tab.tab[i]);
+    }
+    free(tab.tab);
+}
+
 //affiche le labyrinthe, renvoie -1 en cas d'erreur
 //maze : le labyrinthe à afficher
 //filename : le nom de la fenêtre

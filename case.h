@@ -14,6 +14,11 @@ struct maze {
     int height;
     struct cell **cells;
 };
+struct bool_tab {
+    int width;
+    int height;
+    bool **tab;
+};
 
 //Structure représentant une cellule
 //contient 4 booléens représentant les murs de la cellule :
@@ -25,7 +30,15 @@ typedef struct cell cell;
 //cells : tableau de tableau de cellules
 //malloc utilisés, penser à free_maze pour libérer la mémoire
 typedef struct maze maze_t;
+//Structure représentant un tableau de booléens
+//width : largeur du tableau
+//height : hauteur du tableau
+//tab : tableau de tableau de booléens
+//malloc utilisés, penser à free_booltab pour libérer la mémoire
+typedef struct bool_tab bool_tab;
 
+bool_tab create_booltab(int width, int height);
+void free_booltab(bool_tab tab);
 maze_t create_basic_maze(int width, int height);
 void free_maze(maze_t maze);
 int print_maze(maze_t maze, const char* filename);
