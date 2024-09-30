@@ -9,7 +9,8 @@
 //version de base
 //le chemin apparaît au fur et à mesure que le joueur avance
 //maze : le labyrinthe
-//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
+//appuier sur ECHAP ou la croix fermera proprement le jeu
+//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int minigame1(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -67,8 +68,7 @@ int minigame1(const maze_t maze)
     while(is_gaming)
     {
         SDL_WaitEvent(&event); //attente d'un event
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && \
-                (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
         {
             //l'utilisateur ferme la fenetre ou clique sur la croix
             is_gaming = false;
@@ -82,10 +82,16 @@ int minigame1(const maze_t maze)
         }
         if(event.type == SDL_KEYUP)
         {
+            if(event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)
+            {
+                is_gaming = false;
+                SDL_Delay(1);
+                print_maze(maze, "abandon !!");
+            }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
-            SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10);
-            SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13);
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10); //on efface le joueur
+            SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13); //on efface le joueur
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
             SDL_Delay(10);
             if(event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_UP)
@@ -198,7 +204,8 @@ int rminigame1(const int width, const int height)
 //le chemin n'apparaît que sur la case où le joueur est
 //version mi-blind
 //maze : le labyrinthe
-//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
+//appuier sur ECHAP ou la croix fermera proprement le jeu
+//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int minigame2(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -254,8 +261,7 @@ int minigame2(const maze_t maze)
     while(is_gaming)
     {
         SDL_WaitEvent(&event); //attente d'un event
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && \
-                (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
         {
             //l'utilisateur ferme la fenetre ou clique sur la croix
             is_gaming = false;
@@ -269,6 +275,12 @@ int minigame2(const maze_t maze)
         }
         if(event.type == SDL_KEYUP)
         {
+            if(event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)
+            {
+                is_gaming = false;
+                SDL_Delay(1);
+                print_maze(maze, "abandon !!");
+            }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
             SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10); //on efface le joueur
@@ -358,7 +370,8 @@ int minigame2(const maze_t maze)
 //lance minigame2 avec un générateur de labyrinthe aléatoire
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
-//appuier sur ECHAP, ENTER ou la croix fermera proprement le jeu
+//appuier sur ECHAP ou la croix fermera proprement le jeu
+//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int rminigame2(const int width, const int height)
 {
     srand(time(NULL));
@@ -444,8 +457,7 @@ int minigame3(const maze_t maze)
     while(is_gaming)
     {
         SDL_WaitEvent(&event); //attente d'un event
-        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && \
-                (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))
+        if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
         {
             //l'utilisateur ferme la fenetre ou clique sur la croix
             is_gaming = false;
@@ -459,6 +471,12 @@ int minigame3(const maze_t maze)
         }
         if(event.type == SDL_KEYUP)
         {
+            if(event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)
+            {
+                is_gaming = false;
+                SDL_Delay(1);
+                print_maze(maze, "abandon !!");
+            }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
             SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10); //on efface le joueur
