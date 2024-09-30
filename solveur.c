@@ -612,3 +612,11 @@ int r_minigame(const maze_t maze)
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
 }
+
+//renvoie true si le labyrithne est solvable, false sinon
+//maze : le labyrinthe
+bool right_hand(maze_t maze)
+{
+    return false;
+}
+//TODO : à compléter
