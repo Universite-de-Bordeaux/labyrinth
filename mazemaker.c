@@ -242,4 +242,5 @@ maze_t rimperfect_maze(const int width, const int height)
     {
         return imperfect_one_way_maze(width, height);
     }
+    return create_basic_maze(width, height);
 }
