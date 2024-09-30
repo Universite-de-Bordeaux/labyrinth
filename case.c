@@ -381,7 +381,7 @@ int print_maze(maze_t const maze, const char* filename)
     SDL_Event event = {0}; //on crée un event
     while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
         (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
-            event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDL_SCANCODE_KP_ENTER)))) //tant que l'utilisateur n'a pas fermé la fenetre
+            event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)))) //tant que l'utilisateur n'a pas fermé la fenetre
     {
         SDL_WaitEvent(&event); //on attend un event
     }
