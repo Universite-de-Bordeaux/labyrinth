@@ -3,24 +3,24 @@ CFLAGS = -Wall -std=c99
 LDFLAGS = -lm
 SDLFLAGS = `sdl2-config --cflags --libs`
 
-ALL : main
+ALL : src/main
 
-main : main.o case.o outside.o mazemaker.o solveur.o
+main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 
-main.o : main.c case.h
+main.o : src/main.c src/case.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
-case.o : case.c case.h
+case.o : src/case.c src/case.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
-outside.o : outside.c outside.h
+outside.o : src/outside.c src/outside.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
-mazemaker.o : mazemaker.c mazemaker.h
+mazemaker.o : src/mazemaker.c src/mazemaker.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
-solveur.o : solveur.c solveur.h
+solveur.o : src/solveur.c src/solveur.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
 .PHONY : clean
