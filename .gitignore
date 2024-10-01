@@ -174,3 +174,7 @@ fabric.properties
 /.xdp-gitignore-OGP9E5
 /.idea/labyrinth.iml
 /.idea/misc.xml
+/.idea/editor.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/inspectionProfiles/Project_Default.xml
