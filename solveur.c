@@ -615,8 +615,10 @@ int r_minigame(const maze_t maze)
 
 //renvoie true si le labyrithne est solvable, false sinon
 //maze : le labyrinthe
+//non implémenté
 bool right_hand(maze_t maze)
 {
+    fprintf(stderr, "Cette fonction n'a pas été implémentée");
     return false;
 }
 //TODO : à compléter
