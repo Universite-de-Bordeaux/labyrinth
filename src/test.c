@@ -103,8 +103,8 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
     return false;
 }
 
-//Crée un labyrinthe parfait de taille width x height
 //d'après la méthode du hunt and kill
+//Crée un labyrinthe parfait de taille width x height
 maze_t hunt_kill_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -199,7 +199,105 @@ maze_t hunt_kill_maze(const int width, const int height)
                 free_booltab(visited);
                 exit(1);
             }
+            //visited.tab[x][y] = true;
+            }
+        }
+    free_booltab(visited);
+    return maze;
+}
+
+//d'après la méthode du hunt and kill
+//Crée un labyrinthe parfait de taille width x height
+maze_t true_hunt_kill_maze(const int width, const int height)
+{
+    const time_t t = time(NULL);
+    srand(t);
+    //Créer un labyrithe avec tous les murs fermés
+    //width : largeur du labyrinthe
+    //height : hauteur du labyrinthe
+    const maze_t maze = create_wall_maze(width, height);
+
+    //création d'un tableau repertoriant si une cellule a été visitée
+    const bool_tab visited = create_booltab(width, height);
+
+    //choisir une cellule aléatoire
+    int x = rand() % width;
+    int y = rand() % height;
+    //cette cellule est visitée
+    visited.tab[x][y] = true;
+
+    int end = 0;
+    int *px = &x;
+    int *py = &y;
+
+    while (end==0){ //tant que toutes les cellules n'ont pas été visitées
+        //BOUCLE KILL
+        //détruire un mur aléatoire tant que toutes les cellules voisines n'ont pas été visitées
+        while(walk_possible(maze, x, y, width, height, visited)){
+             // tableau des directions possibles (4 choix) (right, down, left, up)
+            int dir_x_4[4] = {1, 0, -1, 0};   //tableau des déplacements possibles en x
+            int dir_y_4[4] = {0, 1, 0, -1};   //tableau des déplacements possibles en y
+            char dir_4[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+            const char dir = rand_dir(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
+            if (dir == 'R'){
+                unwall_right(maze, x, y);
+                x++;
+            }
+            else if (dir== 'D'){
+                unwall_down(maze, x, y);
+                y++;
+            }
+            else if (dir== 'L'){
+                unwall_left(maze, x, y);
+                x--;
+            }
+            else if (dir == 'U'){
+                unwall_up(maze, x, y);
+                y--;
+            }
+            else
+            {
+                fprintf(stderr, "Erreur: direction invalide\n");
+                free_maze(maze);
+                free_booltab(visited);
+                exit(1);
+            }
             visited.tab[x][y] = true;
+        }
+
+        //sinon on cherche une cellule non visitée adjacente à une cellule visitée
+        //BOUCLE HUNT
+        if(!finding_hunt(width, height, visited, px, py)){
+            end = 1;
+        }
+        else{
+            // x = *px;
+            // y = *py;
+            // tableau des directions possibles (4 choix) (right, down, left, up)
+            int dir_x_4[4] = {1, 0, -1, 0};   //tableau des déplacements possibles en x
+            int dir_y_4[4] = {0, 1, 0, -1};   //tableau des déplacements possibles en y
+            char dir_4[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+            //chercher une cellule non visitée adjacente à une cellule visitée
+            const char dir = rand_dir_hunt(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
+            visited.tab[x][y] = true;
+            if (dir == 'R'){
+                unwall_right(maze, x, y);
+            }
+            else if (dir == 'D'){
+                unwall_down(maze, x, y);
+            }
+            else if (dir == 'L'){
+                unwall_left(maze, x, y);
+            }
+            else if (dir == 'U'){
+                unwall_up(maze, x, y);
+            }
+            else{
+                fprintf(stderr, "Erreur: direction invalide\n");
+                free_maze(maze);
+                free_booltab(visited);
+                exit(1);
+            }
             }
         }
     free_booltab(visited);
