@@ -26,7 +26,7 @@ bool walk_possible(maze_t maze, const int x, const int y, const int width, const
 
 //fonction qui permet de s'assurer que toutes les cellules ont été visitées
 //retourne true si toutes les cellules ont été visitées, false sinon
-bool all_visited(int width, int height, bool_tab visited){
+bool all_visited(const int width, const int height, const bool_tab visited){
     for(int i = 0; i < width ; i++){
         for(int j = 0; j < height; j++){
             if (!visited.tab[i][j]){
@@ -40,9 +40,9 @@ bool all_visited(int width, int height, bool_tab visited){
 //fonction qui retourne une direction aléatoire possible vers une cellule non visitée
 //retourne la direction sous le format d'un charactère
 char rand_dir(int x, int y, int width, int height, bool_tab visited, int size, int dir_x[size], int dir_y[size], char dir[size]){
-    int r = rand() % size;
-    int new_x = x + dir_x[r];
-    int new_y = y + dir_y[r];
+    const int r = rand() % size;
+    const int new_x = x + dir_x[r];
+    const int new_y = y + dir_y[r];
     //la case designée par la direction random est possible
     if (new_x >= 0 && new_x < width && new_y >= 0 && new_y < height && !visited.tab[new_x][new_y]){
         printf("direction : %c\n", dir[r]);
@@ -62,15 +62,17 @@ char rand_dir(int x, int y, int width, int height, bool_tab visited, int size, i
 
 //fonction qui retourne une direction aléatoire possible vers une cellule visitée
 //retourne la direction sous le format d'un charactère
-char rand_dir_hunt(int x, int y, int width, int height, bool_tab visited, int size, int dir_x[size], int dir_y[size], char dir[size]){
-    int r = rand() % size;
+char rand_dir_hunt(const int x, const  int y, const  int width, const int height, const  bool_tab visited, const  int size, int dir_x[size], int dir_y[size], char dir[size]){
+    const int r = rand() % size;
+    const int new_x = x + dir_x[r];
+    const int new_y = y + dir_y[r];
     //la case designée par la direction random est possible et a déjà été visitée
-    if ((x+dir_x[r]>=0) && (x+dir_x[r]<width) && (y+dir_y[r]>=0) && (y+dir_y[r]<height) && visited.tab[x+dir_x[r]][y+dir_y[r]]){
+    if (new_x >= 0 && new_x < width && new_y >= 0 && new_y < height && visited.tab[new_x][new_y]){
         return dir[r];
     }
     //sinon on enlève la direction de la liste des directions possibles
     else {
-        for (int i =r; i<=size; i++){
+        for (int i = r; i < size; i++){
             dir[i] = dir[i+1];
             dir_x[i] = dir_x[i+1];
             dir_y[i] = dir_y[i+1];
@@ -82,7 +84,7 @@ char rand_dir_hunt(int x, int y, int width, int height, bool_tab visited, int si
 //FONCTION
 //fonction qui permet de trouver une cellule non visitée adjacente à une cellule visitée
 //modifie les coordonnées de la cellule non visitée et retourne true si une cellule a été trouvée, false sinon
-bool finding_hunt(const int width, const int height, bool_tab visited, int *px, int *py){
+bool finding_hunt(const int width, const int height, const bool_tab visited, int *px, int *py){
     for(int i = 0; i < height; i++)
     {
         for(int j = 0; j < width; j++)
@@ -90,28 +92,37 @@ bool finding_hunt(const int width, const int height, bool_tab visited, int *px, 
             if(!visited.tab[j][i])
             {
                 if(j+1 < width && visited.tab[j+1][i]){
+                    printf("px  : %d, py  : %d\n", *px, *py);
                     *px = j;
                     *py = i;
+                    printf("npx : %d, npy : %d\n", *px, *py);
                     return true;
                 }
                 if(i+1 < height && visited.tab[j][i+1]){
+                    printf("px  : %d, py  : %d\n", *px, *py);
                     *px = j;
                     *py = i;
+                    printf("npx : %d, npy : %d\n", *px, *py);
                     return true;
                 }
                 if(j > 2 && visited.tab[j-1][i]){
+                    printf("px  : %d, py  : %d\n", *px, *py);
                     *px = j;
                     *py = i;
+                    printf("npx : %d, npy : %d\n", *px, *py);
                     return true;
                 }
                 if(i > 2 && visited.tab[j][i-1]){
+                    printf("px  : %d, py  : %d\n", *px, *py);
                     *px = j;
                     *py = i;
+                    printf("npx : %d, npy : %d\n", *px, *py);
                     return true;
                 }
             }
         }
     }
+    printf("pas de cellule non visitée adjacente à une cellule visitée\n");
     return false;
 }
 
@@ -124,10 +135,10 @@ maze_t hunt_kill_maze(const int width, const int height)
     //Créer un labyrithe avec tous les murs fermés
     //width : largeur du labyrinthe
     //height : hauteur du labyrinthe
-    maze_t maze = create_wall_maze(width, height);
+    const maze_t maze = create_wall_maze(width, height);
 
     //création d'un tableau repertoriant si une cellule a été visitée
-    bool_tab visited = create_booltab(width, height);
+    const bool_tab visited = create_booltab(width, height);
 
     printf("on a créé le labyrinthe\n");
     //choisir une cellule aléatoire
@@ -138,9 +149,9 @@ maze_t hunt_kill_maze(const int width, const int height)
     visited.tab[x][y] = true;
     printf("la case [%d][%d] est visitée\n", x, y);
 
-    int end =0;
-    int *px =&x;
-    int *py =&y;
+    int end = 0;
+    int *px = &x;
+    int *py = &y;
 
     while (end==0){ //tant que toutes les cellules n'ont pas été visitées
         //BOUCLE KILL
@@ -148,9 +159,21 @@ maze_t hunt_kill_maze(const int width, const int height)
         while(walk_possible(maze, x, y, width, height, visited)){
              // tableau des directions possibles (4 choix) (right, down, left, up)
             int dir_x_4[4] = {1, 0, -1, 0};   //tableau des déplacements possibles en x
+            dir_x_4[0] = 1;
+            dir_x_4[1] = 0;
+            dir_x_4[2] = -1;
+            dir_x_4[3] = 0;
             int dir_y_4[4] = {0, 1, 0, -1};   //tableau des déplacements possibles en y
+            dir_y_4[0] = 0;
+            dir_y_4[1] = 1;
+            dir_y_4[2] = 0;
+            dir_y_4[3] = -1;
             char dir_4[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-            char dir = rand_dir(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
+            dir_4[0] = 'R';
+            dir_4[1] = 'D';
+            dir_4[2] = 'L';
+            dir_4[3] = 'U';
+            const char dir = rand_dir(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
             if (dir == 'R'){
                 unwall_right(maze, x, y);
                 x++;
@@ -181,7 +204,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         print_maze(maze, "maze");
 
         //si toutes les cellules ont été visitées
-        if (all_visited (width, height, visited)){
+        if (all_visited (width, height, visited)){ //redondant avec !finding_hunt
             end =1; //le labyrinthe est terminé
         }
 
@@ -191,17 +214,30 @@ maze_t hunt_kill_maze(const int width, const int height)
             printf ("on part à la chasse\n");
             if (!finding_hunt(width, height, visited, px, py)){
                 end = 1;
-                break;
             }
-            else if (finding_hunt(width, height, visited, px, py)){
+            else //if(finding_hunt(width, height, visited, px, py))
+                {
+                visited.tab[x][y] = true;
                 // x = *px;
                 // y = *py;
                 // tableau des directions possibles (4 choix) (right, down, left, up)
                 int dir_x_4[4] = {1, 0, -1, 0};   //tableau des déplacements possibles en x
+                dir_x_4[0] = 1;
+                dir_x_4[1] = 0;
+                dir_x_4[2] = -1;
+                dir_x_4[3] = 0;
                 int dir_y_4[4] = {0, 1, 0, -1};   //tableau des déplacements possibles en y
+                dir_y_4[0] = 0;
+                dir_y_4[1] = 1;
+                dir_y_4[2] = 0;
+                dir_y_4[3] = -1;
                 char dir_4[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+                dir_4[0] = 'R';
+                dir_4[1] = 'D';
+                dir_4[2] = 'L';
+                dir_4[3] = 'U';
                 //chercher une cellule non visitée adjacente à une cellule visitée
-                char dir = rand_dir_hunt(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
+                const char dir = rand_dir_hunt(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
                 if (dir == 'R'){
                     unwall_right(maze, x, y);
                     x++;
@@ -218,8 +254,13 @@ maze_t hunt_kill_maze(const int width, const int height)
                     unwall_up(maze, x, y);
                     y--;
                 }
-                visited.tab[x][y] = true;
-                printf("x : %d, y : %d\n", x, y);
+                else
+                {
+                    fprintf(stderr, "Erreur: direction invalide\n");
+                    free_maze(maze);
+                    free_booltab(visited);
+                    exit(1);
+                }
             }
         }
     }
