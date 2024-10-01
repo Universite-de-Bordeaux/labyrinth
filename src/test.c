@@ -8,17 +8,17 @@
 //FONCTION UTILISEES POUR LA GENERATION DE LABYRINTHE HUNT AND KILL
 //fonction qui permet de s'assurer qu'on peut encore avancer dans la partie KILL de l'algo hunt and kill
 //retourne true si on peut avancer (si on a des cases voisines non visité), false sinon
-bool walk_possible(maze_t maze, int x, int y,int width, int height ,bool_tab visited){
+bool walk_possible(maze_t maze, const int x, const int y, const int width, const int height , const bool_tab visited){
     if (x+1 < width && !visited.tab[x+1][y]){
         return true;
     }
     if (y+1 < height && !visited.tab[x][y+1]){
         return true;
     }
-    if (x-1 >= 0 && !visited.tab[x-1][y]){
+    if (x > 2 && !visited.tab[x-1][y]){
         return true;
     }
-    if (y-1 >= 0 && !visited.tab[x][y-1]){
+    if (y > 2 && !visited.tab[x][y-1]){
         return true;
     }
     return false;
@@ -44,13 +44,13 @@ char rand_dir(int x, int y, int width, int height, bool_tab visited, int size, i
     int new_x = x + dir_x[r];
     int new_y = y + dir_y[r];
     //la case designée par la direction random est possible
-    if ((new_x >= 0) && (new_x < width) && (new_y >= 0) && (new_y < height) && !visited.tab[new_x][new_y]){
+    if (new_x >= 0 && new_x < width && new_y >= 0 && new_y < height && !visited.tab[new_x][new_y]){
         printf("direction : %c\n", dir[r]);
         return dir[r];
     }
     //sinon on enlève la direction de la liste des directions possibles
     else {
-        for (int i =r; i<size-1; i++){
+        for (int i = r; i < size - 1; i++){
             dir[i] = dir[i+1];
             dir_x[i] = dir_x[i+1];
             dir_y[i] = dir_y[i+1];
@@ -82,58 +82,33 @@ char rand_dir_hunt(int x, int y, int width, int height, bool_tab visited, int si
 //FONCTION
 //fonction qui permet de trouver une cellule non visitée adjacente à une cellule visitée
 //modifie les coordonnées de la cellule non visitée et retourne true si une cellule a été trouvée, false sinon
-bool finding_hunt(int width, int height, bool_tab visited, int *px, int *py){
-    for (int i = 0; i<height; i++){     //i correspond à la ligne
-        for (int j = 0; j<width; j++){  //j correspond à la colonne
-            printf("i : %d, j : %d\n", i, j);
-            if (i==0){      //si on est dans la première ligne
-                if (j==0){  //si on est dans la case [0][0]
-                printf("visited [%d] [%d] : %d\n", i, j, visited.tab[i][j]);
-                printf("visited [%d] [%d] : %d\n", i+1, j, visited.tab[i+1][j]);
-                printf("visited [%d] [%d] : %d\n", i, j+1, visited.tab[i][j+1]);
-                    if ((visited.tab[i+1][j] || visited.tab[i][j+1]) && !visited.tab[i][j]){
-                        *px = i;
-                        *py = j;
-                        printf("la case est [0][0]\n");
-                        return true;
-                    }
-                }
-                else if(j==height-1){   //si on est dans la case [0][height-1]
-                    if ((visited.tab[i+1][j]|| visited.tab[i][j-1]) && !visited.tab[i][j]){
-                        *px = i;
-                        *py = j;
-                        printf("la case est [0][height-1]\n");
-                        return true;
-                    }
-                }
-                else if (j>0 && j<height-1){   //si on est dans la première ligne
-                    if ((visited.tab[i+1][j] || visited.tab[i][j-1] || visited.tab[i][j+1]) && !(visited.tab[i][j])){
-                        *px = i;
-                        *py = j;
-                        printf("la case est [0][j] on est dans la premier ligne\n");
-                        return true;
-                    }
-                }
-            }
-            if(j==0){   //si on est dans la première colonne
-                if ((visited.tab[i+1][j] || visited.tab[i-1][j] || visited.tab[i][j+1]) && !(visited.tab[i][j])){
-                    *px = i;
-                    *py = j;
+bool finding_hunt(const int width, const int height, bool_tab visited, int *px, int *py){
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            if(!visited.tab[j][i])
+            {
+                if(j+1 < width && visited.tab[j+1][i]){
+                    *px = j;
+                    *py = i;
                     return true;
                 }
-            }
-            if(j==height-1){    //si on est dans la dernière colonne
-                if ((visited.tab[i+1][j] || visited.tab[i-1][j] || visited.tab[i][j-1]) && !(visited.tab[i][j])){
-                    *px = i;
-                    *py = j;
+                if(i+1 < height && visited.tab[j][i+1]){
+                    *px = j;
+                    *py = i;
                     return true;
                 }
-            }
-            //si on est dans une case quelconque
-            else if (!(visited.tab[i][j]) && (visited.tab[i+1][j] || visited.tab[i-1][j] || visited.tab[i][j+1] || visited.tab[i][j-1])){
-                *px = i;
-                *py = j;
-                return true;
+                if(j > 2 && visited.tab[j-1][i]){
+                    *px = j;
+                    *py = i;
+                    return true;
+                }
+                if(i > 2 && visited.tab[j][i-1]){
+                    *px = j;
+                    *py = i;
+                    return true;
+                }
             }
         }
     }
@@ -192,6 +167,13 @@ maze_t hunt_kill_maze(const int width, const int height)
                 unwall_up(maze, x, y);
                 y--;
             }
+            else
+            {
+                fprintf(stderr, "Erreur: direction invalide\n");
+                free_maze(maze);
+                free_booltab(visited);
+                exit(1);
+            }
             visited.tab[x][y] = true;
         }
         printf("x : %d, y : %d\n", x, y);
@@ -207,7 +189,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         //BOUCLE HUNT
         else {
             printf ("on part à la chasse\n");
-            if (!(finding_hunt(width, height, visited, px, py))){
+            if (!finding_hunt(width, height, visited, px, py)){
                 end = 1;
                 break;
             }
