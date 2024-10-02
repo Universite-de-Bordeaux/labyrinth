@@ -3,7 +3,7 @@ CFLAGS = -Wall -std=c99
 LDFLAGS = -lm
 SDLFLAGS = `sdl2-config --cflags --libs`
 
-ALL : main
+all : main
 
 main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
