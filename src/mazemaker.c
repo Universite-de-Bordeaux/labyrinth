@@ -313,22 +313,18 @@ maze_t hunt_kill_maze(const int width, const int height)
                 if (c == 'R' && x + 1 < width && visited.tab[x+1][y])
                 {
                     unwall_right(maze, x, y);
-                    visited.tab[x][y] = true;
                 }
                 else if(c == 'L' && x > 0 && visited.tab[x-1][y])
                 {
                     unwall_left(maze, x, y);
-                    visited.tab[x][y] = true;
                 }
                 else if(c == 'D' && y + 1 < height && visited.tab[x][y+1])
                 {
                     unwall_down(maze, x, y);
-                    visited.tab[x][y] = true;
                 }
                 else if(c == 'U' && y > 0 && visited.tab[x][y-1])
                 {
                     unwall_up(maze, x, y);
-                    visited.tab[x][y] = true;
                 }
                 else
                 {
@@ -347,6 +343,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                     }
                 }
             }
+            visited.tab[x][y] = true;
         }
     }
     free_booltab(visited);
