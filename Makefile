@@ -8,7 +8,7 @@ all : main
 main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 
-main.o : src/main.c src/case.h
+main.o : src/main.c
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 
 case.o : src/case.c src/case.h
@@ -27,9 +27,7 @@ solveur.o : src/solveur.c src/solveur.h
 clean :
 	@rm -f *.o main
 	@echo "Clean done"
-cleangch : #en cas de compilation de .h (erreur d'utilisateur)
-	@rm -f *.gch
-	@echo "Clean gch done"
+
 deftest :
 	@make
 	@./main
