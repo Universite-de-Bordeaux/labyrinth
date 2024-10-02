@@ -230,38 +230,47 @@ maze_t true_hunt_kill_maze(const int width, const int height)
     int *px = &x;
     int *py = &y;
 
-    while (end==0){ //tant que toutes les cellules n'ont pas été visitées
+    while(end == 0){ //tant que toutes les cellules n'ont pas été visitées
         //BOUCLE KILL
         //détruire un mur aléatoire tant que toutes les cellules voisines n'ont pas été visitées
         while(walk_possible(maze, x, y, width, height, visited)){
-             // tableau des directions possibles (4 choix) (right, down, left, up)
-            int dir_x_4[4] = {1, 0, -1, 0};   //tableau des déplacements possibles en x
-            int dir_y_4[4] = {0, 1, 0, -1};   //tableau des déplacements possibles en y
-            char dir_4[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-            const char dir = rand_dir(x, y, width, height, visited, 4, dir_x_4, dir_y_4, dir_4);
-            if (dir == 'R'){
-                unwall_right(maze, x, y);
-                x++;
-            }
-            else if (dir== 'D'){
-                unwall_down(maze, x, y);
-                y++;
-            }
-            else if (dir== 'L'){
-                unwall_left(maze, x, y);
-                x--;
-            }
-            else if (dir == 'U'){
-                unwall_up(maze, x, y);
-                y--;
-            }
-            else
+            char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+            int size = 4;
+            char c = '\0';
+            while(c == '\0')
             {
-                fprintf(stderr, "Erreur: direction invalide\n");
-                free_maze(maze);
-                free_booltab(visited);
-                exit(1);
+                const int r = rand() % size;
+                c = dir[r];
+                if (c == 'R' && x + 1 < width && !visited.tab[x+1][y])
+                {
+                    unwall_right(maze, x, y);
+                    x++;
+                }
+                else if(c == 'L' && x - 1 >= 0 && !visited.tab[x-1][y])
+                {
+                    unwall_left(maze, x, y);
+                    x--;
+                }
+                else if(c == 'D' && y + 1 < height && !visited.tab[x][y+1])
+                {
+                    unwall_down(maze, x, y);
+                    y++;
+                }
+                else if(c == 'U' && y - 1 >= 0 && !visited.tab[x][y-1])
+                {
+                    unwall_up(maze, x, y);
+                    y--;
+                }
+                else
+                {
+                    for (int i = r; i < size - 1; i++){
+                        dir[i] = dir[i+1];
+                        c = '\0';
+                    }
+                    size--;
+                }
             }
+
             visited.tab[x][y] = true;
         }
 
