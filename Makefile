@@ -3,9 +3,9 @@ CFLAGS = -Wall -std=c99
 LDFLAGS = -lm
 SDLFLAGS = `sdl2-config --cflags --libs`
 
-all : main
+all : src/main
 
-main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
+src/main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 
 main.o : src/main.c
@@ -25,10 +25,12 @@ solveur.o : src/solveur.c src/solveur.h
 
 .PHONY : clean
 clean :
+	@rm -f src/*.o src/main
+	@echo "Clean done in src"
 	@rm -f *.o main
-	@echo "Clean done"
+	@echo "Clean done in root (security)"
 
 deftest :
 	@make
-	@./main
+	@./src/main
 	 @if [ $$? -eq 0 ]; then echo "Test ok"; else echo "UNEXPECTED ERROR"; fi
