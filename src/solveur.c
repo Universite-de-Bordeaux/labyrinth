@@ -623,5 +623,59 @@ bool right_hand(maze_t maze)
 }
 //TODO : à compléter
 
-bool cascade_aux(const maze_t maze, const bool_tab bool, const int x, const int y);
+//fonction auxiliaire de cascade
+//renvoie true si on peut atteindre la sortie, false sinon
+//maze : le labyrinthe
+//visited : tableau de booléens pour savoir si on est déjà passé par une case
+//x : abscisse de la case actuelle
+//y : ordonnée de la case actuelle
+bool cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y)
+{
+    //condition d'arrêt : atteindre la sortie
+    if(x == maze.width - 1 && y == maze.height - 1)
+    {
+        return true;
+    }
 
+    //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
+    visited.tab[y][x] = true;
+    if(!maze.cells[y][x].wall_up && !visited.tab[y - 1][x])
+    {
+        if(cascade_aux(maze, visited, x, y - 1))
+        {
+            return true;
+        }
+    }
+    if(!maze.cells[y][x].wall_down && !visited.tab[y + 1][x])
+    {
+        if(cascade_aux(maze, visited, x, y + 1))
+        {
+            return true;
+        }
+    }
+    if(!maze.cells[y][x].wall_left && !visited.tab[y][x - 1])
+    {
+        if(cascade_aux(maze, visited, x - 1, y))
+        {
+            return true;
+        }
+    }
+    if(!maze.cells[y][x].wall_right && !visited.tab[y][x + 1])
+    {
+        if(cascade_aux(maze, visited, x + 1, y))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//renvoie true si le labyrinthe est solvable, false sinon
+//maze : le labyrinthe
+bool cascade(const maze_t maze)
+{
+    const bool_tab visited = create_booltab(maze.width, maze.height);
+    const bool s = cascade_aux(maze, visited, 0, 0);
+    free_booltab(visited);
+    return s;
+}
