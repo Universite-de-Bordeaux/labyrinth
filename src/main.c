@@ -1,9 +1,10 @@
 #include "outside.h"
 #include "mazemaker.h"
 #include "solveur.h"
+#include <stdio.h>
 
 int main() {
-  maze_t maze = hunt_kill_maze(10, 10);
-  minigame3(maze);
+  const maze_t maze = rmaze(10, 10);
+  cascade(maze) ? printf("solvable\n") : printf("insolvable\n");
   return 0;
 }
