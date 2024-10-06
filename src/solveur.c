@@ -622,3 +622,6 @@ bool right_hand(maze_t maze)
     return false;
 }
 //TODO : à compléter
+
+bool cascade_aux(const maze_t maze, const bool_tab bool, const int x, const int y);
+
