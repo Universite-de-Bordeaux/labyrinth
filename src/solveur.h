@@ -14,4 +14,5 @@ int r_minigame(maze_t maze);
 
 //solveur
 bool right_hand(maze_t maze);
+bool cascade(maze_t maze);
 #endif //SOLVEUR_H

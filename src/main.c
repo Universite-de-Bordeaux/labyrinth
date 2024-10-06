@@ -3,7 +3,7 @@
 #include "solveur.h"
 
 int main() {
-    maze_t maze = hunt_kill_maze(10, 10);
-    minigame1(maze);
-    return 0;
+  maze_t maze = hunt_kill_maze(10, 10);
+  minigame3(maze);
+  return 0;
 }
