@@ -300,7 +300,7 @@ void free_booltab(const bool_tab tab)
     free(tab.tab);
 }
 
-//affiche le labyrinthe, renvoie -1 en cas d'erreur
+//affiche le labyrinthe, renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe à afficher
 //filename : le nom de la fenêtre
 //les murs d'entré sont en bleu, les murs de sortie en vert
@@ -388,5 +388,5 @@ int print_maze(maze_t const maze, const char* filename)
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
-    return 0;
+    return 1;
 }
