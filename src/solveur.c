@@ -883,7 +883,7 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
     //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
     if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
     {
-         s = (s || show_has_exit_cascade_aux(maze, visited, x, y - 1, renderer, delay));
+         s = show_has_exit_cascade_aux(maze, visited, x, y - 1, renderer, delay);
     }
     if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
     {
@@ -901,6 +901,12 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
     if(!s)
     {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
+        color_case(renderer, maze, x, y, delay);
+        SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
         color_case(renderer, maze, x, y, delay);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     }
