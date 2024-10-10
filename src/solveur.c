@@ -898,15 +898,15 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
         s = (s || show_has_exit_cascade_aux(maze, visited, x + 1, y, renderer, delay));
     }
     //deuxième condition d'arrêt : on est bloqué
-    if(!s)
+    if(s)
     {
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
+        SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
         color_case(renderer, maze, x, y, delay);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
         color_case(renderer, maze, x, y, delay);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     }
@@ -994,7 +994,14 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     color_case(renderer, maze, 0, 0, delay);
-    show_has_exit_cascade_aux(maze, visited, 0, 0, renderer, delay);
+    if(show_has_exit_cascade_aux(maze, visited, 0, 0, renderer, delay))
+    {
+        SDL_SetWindowTitle(fenetre, "maze solvable");
+    }
+    else
+    {
+        SDL_SetWindowTitle(fenetre, "maze unsolvable");
+    }
 
     //à la fin
     SDL_RenderPresent(renderer); //on met à jour l'affichage
