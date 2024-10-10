@@ -95,7 +95,7 @@ void wall_up(maze_t const maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction wall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(y > 0)
@@ -114,11 +114,11 @@ void wall_up(maze_t const maze, const int x, const int y)
 //x : la coordonnée x de la cellule
 //y : la coordonnée y de la cellule
 //gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
-void wall_down(const maze_t maze, int x, int y)
+void wall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction wall_down : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(y < maze.height - 1)
@@ -141,7 +141,7 @@ void wall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(x > 0)
@@ -164,7 +164,7 @@ void wall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction wall_right : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(x < maze.width - 1)
@@ -187,7 +187,7 @@ void unwall_up(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction unwall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(y > 0)
@@ -210,7 +210,7 @@ void unwall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction unwall_down : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(y < maze.height - 1)
@@ -233,7 +233,7 @@ void unwall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction unwall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(x > 0)
@@ -256,7 +256,7 @@ void unwall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction unwall_right : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         return;
     }
     if(x < maze.width - 1)
@@ -268,6 +268,70 @@ void unwall_right(const maze_t maze, const int x, const int y)
     {
         fprintf(stderr, "Impossible de modifier un mur de délimitation du labyrinthe, cible : %d, %d right\n", x, y);
     }
+}
+
+//renvoie vrai si le mur du haut de la cellule x, y est présent
+//renvoie faux sinon
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+bool has_wall_up(const maze_t maze, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction has_wall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        exit(1);
+    }
+    return maze.cells[y][x].wall_up;
+}
+
+//renvoie vrai si le mur du bas de la cellule x, y est présent
+//renvoie faux sinon
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+bool has_wall_down(const maze_t maze, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction has_wall_down : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        exit(1);
+    }
+    return maze.cells[y][x].wall_down;
+}
+
+//renvoie vrai si le mur de gauche de la cellule x, y est présent
+//renvoie faux sinon
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+bool has_wall_left(const maze_t maze, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction has_wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        exit(1);
+    }
+    return maze.cells[y][x].wall_left;
+}
+
+//renvoie vrai si le mur de droite de la cellule x, y est présent
+//renvoie faux sinon
+//maze : le labyrinthe
+//x : la coordonnée x de la cellule
+//y : la coordonnée y de la cellule
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+bool has_wall_right(const maze_t maze, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction has_wall_right : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
+        exit(1);
+    }
+    return maze.cells[y][x].wall_right;
 }
 
 //crée un tableau de booléens sur false de taille width x height
@@ -304,11 +368,12 @@ void free_booltab(const bool_tab tab)
 //tab : le tableau de booléens
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void set_true(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
-        fprintf(stderr, "les coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction set_true : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
     tab.tab[y][x] = true;
@@ -318,11 +383,12 @@ void set_true(const bool_tab tab, const int x, const int y)
 //tab : le tableau de booléens
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void set_false(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
-        fprintf(stderr, "les coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction set_false : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
     tab.tab[y][x] = false;
@@ -332,74 +398,15 @@ void set_false(const bool_tab tab, const int x, const int y)
 //tab : le tableau de booléens
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool get_bool(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
-        fprintf(stderr, "les coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction get_bool : \nLes coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         exit(1);
     }
     return tab.tab[y][x];
-}
-
-//renvoie vrai si le mur du haut de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-bool has_wall_up(const maze_t maze, const int x, const int y)
-{
-    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
-    {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
-    }
-    return maze.cells[y][x].wall_up;
-}
-
-//renvoie vrai si le mur du bas de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-bool has_wall_down(const maze_t maze, const int x, const int y)
-{
-    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
-    {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
-    }
-    return maze.cells[y][x].wall_down;
-}
-
-//renvoie vrai si le mur de gauche de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-bool has_wall_left(const maze_t maze, const int x, const int y)
-{
-    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
-    {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
-    }
-    return maze.cells[y][x].wall_left;
-}
-
-//renvoie vrai si le mur de droite de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-bool has_wall_right(const maze_t maze, const int x, const int y)
-{
-    if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
-    {
-        fprintf(stderr, "les coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
-    }
-    return maze.cells[y][x].wall_right;
 }
 
 //affiche le labyrinthe, renvoie -1 en cas d'erreur, 1 sinon
