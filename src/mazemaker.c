@@ -58,19 +58,21 @@ maze_t imperfect_one_way_maze(const int width, const int height)
     const bool_tab visited = create_booltab(width, height);
     const time_t t = time(NULL);
     srand(t);
+    int c = 0;
     int x = 0;
     int y = 0;
     while(!(x == width - 1 && y == height - 1))
     {
-        if(rand() % 2 == 0 || y == height - 1)
+        if(c % 2 == 0)
         {
             const int next_x = (rand() % (width - x)) + x;
             for (int i = x; i < next_x; i++)
             {
                 unwall_right(maze, i, y);
-                visited.tab[i][y] = true;
+                set_true(visited, i, y);
             }
             x = next_x;
+            c++;
         }
         else
         {
@@ -78,18 +80,19 @@ maze_t imperfect_one_way_maze(const int width, const int height)
             for (int i = y; i < next_y; i++)
             {
                 unwall_down(maze, x, i);
-                visited.tab[x][i] = true;
+                set_true(visited, x, i);
             }
             y = next_y;
+            c++;
         }
     }
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
         {
-            if(!visited.tab[i][j])
+            if(!get_bool(visited, i, j))
             {
-                int direction = rand() % 4;
+                const int direction = rand() % 4;
                 if(direction == 0 && i > 0)
                 {
                     unwall_left(maze, i, j);
@@ -133,7 +136,7 @@ maze_t perfect_one_way_maze(const int width, const int height)
             for (int i = x; i < next_x; i++)
             {
                 unwall_right(maze, i, y);
-                visited.tab[i][y] = true;
+                set_true(visited, i, y);
             }
             x = next_x;
         }
@@ -143,12 +146,12 @@ maze_t perfect_one_way_maze(const int width, const int height)
             for (int i = y; i < next_y; i++)
             {
                 unwall_down(maze, x, i);
-                visited.tab[x][i] = true;
+                set_true(visited, x, i);
             }
             y = next_y;
         }
     }
-    visited.tab[width - 1][height - 1] = true;
+    set_true(visited, width - 1, height - 1);
     bool is_done = false;
     while(!is_done)
     {
@@ -157,28 +160,28 @@ maze_t perfect_one_way_maze(const int width, const int height)
         {
             for(int j = 0; j < height; j++)
             {
-                if(!visited.tab[i][j])
+                if(!get_bool(visited, i, j))
                 {
                     is_done = false;
-                    if(j < height - 1 && visited.tab[i][j + 1])
+                    if(j < height - 1 && get_bool(visited, i, j + 1))
                     {
                         unwall_down(maze, i, j);
-                        visited.tab[i][j] = true;
+                        set_true(visited, i, j);
                     }
-                    else if(j > 0 && visited.tab[i][j - 1])
+                    else if(j > 0 && get_bool(visited, i, j - 1))
                     {
                         unwall_up(maze, i, j);
-                        visited.tab[i][j] = true;
+                        set_true(visited, i, j);
                     }
-                    else if(i < width - 1 && visited.tab[i + 1][j])
+                    else if(i < width - 1 && get_bool(visited, i + 1, j))
                     {
                         unwall_right(maze, i, j);
-                        visited.tab[i][j] = true;
+                        set_true(visited, i, j);
                     }
-                    else if(i > 0 && visited.tab[i - 1][j])
+                    else if(i > 0 && get_bool(visited, i - 1, j))
                     {
                         unwall_left(maze, i, j);
-                        visited.tab[i][j] = true;
+                        set_true(visited, i, j);
                     }
                 }
             }
@@ -196,24 +199,24 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
     {
         for(int j = 0; j < width; j++)
         {
-            if(!visited.tab[j][i])
+            if(!get_bool(visited, i, j))
             {
-                if(j+1 < width && visited.tab[j+1][i]){
+                if(j+1 < width && get_bool(visited, i, j+1)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i+1 < height && visited.tab[j][i+1]){
+                if(i+1 < height && get_bool(visited, i + 1, j)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(j > 2 && visited.tab[j-1][i]){
+                if(j > 2 && get_bool(visited, i, j - 1)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i > 2 && visited.tab[j][i-1]){
+                if(i > 2 && get_bool(visited, i-  1, j)){
                     *px = j;
                     *py = i;
                     return true;
@@ -243,7 +246,7 @@ maze_t hunt_kill_maze(const int width, const int height)
     int x = rand() % width;
     int y = rand() % height;
     //cette cellule est visitée
-    visited.tab[x][y] = true;
+    set_true(visited, x, y);
 
     int end = 0;
     int *px = &x;
@@ -264,22 +267,22 @@ maze_t hunt_kill_maze(const int width, const int height)
             {
                 const int r = rand() % size;
                 c = dir[r];
-                if (c == 'R' && x + 1 < width && !visited.tab[x+1][y])
+                if (c == 'R' && x + 1 < width && !get_bool(visited, x + 1, y))
                 {
                     unwall_right(maze, x, y);
                     x++;
                 }
-                else if(c == 'L' && x > 0 && !visited.tab[x-1][y])
+                else if(c == 'L' && x > 0 && !get_bool(visited, x - 1, y))
                 {
                     unwall_left(maze, x, y);
                     x--;
                 }
-                else if(c == 'D' && y + 1 < height && !visited.tab[x][y+1])
+                else if(c == 'D' && y + 1 < height && !get_bool(visited, x, y + 1))
                 {
                     unwall_down(maze, x, y);
                     y++;
                 }
-                else if(c == 'U' && y > 0 && !visited.tab[x][y-1])
+                else if(c == 'U' && y > 0 && !get_bool(visited, x, y - 1))
                 {
                     unwall_up(maze, x, y);
                     y--;
@@ -293,7 +296,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                     size--;
                 }
             }
-            visited.tab[x][y] = true;
+            set_true(visited, x, y);
         }
 
         //sinon on cherche une cellule non visitée adjacente à une cellule visitée
@@ -310,19 +313,19 @@ maze_t hunt_kill_maze(const int width, const int height)
             {
                 const int r = rand() % size;
                 c = dir[r];
-                if (c == 'R' && x + 1 < width && visited.tab[x+1][y])
+                if (c == 'R' && x + 1 < width && get_bool(visited, x + 1, y))
                 {
                     unwall_right(maze, x, y);
                 }
-                else if(c == 'L' && x > 0 && visited.tab[x-1][y])
+                else if(c == 'L' && x > 0 && get_bool(visited, x - 1, y))
                 {
                     unwall_left(maze, x, y);
                 }
-                else if(c == 'D' && y + 1 < height && visited.tab[x][y+1])
+                else if(c == 'D' && y + 1 < height && get_bool(visited, x, y + 1))
                 {
                     unwall_down(maze, x, y);
                 }
-                else if(c == 'U' && y > 0 && visited.tab[x][y-1])
+                else if(c == 'U' && y > 0 && get_bool(visited, x, y - 1))
                 {
                     unwall_up(maze, x, y);
                 }
@@ -343,7 +346,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                     }
                 }
             }
-            visited.tab[x][y] = true;
+            set_true(visited, x, y);
         }
     }
     free_booltab(visited);

@@ -14,6 +14,10 @@ int r_minigame(maze_t maze);
 
 //solveur
 bool right_hand(maze_t maze);
-bool is_exit_cascade(maze_t maze);
+
+//solveur cascade (parcours en profondeur)
+bool has_exit_cascade(maze_t maze);
 bool is_perfect_cascade(maze_t maze);
+//visualisation des solveurs cascade
+int show_has_exit_cascade(maze_t maze);
 #endif //SOLVEUR_H
