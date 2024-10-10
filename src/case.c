@@ -7,7 +7,13 @@
 // height : height of the maze
 // tous les murs sont ouverts (hors limites)
 // returns the maze
+// gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_basic_maze(const int width, const int height) {
+    if(width <= 0 || height <= 0)
+    {
+        fprintf(stderr, "Erreur dans la fonction create_basic_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
+        exit(1);
+    }
     cell** start = malloc(sizeof(cell *) * height);
     for (int i = 0; i < height; i++) {
         start[i] = malloc(sizeof(cell) * width);
@@ -58,7 +64,13 @@ maze_t create_basic_maze(const int width, const int height) {
 // height : height of the maze
 // tous les murs sont fermés
 // returns the maze
+// gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_wall_maze(const int width, const int height) {
+    if(width <= 0 || height <= 0)
+    {
+        fprintf(stderr, "Erreur dans la fonction create_wall_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
+        exit(1);
+    }
     cell** start = malloc(sizeof(cell *) * height);
     for (int i = 0; i < height; i++) {
         start[i] = malloc(sizeof(cell) * width);
