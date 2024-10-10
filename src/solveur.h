@@ -22,4 +22,5 @@ bool has_exit_cascade(maze_t maze);
 bool is_perfect_cascade(maze_t maze);
 //visualisation des solveurs cascade
 int show_has_exit_cascade(maze_t maze);
+int show_fast_has_exit_cascade(maze_t maze);
 #endif //SOLVEUR_H

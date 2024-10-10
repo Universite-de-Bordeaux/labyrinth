@@ -810,11 +810,109 @@ bool is_perfect_cascade(const maze_t maze)
     return true;
 }
 
+//fonction auxiliaire de show_has_exit_cascade
+//colorie la case de coordonnées x et y
+//renderer : le renderer
+//x : abscisse de la case
+//y : ordonnée de la case
+void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const int y, const int delay)
+{
+    for(int i = 1; i < 20; i++)
+    {
+        SDL_RenderDrawLine(renderer, (x * 20) + 1, (y * 20) + i, (x * 20) + 19, (y * 20) + i);
+    }
+    if(!has_wall_down(maze, x, y))
+    {
+        SDL_RenderDrawLine(renderer, (x * 20) + 1, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19);
+    }
+    if(!has_wall_up(maze, x, y))
+    {
+        SDL_RenderDrawLine(renderer, (x * 20) + 1, (y * 20), (x * 20) + 19, (y * 20));
+    }
+    if(!has_wall_left(maze, x, y))
+    {
+        SDL_RenderDrawLine(renderer, (x * 20), (y * 20) + 1, (x * 20), (y * 20) + 19);
+    }
+    if(!has_wall_right(maze, x, y))
+    {
+        SDL_RenderDrawLine(renderer, (x * 20) + 19, (y * 20) + 1, (x * 20) + 19, (y * 20) + 19);
+    }
+    SDL_Delay(1); //pour éviter certains anachronismes
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    SDL_Delay(delay); //pause de 0.01 secondes
+}
+
+//fonction auxiliaire de show_has_exit_cascade
+//affiche le labyrinthe et la progression du solveur
+//renvoie true si on peut atteindre la sortie, false sinon
+//maze : le labyrinthe
+//visited : tableau de booléens pour savoir si on est déjà passé par une case
+//x : abscisse de la case actuelle
+//y : ordonnée de la case actuelle
+//renderer : le renderer
+bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, const int delay)
+{
+    SDL_Event event;
+    SDL_WaitEventTimeout(&event, delay); //attente d'un event
+    if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
+    {
+        //l'utilisateur ferme la fenetre ou clique sur la croix
+        fprintf(stderr, "L'utilisateur a manuellement réclamé l'arrêt du programme\n");
+        exit(2);
+    }
+    else if(event.type == SDL_WINDOWEVENT_MINIMIZED)
+    {
+        while(event.type != SDL_WINDOWEVENT_RESTORED)
+        {
+            SDL_WaitEvent(&event);
+        }
+    }
+
+    //première condition d'arrêt : atteindre la sortie
+    if(x == maze.width - 1 && y == maze.height - 1)
+    {
+        SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
+        color_case(renderer, maze, x, y, delay);
+        return true;
+    }
+
+    color_case(renderer, maze, x, y, delay);
+    set_true(visited, x, y);
+    bool s = false;
+
+    //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
+    if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
+    {
+         s = (s || show_has_exit_cascade_aux(maze, visited, x, y - 1, renderer, delay));
+    }
+    if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
+    {
+        s = (s || show_has_exit_cascade_aux(maze, visited, x, y + 1, renderer, delay));
+    }
+    if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
+    {
+        s = (s || show_has_exit_cascade_aux(maze, visited, x - 1, y, renderer, delay));
+    }
+    if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
+    {
+        s = (s || show_has_exit_cascade_aux(maze, visited, x + 1, y, renderer, delay));
+    }
+    //deuxième condition d'arrêt : on est bloqué
+    if(!s)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
+        color_case(renderer, maze, x, y, delay);
+        SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
+    }
+    return s;
+}
+
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-int show_has_exit_cascade(const maze_t maze)
+//delay : le delay de refresh (2 * delay + 1 ms/case)
+int true_show_has_exit_cascade(const maze_t maze, const int delay)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -885,17 +983,12 @@ int show_has_exit_cascade(const maze_t maze)
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    int x = 0, y = 0;
+
+    //on commence la recherche
     const bool_tab visited = create_booltab(maze.width, maze.height);
-    set_true(visited, x, y);
-    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255); //on définit la couleur en bleu
-    for(int i = 1; i < 20; i++)
-    {
-        SDL_RenderDrawLine(renderer, (x * 20)+1, ((y) * 20) + i, (x * 20) + 19, (y * 20) + i); // on peint la case en bleu
-    }
-    SDL_Delay(1);
-    SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(100); //pause de 0.1 secondes
+    SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
+    color_case(renderer, maze, 0, 0, delay);
+    show_has_exit_cascade_aux(maze, visited, 0, 0, renderer, delay);
 
     //à la fin
     SDL_RenderPresent(renderer); //on met à jour l'affichage
@@ -907,8 +1000,40 @@ int show_has_exit_cascade(const maze_t maze)
     {
         SDL_WaitEvent(&event); //on attend un event
     }
+    free_booltab(visited);
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
+    return 1;
+}
+
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+int show_has_exit_cascade(const maze_t maze)
+{
+    if(true_show_has_exit_cascade(maze, 5) == -1)
+    {
+        fprintf(stderr, "Erreur de visualisation\n");
+        return -1;
+    }
+    return 1;
+}
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+//version rapide, risque de suppression de la visualisation active
+//utilisation fortement déconseillée
+int show_fast_has_exit_cascade(const maze_t maze)
+{
+    if(true_show_has_exit_cascade(maze, 1) == -1)
+    {
+        fprintf(stderr, "Erreur de visualisation\n");
+        return -1;
+    }
     return 1;
 }
