@@ -38,7 +38,7 @@ clean :
 
 Cmain :
 	@make
-	@echo "Lancement du main :\n"
+	@echo "Lancement du main\n"
 	@./src/main
 	@echo "\nFin du main"
 	 @if [ $$? -eq 0 ]; then echo "Test ok"; else echo "UNEXPECTED ERROR"; fi
