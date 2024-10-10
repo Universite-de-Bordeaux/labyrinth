@@ -54,8 +54,8 @@ void unwall_up(maze_t maze, int x, int y);
 void unwall_down(maze_t maze, int x, int y);
 void unwall_left(maze_t maze, int x, int y);
 void unwall_right(maze_t maze, int x, int y);
-bool is_wall_up(maze_t maze, int x, int y);
-bool is_wall_down(maze_t maze, int x, int y);
-bool is_wall_left(maze_t maze, int x, int y);
-bool is_wall_right(maze_t maze, int x, int y);
+bool has_wall_up(maze_t maze, int x, int y);
+bool has_wall_down(maze_t maze, int x, int y);
+bool has_wall_left(maze_t maze, int x, int y);
+bool has_wall_right(maze_t maze, int x, int y);
 #endif //CASE_H

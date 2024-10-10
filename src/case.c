@@ -347,7 +347,7 @@ bool get_bool(const bool_tab tab, const int x, const int y)
 //maze : le labyrinthe
 //x : la coordonnée x de la cellule
 //y : la coordonnée y de la cellule
-bool is_wall_up(const maze_t maze, const int x, const int y)
+bool has_wall_up(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
@@ -362,7 +362,7 @@ bool is_wall_up(const maze_t maze, const int x, const int y)
 //maze : le labyrinthe
 //x : la coordonnée x de la cellule
 //y : la coordonnée y de la cellule
-bool is_wall_down(const maze_t maze, const int x, const int y)
+bool has_wall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
@@ -377,7 +377,7 @@ bool is_wall_down(const maze_t maze, const int x, const int y)
 //maze : le labyrinthe
 //x : la coordonnée x de la cellule
 //y : la coordonnée y de la cellule
-bool is_wall_left(const maze_t maze, const int x, const int y)
+bool has_wall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
@@ -392,7 +392,7 @@ bool is_wall_left(const maze_t maze, const int x, const int y)
 //maze : le labyrinthe
 //x : la coordonnée x de la cellule
 //y : la coordonnée y de la cellule
-bool is_wall_right(const maze_t maze, const int x, const int y)
+bool has_wall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {

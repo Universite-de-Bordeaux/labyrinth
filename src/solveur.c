@@ -44,12 +44,12 @@ int minigame1(const maze_t maze)
     SDL_RenderDrawLine(renderer, 0, 0, 0, 19); //on dessine le mur de gauche
     SDL_RenderDrawLine(renderer, 7, 10, 13, 10); //on dessine le joueur
     SDL_RenderDrawLine(renderer, 10, 7, 10, 13); //on dessine le joueur
-    if(is_wall_right(maze, 0, 0))
+    if(has_wall_right(maze, 0, 0))
     {
         SDL_RenderDrawLine(renderer, 19, 0, 19, 19); //on dessine le mur de droite
         SDL_RenderDrawLine(renderer, 20, 0, 20, 19); //on dessine le mur de droite
     }
-    if(is_wall_down(maze, 0, 0))
+    if(has_wall_down(maze, 0, 0))
     {
         SDL_RenderDrawLine(renderer, 0, 19, 19, 19); //on dessine le mur du bas
         SDL_RenderDrawLine(renderer, 0, 20, 19, 20); //on dessine le mur du bas
@@ -96,49 +96,49 @@ int minigame1(const maze_t maze)
             SDL_Delay(10);
             if(event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_UP)
             {
-                if(!is_wall_up(maze, pos_x, pos_y))
+                if(!has_wall_up(maze, pos_x, pos_y))
                 {
                     pos_y--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
             {
-                if(!is_wall_down(maze, pos_x, pos_y))
+                if(!has_wall_down(maze, pos_x, pos_y))
                 {
                     pos_y++;
                 }
             }
             else if(event.key.keysym.sym == SDLK_q || event.key.keysym.sym == SDLK_LEFT)
             {
-                if(!is_wall_left(maze, pos_x, pos_y))
+                if(!has_wall_left(maze, pos_x, pos_y))
                 {
                     pos_x--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(!is_wall_right(maze, pos_x, pos_y))
+                if(!has_wall_right(maze, pos_x, pos_y))
                 {
                     pos_x++;
                 }
             }
-            if(is_wall_up(maze, pos_x, pos_y))
+            if(has_wall_up(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20 + 19, pos_y * 20);
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20 -1, pos_x * 20 + 19, pos_y * 20 -1);
             }
-            if(is_wall_down(maze, pos_x, pos_y))
+            if(has_wall_down(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19);
                 SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 20, (pos_x * 20) + 19, (pos_y * 20) + 20);
             }
-            if(is_wall_left(maze, pos_x, pos_y))
+            if(has_wall_left(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19);
                 SDL_RenderDrawLine(renderer, pos_x * 20 - 1, pos_y * 20, pos_x * 20 - 1, (pos_y * 20) + 19);
             }
 
-            if(is_wall_right(maze, pos_x, pos_y))
+            if(has_wall_right(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19);
                 SDL_RenderDrawLine(renderer, (pos_x * 20) + 20, pos_y * 20, (pos_x * 20) + 20, (pos_y * 20) + 19);
@@ -239,11 +239,11 @@ int minigame2(const maze_t maze)
     SDL_RenderDrawLine(renderer, 0, 0, 0, 19); //on dessine le mur de gauche
     SDL_RenderDrawLine(renderer, 7, 10, 13, 10); //on dessine le joueur
     SDL_RenderDrawLine(renderer, 10, 7, 10, 13); //on dessine le joueur
-    if(is_wall_right(maze, 0, 0))
+    if(has_wall_right(maze, 0, 0))
     {
         SDL_RenderDrawLine(renderer, 19, 0, 19, 19); //on dessine le mur de droite
     }
-    if(is_wall_down(maze, 0, 0))
+    if(has_wall_down(maze, 0, 0))
     {
         SDL_RenderDrawLine(renderer, 0, 19, 19, 19); //on dessine le mur du bas
     }
@@ -285,20 +285,20 @@ int minigame2(const maze_t maze)
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
             SDL_RenderDrawLine(renderer, pos_x * 20 + 7, pos_y * 20 + 10, pos_x * 20 + 13, pos_y * 20 + 10); //on efface le joueur
             SDL_RenderDrawLine(renderer, pos_x * 20 + 10, pos_y * 20 + 7, pos_x * 20 + 10, pos_y * 20 + 13); //on efface le joueur
-            if(is_wall_up(maze, pos_x, pos_y))
+            if(has_wall_up(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20 + 19, pos_y * 20); //on efface le mur du haut
             }
-            if(is_wall_down(maze, pos_x, pos_y))
+            if(has_wall_down(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19); //on efface le mur du bas
             }
-            if(is_wall_left(maze, pos_x, pos_y))
+            if(has_wall_left(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19); //on efface le mur de gauche
             }
 
-            if(is_wall_right(maze, pos_x, pos_y))
+            if(has_wall_right(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19); //on efface le mur de droite
             }
@@ -306,46 +306,46 @@ int minigame2(const maze_t maze)
             SDL_Delay(10);
             if(event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_UP)
             {
-                if(!is_wall_up(maze, pos_x, pos_y))
+                if(!has_wall_up(maze, pos_x, pos_y))
                 {
                     pos_y--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
             {
-                if(!is_wall_down(maze, pos_x, pos_y))
+                if(!has_wall_down(maze, pos_x, pos_y))
                 {
                     pos_y++;
                 }
             }
             else if(event.key.keysym.sym == SDLK_q || event.key.keysym.sym == SDLK_LEFT)
             {
-                if(!is_wall_left(maze, pos_x, pos_y))
+                if(!has_wall_left(maze, pos_x, pos_y))
                 {
                     pos_x--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(!is_wall_right(maze, pos_x, pos_y))
+                if(!has_wall_right(maze, pos_x, pos_y))
                 {
                     pos_x++;
                 }
             }
-            if(is_wall_up(maze, pos_x, pos_y))
+            if(has_wall_up(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20 + 19, pos_y * 20); //on dessine le mur du haut
             }
-            if(is_wall_down(maze, pos_x, pos_y))
+            if(has_wall_down(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, (pos_y * 20) + 19, (pos_x * 20) + 19, (pos_y * 20) + 19); //on dessine le mur du bas
             }
-            if(is_wall_left(maze, pos_x, pos_y))
+            if(has_wall_left(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, pos_x * 20, pos_y * 20, pos_x * 20, (pos_y * 20) + 19); //on dessine le mur de gauche
             }
 
-            if(is_wall_right(maze, pos_x, pos_y))
+            if(has_wall_right(maze, pos_x, pos_y))
             {
                 SDL_RenderDrawLine(renderer, (pos_x * 20) + 19, pos_y * 20, (pos_x * 20) + 19, (pos_y * 20) + 19); //on dessine le mur de droite
             }
@@ -485,28 +485,28 @@ int minigame3(const maze_t maze)
             SDL_Delay(10);
             if(event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_UP)
             {
-                if(!is_wall_up(maze, pos_x, pos_y))
+                if(!has_wall_up(maze, pos_x, pos_y))
                 {
                     pos_y--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_s || event.key.keysym.sym == SDLK_DOWN)
             {
-                if(!is_wall_down(maze, pos_x, pos_y))
+                if(!has_wall_down(maze, pos_x, pos_y))
                 {
                     pos_y++;
                 }
             }
             else if(event.key.keysym.sym == SDLK_q || event.key.keysym.sym == SDLK_LEFT)
             {
-                if(!is_wall_left(maze, pos_x, pos_y))
+                if(!has_wall_left(maze, pos_x, pos_y))
                 {
                     pos_x--;
                 }
             }
             else if(event.key.keysym.sym == SDLK_d || event.key.keysym.sym == SDLK_RIGHT)
             {
-                if(!is_wall_right(maze, pos_x, pos_y))
+                if(!has_wall_right(maze, pos_x, pos_y))
                 {
                     pos_x++;
                 }
@@ -639,28 +639,28 @@ bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x
 
     //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
     set_true(visited, x, y);
-    if(!is_wall_up(maze, x, y) && !get_bool(visited, x, y-1))
+    if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y-1))
     {
         if(has_exit_cascade_aux(maze, visited, x, y - 1))
         {
             return true;
         }
     }
-    if(!is_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
+    if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
     {
         if(has_exit_cascade_aux(maze, visited, x, y + 1))
         {
             return true;
         }
     }
-    if(!is_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
+    if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
     {
         if(has_exit_cascade_aux(maze, visited, x - 1, y))
         {
             return true;
         }
     }
-    if(!is_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
+    if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
     {
         if(has_exit_cascade_aux(maze, visited, x + 1, y))
         {
@@ -691,28 +691,28 @@ bool has_exit_cascade(const maze_t maze)
 bool is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x,const int p_y)
 {
     set_true(visited, x, y);
-    if(!is_wall_up(maze, x, y) && (p_y != y - 1 || p_x != x))
+    if(!has_wall_up(maze, x, y) && (p_y != y - 1 || p_x != x))
     {
         if(get_bool(visited, x, y - 1) || !is_perfect_cascade_aux(maze, visited, x, y - 1, x, y))
         {
             return false;
         }
     }
-    if(!is_wall_down(maze, x, y) && (p_y != y + 1 || p_x != x))
+    if(!has_wall_down(maze, x, y) && (p_y != y + 1 || p_x != x))
     {
         if(get_bool(visited, x, y + 1) || !is_perfect_cascade_aux(maze, visited, x, y + 1, x, y))
         {
             return false;
         }
     }
-    if(!is_wall_left(maze, x, y) && (p_x != x - 1 || p_y != y))
+    if(!has_wall_left(maze, x, y) && (p_x != x - 1 || p_y != y))
     {
         if(get_bool(visited, x - 1, y) || !is_perfect_cascade_aux(maze, visited, x - 1, y, x, y))
         {
             return false;
         }
     }
-    if(!is_wall_right(maze, x, y) && (p_x != x + 1 || p_y != y))
+    if(!has_wall_right(maze, x, y) && (p_x != x + 1 || p_y != y))
     {
         if(get_bool(visited, x + 1, y) || !is_perfect_cascade_aux(maze, visited, x + 1, y, x, y))
         {
@@ -791,19 +791,19 @@ int show_has_exit_cascade(const maze_t maze)
     {
         for(int y = 0; y < maze.height; y++)
         {
-            if(is_wall_up(maze, x, y))
+            if(has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20); //on dessine un mur en haut
             }
-            if(is_wall_down(maze, x, y))
+            if(has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19); //on dessine un mur en bas
             }
-            if(is_wall_left(maze, x, y))
+            if(has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19); //on dessine un mur à gauche
             }
-            if(is_wall_right(maze, x, y))
+            if(has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19); //on dessine un mur à droite
             }
