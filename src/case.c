@@ -9,7 +9,7 @@
 // returns the maze
 // gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_basic_maze(const int width, const int height) {
-    if(width <= 0 || height <= 0)
+    if(width < 1 || height < 1)
     {
         fprintf(stderr, "Erreur dans la fonction create_basic_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(1);
@@ -66,7 +66,7 @@ maze_t create_basic_maze(const int width, const int height) {
 // returns the maze
 // gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_wall_maze(const int width, const int height) {
-    if(width <= 0 || height <= 0)
+    if(width < 1 || height < 1)
     {
         fprintf(stderr, "Erreur dans la fonction create_wall_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(1);
@@ -352,6 +352,11 @@ bool has_wall_right(const maze_t maze, const int x, const int y)
 //renvoie le tableau de booléens
 bool_tab create_booltab(const int width, const int height)
 {
+    if(width < 1 || height < 1)
+    {
+        fprintf(stderr, "Erreur dans la fonction create_booltab : \nles dimensions du tableau de booléens doivent être strictements positives, width : %d, height : %d\n", width, height);
+        exit(1);
+    }
     bool** booltab = malloc(sizeof(bool *) * height);
     for(int i = 0; i < height; i++)
     {
