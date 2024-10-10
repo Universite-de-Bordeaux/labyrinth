@@ -358,6 +358,7 @@ maze_t hunt_kill_maze(const int width, const int height)
 //height : hauteur du labyrinthe
 maze_t rmaze(const int width, const int height)
 {
+    srand(time(NULL));
     const int choice = rand() % NB_MAZE_GENERATOR;
     if(choice == 0)
     {
