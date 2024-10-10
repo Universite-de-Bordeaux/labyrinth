@@ -529,7 +529,7 @@ int minigame3(const maze_t maze)
     return 0;
 }
 
-//lance minigame1 avec un générateur de labyrinthe aléatoire
+//lance minigame3 avec un générateur de labyrinthe aléatoire
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 int rminigame3(const int width, const int height)
@@ -568,13 +568,68 @@ int rminigame3(const int width, const int height)
     return -1;
 }
 
+
+//une mini-jeu où il faut trouver la sortie
+//le chemin apparaît sur la case où le joueur est et sur les cases adjacentes
+//version avec un téléporteur
+//maze : le labyrinthe
+//appuier sur ECHAP ou la croix fermera proprement le jeu
+//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
+int minigame4(const maze_t maze)
+{
+    fprintf(stderr, "La fonction minigame4 n'a pas été implémentée\n");
+    const maze_t t = perfect_one_way_maze(2, 1);
+    minigame1(t);
+    free_maze(t);
+    return -1;
+}
+
+//lance minigame4 avec un générateur de labyrinthe aléatoire
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+int rminigame4(const int width, const int height)
+{
+    srand(time(NULL));
+    const int r = rand() % NB_GENERATEURS;
+    if(r == 0)
+    {
+        const maze_t maze = line_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 1)
+    {
+        const maze_t maze = column_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 2)
+    {
+        const maze_t maze = imperfect_one_way_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 3)
+    {
+        const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
+    return -1;
+}
+
 //lance un mini-jeu avec un générateur de labyrinthe et une difficulté aléatoires
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 int rminigame(const int width, const int height)
 {
     srand(time(NULL));
-    const int r = rand() % 3;
+    const int r = rand() % 4;
     if(r == 0)
     {
         return rminigame1(width, height);
@@ -587,6 +642,10 @@ int rminigame(const int width, const int height)
     {
         return rminigame3(width, height);
     }
+    else if(r == 3)
+    {
+        return rminigame4(width, height);
+    }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
 }
@@ -596,7 +655,7 @@ int rminigame(const int width, const int height)
 int r_minigame(const maze_t maze)
 {
     srand(time(NULL));
-    const int r = rand() % 3;
+    const int r = rand() % 4;
     if(r == 0)
     {
         return minigame1(maze);
@@ -608,6 +667,10 @@ int r_minigame(const maze_t maze)
     else if (r == 2)
     {
         return minigame3(maze);
+    }
+    else if (r == 3)
+    {
+        return minigame4(maze);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;

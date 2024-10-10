@@ -11,6 +11,8 @@ int minigame3(maze_t maze);
 int rminigame3(int width, int height);
 int rminigame(int width, int height);
 int r_minigame(maze_t maze);
+int minigame4(maze_t maze);
+int rminigame4(int width, int height);
 
 //solveur
 bool right_hand(maze_t maze);
