@@ -4,8 +4,7 @@
 #include <stdio.h>
 
 int main() {
-  const maze_t maze = imperfect_one_way_maze(20, 10);
-  printf("Maze made\n");
-  has_exit_cascade(maze) ? printf("Maze has exit\n") : printf("Maze has no exit\n");
-  return print_maze(maze, "maze") ? 0 : 1;
+  maze_t maze = hunt_kill_maze(1, 100);
+  r_minigame(maze);
+  return 0;
 }

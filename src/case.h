@@ -37,15 +37,10 @@ typedef struct maze maze_t;
 //malloc utilisés, penser à free_booltab pour libérer la mémoire
 typedef struct bool_tab bool_tab;
 
-bool_tab create_booltab(int width, int height);
-void free_booltab(bool_tab tab);
-void set_true(bool_tab tab, int x, int y);
-void set_false(bool_tab tab, int x, int y);
-bool get_bool(bool_tab tab, int x, int y);
+//maze_t
 maze_t create_basic_maze(int width, int height);
 maze_t create_wall_maze(int width, int height);
 void free_maze(maze_t maze);
-int print_maze(maze_t maze, const char* filename);
 void wall_up(maze_t maze, int x, int y);
 void wall_down(maze_t maze, int x, int y);
 void wall_left(maze_t maze, int x, int y);
@@ -58,4 +53,12 @@ bool has_wall_up(maze_t maze, int x, int y);
 bool has_wall_down(maze_t maze, int x, int y);
 bool has_wall_left(maze_t maze, int x, int y);
 bool has_wall_right(maze_t maze, int x, int y);
+int print_maze(maze_t maze, const char* filename);
+
+//bool_tab
+bool_tab create_booltab(int width, int height);
+void free_booltab(bool_tab tab);
+void set_true(bool_tab tab, int x, int y);
+void set_false(bool_tab tab, int x, int y);
+bool get_bool(bool_tab tab, int x, int y);
 #endif //CASE_H
