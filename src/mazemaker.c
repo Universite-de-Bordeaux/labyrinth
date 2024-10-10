@@ -201,22 +201,22 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
         {
             if(!get_bool(visited, i, j))
             {
-                if(j+1 < width && get_bool(visited, i, j+1)){
+                if(j + 1 < width && get_bool(visited, j + 1, i)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i+1 < height && get_bool(visited, i + 1, j)){
+                if(i + 1 < height && get_bool(visited, j, i + 1)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(j > 2 && get_bool(visited, i, j - 1)){
+                if(j > 2 && get_bool(visited, j - 1, i)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i > 2 && get_bool(visited, i-  1, j)){
+                if(i > 2 && get_bool(visited, j, i - 1)){
                     *px = j;
                     *py = i;
                     return true;
