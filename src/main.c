@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 int main() {
-  maze_t maze = hunt_kill_maze(1, 100);
-  r_minigame(maze);
+  const maze_t maze = rmaze(0, 0);
+  free_maze(maze);
   return 0;
 }
