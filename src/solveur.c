@@ -884,6 +884,18 @@ int show_has_exit_cascade(const maze_t maze)
     SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
     SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    int x = 0, y = 0;
+    const bool_tab visited = create_booltab(maze.width, maze.height);
+    set_true(visited, x, y);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255); //on définit la couleur en bleu
+    for(int i = 1; i < 20; i++)
+    {
+        SDL_RenderDrawLine(renderer, (x * 20)+1, ((y) * 20) + i, (x * 20) + 19, (y * 20) + i); // on peint la case en bleu
+    }
+    SDL_Delay(1);
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    SDL_Delay(100); //pause de 0.1 secondes
 
     //à la fin
     SDL_RenderPresent(renderer); //on met à jour l'affichage
