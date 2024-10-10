@@ -199,7 +199,7 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
     {
         for(int j = 0; j < width; j++)
         {
-            if(!get_bool(visited, i, j))
+            if(!get_bool(visited, j, i))
             {
                 if(j + 1 < width && get_bool(visited, j + 1, i)){
                     *px = j;
