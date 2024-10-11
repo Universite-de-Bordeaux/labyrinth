@@ -1027,7 +1027,7 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
 //maze : le labyrinthe
 int show_has_exit_cascade(const maze_t maze)
 {
-    if(true_show_has_exit_cascade(maze, 3) == -1)
+    if(true_show_has_exit_cascade(maze, 4) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
