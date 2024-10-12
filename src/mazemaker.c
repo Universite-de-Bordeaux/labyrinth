@@ -3,12 +3,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#define NB_MAZE_GENERATOR 5
-#define NB_PERFECT_MAZE_GENERATOR 4
+#define NB_MAZE_GENERATOR 6
+#define NB_PERFECT_MAZE_GENERATOR 5
 #define NB_IMPERFECT_MAZE_GENERATOR 1
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont verticaux
 maze_t line_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -28,8 +26,6 @@ maze_t line_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont horizontaux
 maze_t column_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -49,10 +45,6 @@ maze_t column_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe imparfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//seuls le chemins de sortie possèdent des embranchements
 maze_t imperfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
@@ -117,10 +109,6 @@ maze_t imperfect_one_way_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe parfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//seuls le chemins de sortie possèdent des embranchements
 maze_t perfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
@@ -229,8 +217,6 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
     return false;
 }
 
-//d'après la méthode du hunt and kill
-//Crée un labyrinthe parfait de taille width x height
 maze_t hunt_kill_maze(const int width, const int height)
 {
     //INITIALISATION
@@ -432,7 +418,7 @@ bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
 }
 //Fonction Auxilliaire de lab_by_path
 //fonction qui crée tout les chemins et ajoute les murs
-void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, bool_tab tab_visited){
+void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab tab_visited){
     int width = maze -> width, height = maze -> height;
     set_true(tab_visited, *x, *y);
 
@@ -509,14 +495,11 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, bool_tab tab_vis
         return;
 }
 
-//Crée un labyrinthe parfait de taille width x height dont toutes les cases sont accessibles
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-maze_t lab_by_path(int width, int height){
+maze_t by_path_maze(const int width, const int height){
     //const time_t t = time(NULL); //Création de la graine du random
     const time_t t = 50; // Création du graine fixe (pour les tests)
     srand(t);
-    bool_tab tab_visited = create_booltab(width, height);
+    const bool_tab tab_visited = create_booltab(width, height);
     maze_t maze = create_basic_maze(width, height);
 
     if (width==1 || height ==1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
@@ -556,10 +539,7 @@ maze_t lab_by_path(int width, int height){
    return maze;
 }
 
-//Crée un labyrinthe à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-maze_t rmaze(const int width, const int height)
+maze_t r_maze(const int width, const int height)
 {
     srand(time(NULL));
     const int choice = rand() % NB_MAZE_GENERATOR;
@@ -579,15 +559,16 @@ maze_t rmaze(const int width, const int height)
     {
         return perfect_one_way_maze(width, height);
     }
+    else if(choice == 4)
+    {
+        return by_path_maze(width, height);
+    }
     else
     {
         return hunt_kill_maze(width, height);
     }
 }
 
-//Crée un labyrinthe parfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 maze_t rperfect_maze(const int width, const int height)
 {
     const int choice = rand() % NB_PERFECT_MAZE_GENERATOR;
@@ -603,12 +584,13 @@ maze_t rperfect_maze(const int width, const int height)
     {
         return perfect_one_way_maze(width, height);
     }
+    else if(choice == 3)
+    {
+        return by_path_maze(width, height);
+    }
     return hunt_kill_maze(width, height);
 }
 
-//Crée un labyrinthe imparfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 maze_t rimperfect_maze(const int width, const int height)
 {
     const int choice = rand() % NB_IMPERFECT_MAZE_GENERATOR;
