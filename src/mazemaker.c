@@ -183,7 +183,8 @@ maze_t perfect_one_way_maze(const int width, const int height)
 
 //FONCTION AUXILIAIRE (hunt_kill_maze)
 //fonction qui permet de trouver une cellule non visitée adjacente à une cellule visitée
-//modifie les coordonnées de la cellule non visitée et retourne true si une cellule a été trouvée, false sinon
+//modifie les coordonnées px et py pour les coordonnées de la cellule non visitée
+//retourne true si une cellule non visitée adjacente à une cellule visitée a été trouvée, false sinon
 bool finding_hunt(const int width, const int height, const bool_tab visited, int *px, int *py){
     for(int i = 0; i < height; i++)
     {
@@ -201,12 +202,12 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
                     *py = i;
                     return true;
                 }
-                if(j > 2 && get_bool(visited, j - 1, i)){
+                if(j > 1 && get_bool(visited, j - 1, i)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i > 2 && get_bool(visited, j, i - 1)){
+                if(i > 1 && get_bool(visited, j, i - 1)){
                     *px = j;
                     *py = i;
                     return true;
@@ -294,7 +295,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         }
         else{
             char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-            //chercher une cellule non visitée adjacente à une cellule visitée
+            //chercher une cellule visitée adjacente à notre cellule non visitée
             c = '\0';
             size = 4;
             while(c == '\0')

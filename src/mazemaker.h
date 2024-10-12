@@ -2,6 +2,11 @@
 #define MAZEMAKER_H
 #include "case.h"
 
+//un labyrinth parfait est un labyrinthe où il existe un unique chemin entre chaque paire de cellules
+//un labyrinthe est parfait si et seulement si il existe un chemin entre chaque paire de cellules et qu'il n'existe pas de boucle (principe des solveurs)
+//un labyrinthe solvable est un labyrinthe où il existe au moins un chemin entre le point de départ (0, 0) et le point d'arrivée (width-1, height-1)
+//tout labyrinthe doit être solvable (cahier des charges)
+
 //Crée un labyrinthe parfait de taille width x height
 //tous les murs sont verticaux
 maze_t line_maze(const int width, const int height);
