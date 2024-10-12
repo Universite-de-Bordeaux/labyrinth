@@ -41,10 +41,8 @@ Cmain :
 	@echo "Lancement du main\n"
 	@./src/main
 	@echo "\nFin du main"
-	 @if [ $$? -eq 0 ]; then echo "Test ok"; else echo "UNEXPECTED ERROR"; fi
 
 main : src/main
 	@echo "Lancement du main\n"
 	@./src/main
 	@echo "\nFin du main"
-	 @if [ $$? -eq 0 ]; then echo "Test ok"; else echo "UNEXPECTED ERROR"; fi
