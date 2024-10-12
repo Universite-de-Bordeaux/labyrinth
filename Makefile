@@ -5,7 +5,7 @@ SDLFLAGS = `sdl2-config --cflags --libs`
 
 all : src/main
 
-src/main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o
+src/main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o src/test.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 	@echo "Compilation done"
 
@@ -28,6 +28,10 @@ mazemaker.o : src/mazemaker.c src/mazemaker.h
 solveur.o : src/solveur.c src/solveur.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 	@echo "solveur.o done"
+
+test.o : src/test.c src/test.h
+	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
+	@echo "test.o done"
 
 .PHONY : clean
 clean :
