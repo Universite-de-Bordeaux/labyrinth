@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <SDL2/SDL.h>
-#define NB_GENERATEURS 4
+#define NB_GENERATEURS 6
 
 //une mini-jeu où il faut trouver la sortie
 //version de base
@@ -86,7 +86,7 @@ int minigame1(const maze_t maze)
             {
                 is_gaming = false;
                 SDL_Delay(1);
-                print_maze(maze, "abandon !!");
+                print_maze(maze);
             }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
@@ -152,7 +152,7 @@ int minigame1(const maze_t maze)
         {
             is_gaming = false;
             SDL_Delay(100);
-            print_maze(maze, "victoire !!");
+            print_maze(maze);
         }
     }
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
@@ -192,6 +192,20 @@ int rminigame1(const int width, const int height)
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r ==4)
+    {
+        const maze_t maze = hunt_kill_maze(width, height);
+        const int s = minigame1(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 5)
+    {
+        const maze_t maze = by_path_maze(width, height);
         const int s = minigame1(maze);
         free_maze(maze);
         return s;
@@ -279,7 +293,7 @@ int minigame2(const maze_t maze)
             {
                 is_gaming = false;
                 SDL_Delay(1);
-                print_maze(maze, "abandon !!");
+                print_maze(maze);
             }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
@@ -358,7 +372,7 @@ int minigame2(const maze_t maze)
         {
             is_gaming = false; //on arrête le jeu
             SDL_Delay(100); //pause pour assurer le bon affichage
-            print_maze(maze, "victoire !!"); //on affiche le labyrinthe en entier
+            print_maze(maze); //on affiche le labyrinthe en entier
         }
     }
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
@@ -400,6 +414,20 @@ int rminigame2(const int width, const int height)
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r ==4)
+    {
+        const maze_t maze = hunt_kill_maze(width, height);
+        const int s = minigame2(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 5)
+    {
+        const maze_t maze = by_path_maze(width, height);
         const int s = minigame2(maze);
         free_maze(maze);
         return s;
@@ -475,7 +503,7 @@ int minigame3(const maze_t maze)
             {
                 is_gaming = false;
                 SDL_Delay(1);
-                print_maze(maze, "abandon !!");
+                print_maze(maze);
             }
             SDL_Delay(1);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
@@ -520,7 +548,7 @@ int minigame3(const maze_t maze)
         {
             is_gaming = false; //on arrête le jeu
             SDL_Delay(10); //pause pour assurer le bon affichage
-            print_maze(maze, "victoire !!"); //on affiche le labyrinthe en entier
+            print_maze(maze); //on affiche le labyrinthe en entier
         }
     }
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
@@ -560,6 +588,20 @@ int rminigame3(const int width, const int height)
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 4)
+    {
+        const maze_t maze = hunt_kill_maze(width, height);
+        const int s = minigame3(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 5)
+    {
+        const maze_t maze = by_path_maze(width, height);
         const int s = minigame3(maze);
         free_maze(maze);
         return s;
@@ -615,6 +657,20 @@ int rminigame4(const int width, const int height)
     else if(r == 3)
     {
         const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 4)
+    {
+        const maze_t maze = hunt_kill_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    else if(r == 5)
+    {
+        const maze_t maze = by_path_maze(width, height);
         const int s = minigame4(maze);
         free_maze(maze);
         return s;
@@ -676,16 +732,6 @@ int r_minigame(const maze_t maze)
     return -1;
 }
 
-//renvoie true si le labyrithne est solvable, false sinon
-//maze : le labyrinthe
-//non implémenté
-bool right_hand(maze_t maze)
-{
-    fprintf(stderr, "Cette fonction n'a pas été implémentée");
-    return false;
-}
-//TODO : à compléter
-
 //fonction auxiliaire de cascade
 //renvoie true si on peut atteindre la sortie, false sinon
 //maze : le labyrinthe
@@ -730,6 +776,7 @@ bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x
             return true;
         }
     }
+    //condition d'arrêt : on ne peut plus avancer
     return false;
 }
 
