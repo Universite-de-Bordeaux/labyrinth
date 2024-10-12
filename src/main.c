@@ -1,7 +1,4 @@
-#include "outside.h"
 #include "mazemaker.h"
-#include "solveur.h"
-#include <stdio.h>
 #include "test.h"
 
 int main() {
