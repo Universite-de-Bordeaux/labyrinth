@@ -858,7 +858,7 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
         fprintf(stderr, "L'utilisateur a manuellement réclamé l'arrêt du programme\n");
-        exit(2);
+        exit(EXIT_SUCCESS);
     }
     else if(event.type == SDL_WINDOWEVENT_MINIMIZED)
     {
@@ -1070,7 +1070,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
         fprintf(stderr, "L'utilisateur a manuellement réclamé l'arrêt du programme\n");
-        exit(2);
+        exit(EXIT_SUCCESS);
     }
     else if(event.type == SDL_WINDOWEVENT_MINIMIZED)
     {
