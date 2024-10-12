@@ -1,13 +1,6 @@
 #include "case.h"
-#include <stdio.h>
 #include <SDL2/SDL.h>
 
-// Create a maze of width x height cells
-// width : width of the maze
-// height : height of the maze
-// tous les murs sont ouverts (hors limites)
-// returns the maze
-// gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_basic_maze(const int width, const int height) {
     if(width < 1 || height < 1)
     {
@@ -59,12 +52,6 @@ maze_t create_basic_maze(const int width, const int height) {
     return maze;
 }
 
-// Create a maze of width x height cells
-// width : width of the maze
-// height : height of the maze
-// tous les murs sont fermés
-// returns the maze
-// gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 maze_t create_wall_maze(const int width, const int height) {
     if(width < 1 || height < 1)
     {
@@ -89,8 +76,6 @@ maze_t create_wall_maze(const int width, const int height) {
     return maze;
 }
 
-//désalloue la mémoire allouée pour le labyrinthe
-//maze : le labyrinthe à désallouer
 void free_maze(const maze_t maze) {
   for (int i = 0; i < maze.height; i++) {
     free(maze.cells[i]);
@@ -98,11 +83,6 @@ void free_maze(const maze_t maze) {
   free(maze.cells);
 }
 
-//ajoute un mur en haut de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_up(maze_t const maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -121,11 +101,6 @@ void wall_up(maze_t const maze, const int x, const int y)
       }
 }
 
-//ajoute un mur en bas de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -144,11 +119,6 @@ void wall_down(const maze_t maze, const int x, const int y)
     }
 }
 
-//ajoute un mur à gauche de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -167,11 +137,6 @@ void wall_left(const maze_t maze, const int x, const int y)
     }
 }
 
-//ajoute un mur à droite de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void wall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -190,11 +155,6 @@ void wall_right(const maze_t maze, const int x, const int y)
     }
 }
 
-//retire le mur du haut de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_up(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -213,11 +173,6 @@ void unwall_up(const maze_t maze, const int x, const int y)
     }
 }
 
-//retire le mur du bas de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -236,11 +191,6 @@ void unwall_down(const maze_t maze, const int x, const int y)
     }
 }
 
-//retire le mur à gauche de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -259,11 +209,6 @@ void unwall_left(const maze_t maze, const int x, const int y)
     }
 }
 
-//retire le mur à droite de la cellule x, y
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void unwall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
@@ -282,74 +227,46 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
 }
 
-//renvoie vrai si le mur du haut de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool has_wall_up(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
         fprintf(stderr, "Erreur dans la fonction has_wall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return maze.cells[y][x].wall_up;
 }
 
-//renvoie vrai si le mur du bas de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool has_wall_down(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
         fprintf(stderr, "Erreur dans la fonction has_wall_down : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return maze.cells[y][x].wall_down;
 }
 
-//renvoie vrai si le mur de gauche de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool has_wall_left(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
         fprintf(stderr, "Erreur dans la fonction has_wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return maze.cells[y][x].wall_left;
 }
 
-//renvoie vrai si le mur de droite de la cellule x, y est présent
-//renvoie faux sinon
-//maze : le labyrinthe
-//x : la coordonnée x de la cellule
-//y : la coordonnée y de la cellule
-//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool has_wall_right(const maze_t maze, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= maze.width || y >= maze.height)
     {
         fprintf(stderr, "Erreur dans la fonction has_wall_right : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     return maze.cells[y][x].wall_right;
 }
 
-//crée un tableau de booléens sur false de taille width x height
-//width : largeur du tableau
-//height : hauteur du tableau
-//renvoie le tableau de booléens
 bool_tab create_booltab(const int width, const int height)
 {
     if(width < 1 || height < 1)
@@ -370,8 +287,6 @@ bool_tab create_booltab(const int width, const int height)
     return tab;
 }
 
-//désalloue la mémoire allouée pour le tableau de booléens
-//tab : le tableau de booléens à désallouer
 void free_booltab(const bool_tab tab)
 {
     for(int i = 0; i < tab.height; i++)
@@ -381,11 +296,6 @@ void free_booltab(const bool_tab tab)
     free(tab.tab);
 }
 
-//met la case x, y du tableau de booléens à vrai
-//tab : le tableau de booléens
-//x : la coordonnée x de la case
-//y : la coordonnée y de la case
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void set_true(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
@@ -396,11 +306,6 @@ void set_true(const bool_tab tab, const int x, const int y)
     tab.tab[y][x] = true;
 }
 
-//met la case x, y du tableau de booléens à faux
-//tab : le tableau de booléens
-//x : la coordonnée x de la case
-//y : la coordonnée y de la case
-//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void set_false(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
@@ -411,11 +316,6 @@ void set_false(const bool_tab tab, const int x, const int y)
     tab.tab[y][x] = false;
 }
 
-//renvoie la valeur de la case x, y du tableau de booléens
-//tab : le tableau de booléens
-//x : la coordonnée x de la case
-//y : la coordonnée y de la case
-//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool get_bool(const bool_tab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
@@ -426,13 +326,7 @@ bool get_bool(const bool_tab tab, const int x, const int y)
     return tab.tab[y][x];
 }
 
-//affiche le labyrinthe, renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe à afficher
-//filename : le nom de la fenêtre
-//les murs d'entré sont en bleu, les murs de sortie en vert
-//chaque cellule est de taille 20x20 pixels
-//le programme se ferme uand on appuie sur ECHAP, ENTRER, ou tente de fermer la fenetre
-int print_maze(maze_t const maze, const char* filename)
+int print_maze(maze_t const maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
@@ -441,7 +335,7 @@ int print_maze(maze_t const maze, const char* filename)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow(filename, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();

@@ -1,7 +1,6 @@
 #ifndef TEST_H
 #define TEST_H
 #include "case.h"
-#include <stdio.h>
 
 //Définition du type de pointeur de fonction (avec 2 entiers en paramètres et un maze_t en retour)
 typedef maze_t (*func_ptr)(int, int);

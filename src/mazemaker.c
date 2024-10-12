@@ -327,10 +327,9 @@ maze_t hunt_kill_maze(const int width, const int height)
                     if(size == 0){
                         fprintf(stderr, "Erreur: direction hunt invalide\n");
                         printf("x : %d, y : %d\n", x, y);
-                        print_maze(maze, "maze");
                         free_booltab(visited);
                         free_maze(maze);
-                        exit(1);
+                        exit(EXIT_FAILURE);
                     }
                 }
             }
