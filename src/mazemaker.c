@@ -1,4 +1,5 @@
 #include "mazemaker.h"
+#include "case.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -353,6 +354,207 @@ maze_t hunt_kill_maze(const int width, const int height)
     return maze;
 }
 
+
+//Fonction Auxilliaire de lab_by_path
+//fonctions de directions
+bool lbp_can_move_left(maze_t *maze, int x, int  y, bool_tab tab_visited){
+    if (x-1>=0 && !get_bool(tab_visited, x-1, y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
+            return true;
+    return false;
+}
+
+bool lbp_can_move_right(maze_t *maze, int x, int y, bool_tab tab_visited){
+    if (x+1<maze->width && !get_bool(tab_visited, x+1, y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
+        return true;
+    return false;
+}
+
+bool lbp_can_move_up(maze_t *maze, int x, int y, bool_tab tab_visited){
+    if (y-1 >=0 && !get_bool(tab_visited, x, y-1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+            return true;
+    return false;
+}
+
+bool lbp_can_move_down(maze_t *maze, int x, int y, bool_tab tab_visited){
+    if (y+1<maze->height && !get_bool(tab_visited, x, y+1)) // si nous ne somme pas sur le bord bas  et que la case n'est pas visitée
+        return true;
+    return false;
+}
+
+//Fonction Auxilliaire de lab_by_path
+//fonction qui applique une direction
+bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
+    bool tab_dir[4] = {}; // créatrion du tableau de possibilité de direction
+    int impossible_dir = 0; // compteur de direction en moins
+    bool has_moved = false;
+    while (impossible_dir <4){ // tant qu'il nous reste des directions
+        int choice = rand() %(4-impossible_dir); // choix d'une direction
+        while (tab_dir[choice]) // si notre direction n'est pas possible, on passe à la suivante
+            choice ++;
+        switch (choice){
+            case 0:
+                if (lbp_can_move_left(maze, *x, *y, tab_visited)){
+                    (*x)--;
+                    has_moved = true;
+                }
+                break;
+            case 1:
+                if (lbp_can_move_right(maze, *x, *y, tab_visited)){
+                    (*x)++;
+                    has_moved = true;
+                }
+                break;
+            case 2:
+                if (lbp_can_move_up(maze, *x, *y, tab_visited)){
+                    (*y)--;
+                    has_moved = true;
+                }
+                break;
+            case 3:
+                if (lbp_can_move_down(maze, *x, *y, tab_visited)){
+                    (*y)++;
+                    has_moved = true;
+                }
+                break;
+            default:
+                fprintf(stderr, "Problem in the switch case in lbp_path_move");
+                exit(EXIT_FAILURE);
+        }
+        if (has_moved){
+            set_true(tab_visited, *x, *y);
+            return true;
+        }
+        tab_dir[choice] = true;
+        impossible_dir++;
+    }
+    return false;
+}
+//Fonction Auxilliaire de lab_by_path
+//fonction qui crée tout les chemins et ajoute les murs
+void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, bool_tab tab_visited){
+    int width = maze -> width, height = maze -> height;
+    set_true(tab_visited, *x, *y);
+
+    if (*x==0 && *y == height -1){ // coin bas gauche
+        if (*y-1 != *y_2 && get_bool(tab_visited, *x, (*y)-1))
+            wall_up(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, (*x)+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    else if (*x==width -1 && *y == height -1){ // coin bas droit
+        if ((*y) -1 != *y_2 && get_bool(tab_visited, *x, (*y)-1))
+            wall_up(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, (*x)-1, *y))
+            wall_left(*maze, *x, *y);
+    }
+    else if (*x==0 && *y == height -1){ // coin haut gauche
+        if ((*y) +1 != *y_2 && get_bool(tab_visited, *x, (*y)+1))
+            wall_down(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, (*x)+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    else if (*x == width -1 && *y==0){ // coin du haut droit
+        if ((*y)+1 != *y_2 && get_bool(tab_visited, *x, *y+1))
+            wall_down(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, *x-1, *y))
+            wall_left(*maze, *x, *y);
+    }
+    else if (*x == 0){ // colonne gauche
+        if (*y-1 != *y_2 && get_bool(tab_visited, *x, *y-1))
+            wall_up(*maze, *x, *y);
+        if (*y+1 != *y_2 && get_bool(tab_visited, *x, *y+1))
+            wall_down(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, *x+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    else if (*x == width -1){ // colonne droite
+        if (*y-1 != *y_2 && get_bool(tab_visited, *x, *y-1))
+            wall_up(*maze, *x, *y);
+        if (*y+1 != *y_2 && get_bool(tab_visited, *x, *y+1))
+            wall_down(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, *x-1, *y))
+            wall_left(*maze, *x, *y);
+    }
+    else if (*y == 0){ // ligne haut
+        if (*y+1 != *y_2 && get_bool(tab_visited, *x, *y+1))
+            wall_down(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, *x-1, *y))
+            wall_left(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, *x+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    else if (*y == height -1){ // ligne bas
+        if (*y-1 != *y_2 && get_bool(tab_visited, *x, *y-1))
+            wall_up(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, *x-1, *y))
+            wall_left(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, *x+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    else{ // tout ce qui n'est pas sur le bord
+        if (*y+1 != *y_2 && get_bool(tab_visited, *x, *y+1))
+            wall_down(*maze, *x, *y);
+        if (*y-1 != *y_2 && get_bool(tab_visited, *x, *y-1))
+            wall_up(*maze, *x, *y);
+        if (*x-1 != *x_2 && get_bool(tab_visited, *x-1, *y))
+            wall_left(*maze, *x, *y);
+        if (*x+1 != *x_2 && get_bool(tab_visited, *x+1, *y))
+            wall_right(*maze, *x, *y);
+    }
+    *x_2 = *x, *y_2 = *y;
+    if (lbp_path_move(maze, x, y, tab_visited)) // mouvement
+        lbp_path(maze, x, y, x_2, y_2, tab_visited);
+    else
+        return;
+}
+
+//Crée un labyrinthe parfait de taille width x height dont toutes les cases sont accessibles
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+maze_t lab_by_path(int width, int height){
+    //const time_t t = time(NULL); //Création de la graine du random
+    const time_t t = 50; // Création du graine fixe (pour les tests)
+    srand(t);
+    bool_tab tab_visited = create_booltab(width, height);
+    maze_t maze = create_basic_maze(width, height);
+
+    if (width==1 || height ==1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
+        return maze;
+
+    int x_1=0, x_2=0, y_1=0, y_2=0; // création des coordonnées et coordonnées de la case précédente
+    set_true(tab_visited, x_1, x_2); // on valide notre passage sur la case de départ
+    if (rand()%2) // on choisit une direction aléatoire
+        x_1++;
+    else
+        y_1++;
+    set_true(tab_visited, x_1, y_1); //on valide notre passage sur la nouvelle case
+
+    for (int y=0; y<height-1; y++){
+        for (int x=0; x<width-1; x++){
+            if(get_bool(tab_visited, x, y)){
+                x_1 = x, y_1 = y, x_2 = x, y_2 = y;
+                if (!get_bool(tab_visited, x+1, y)){ // si la case de droite est nouvelle, on y va depuis notre case actuelle
+                    x_1++;
+                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                }
+                else if (!get_bool(tab_visited, x, y+1)){// si la case du bas est nouvelle, on y va depuis notre case actuelle
+                    y_1++;
+                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                }
+            }
+
+        }
+    }
+    if (!get_bool(tab_visited, width-1, height-1)){ // si on n'est jamais passé par la sortie, alors on passe
+        if (rand()%2)
+            wall_up(maze, width -1 ,height -1);
+        else
+           wall_left(maze, width -1 ,height -1);
+    }
+    free_booltab(tab_visited);
+   return maze;
+}
+
 //Crée un labyrinthe à l'aide d'une méthode existante chosie aléatoirement
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
@@ -415,4 +617,3 @@ maze_t rimperfect_maze(const int width, const int height)
     }
     return create_basic_maze(width, height);
 }
-
