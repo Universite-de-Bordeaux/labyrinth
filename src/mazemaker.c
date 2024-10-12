@@ -126,6 +126,8 @@ maze_t perfect_one_way_maze(const int width, const int height)
     const bool_tab visited = create_booltab(width, height);
     const time_t t = time(NULL);
     srand(t);
+
+    //création du chemin principal
     int x = 0;
     int y = 0;
     while(!(x == width - 1 && y == height - 1))
@@ -152,6 +154,8 @@ maze_t perfect_one_way_maze(const int width, const int height)
         }
     }
     set_true(visited, width - 1, height - 1);
+
+    //création des embranchements
     bool is_done = false;
     while(!is_done)
     {
@@ -162,26 +166,23 @@ maze_t perfect_one_way_maze(const int width, const int height)
             {
                 if(!get_bool(visited, i, j))
                 {
+                    x = i;
+                    y = j;
                     is_done = false;
-                    if(j < height - 1 && get_bool(visited, i, j + 1))
+                    while(!get_bool(visited, x, y))
                     {
-                        unwall_down(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(j > 0 && get_bool(visited, i, j - 1))
-                    {
-                        unwall_up(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(i < width - 1 && get_bool(visited, i + 1, j))
-                    {
-                        unwall_right(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(i > 0 && get_bool(visited, i - 1, j))
-                    {
-                        unwall_left(maze, i, j);
-                        set_true(visited, i, j);
+                        if(rand() % 2 == 0 && i > 0)
+                        {
+                            unwall_left(maze, x, y);
+                            set_true(visited, x, y);
+                            x--;
+                        }
+                        else if(j > 0)
+                        {
+                            unwall_up(maze, x, y);
+                            set_true(visited, x, y);
+                            y--;
+                        }
                     }
                 }
             }
