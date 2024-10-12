@@ -2,12 +2,11 @@
 #include "mazemaker.h"
 #include "solveur.h"
 #include <stdio.h>
+#include "test.h"
 
 int main() {
-  const maze_t maze = rmaze(80, 50);
-  wall_up(maze, 79, 49);
-  wall_left(maze, 79, 49);
-  show_is_perfect_cascade(maze);
-  free_maze(maze);
-  return 0;
+    EVALUATE_MAZEMAKERN(perfect_one_way_maze, "perfect_one_way_maze");
+    EVALUATE_MAZEMAKERN(imperfect_one_way_maze, "imperfect_one_way_maze");
+    EVALUATE_MAZEMAKER(line_maze);
+    return 0;
 }
