@@ -47,9 +47,9 @@ bool create_perfect_maze(const func_ptr f)
 
 int evaluate_mazemaker(const func_ptr f)
 {
-    if(create_solvable_maze(f))
+    if(create_perfect_maze(f))
     {
-        return create_perfect_maze(f) ? 2 : 1;
+        return 2;
     }
-    return 0;
+    return create_solvable_maze(f) ? 1 : 0;
 }
