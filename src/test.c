@@ -12,7 +12,7 @@ bool create_solvable_maze(const func_ptr f)
         for(int j = 1; j < 100; j++)
         {
             const maze_t maze = f(i, j);
-            if(!has_exit_cascade(maze))
+            if(!has_exit_right_hand(maze))
             {
                 free_maze(maze);
                 return false;
@@ -34,7 +34,7 @@ bool create_perfect_maze(const func_ptr f)
         for(int j = 1; j < 100; j++)
         {
             const maze_t maze = f(i, j);
-            if(!is_perfect_cascade(maze))
+            if(!is_perfect_right_hand(maze))
             {
                 free_maze(maze);
                 return false;

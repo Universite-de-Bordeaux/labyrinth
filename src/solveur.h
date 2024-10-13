@@ -53,39 +53,24 @@ int rminigame(int width, int height);
 int r_minigame(maze_t maze);
 
 //solveur
-bool right_hand(maze_t maze);
 
-//solveur cascade (parcours en profondeur)
+//solveur right hand (parcours en profondeur)
 
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
-bool has_exit_cascade(maze_t maze);
+bool has_exit_right_hand(maze_t maze);
 
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
-bool is_perfect_cascade(maze_t maze);
+bool is_perfect_right_hand(maze_t maze);
 
-//visualisation des solveurs cascade
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-int show_has_exit_cascade(maze_t maze);
+//visualisation des solveurs right_hand
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-//version rapide, risque de suppression de la visualisation active
-//utilisation fortement déconseillée
-int show_fast_has_exit_cascade(maze_t maze);
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-int show_is_perfect_cascade(maze_t maze);
+int show_has_exit_right_hand(maze_t maze);
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
@@ -93,5 +78,19 @@ int show_is_perfect_cascade(maze_t maze);
 //maze : le labyrinthe
 //version rapide, risque de suppression de la visualisation active
 //utilisation fortement déconseillée
-int show_fast_is_perfect_cascade(maze_t maze);
+int show_fast_has_exit_right_hand(maze_t maze);
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+int show_is_perfect_right_hand(maze_t maze);
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+//version rapide, risque de suppression de la visualisation active
+//utilisation fortement déconseillée
+int show_fast_is_perfect_right_hand(maze_t maze);
 #endif //SOLVEUR_H

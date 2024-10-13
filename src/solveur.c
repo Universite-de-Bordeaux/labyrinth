@@ -623,13 +623,13 @@ int r_minigame(const maze_t maze)
     return -1;
 }
 
-//fonction auxiliaire de cascade
+//fonction auxiliaire de right_hand
 //renvoie true si on peut atteindre la sortie, false sinon
 //maze : le labyrinthe
 //visited : tableau de booléens pour savoir si on est déjà passé par une case
 //x : abscisse de la case actuelle
 //y : ordonnée de la case actuelle
-bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y)
+bool has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y)
 {
     //condition d'arrêt : atteindre la sortie
     if(x == maze.width - 1 && y == maze.height - 1)
@@ -641,28 +641,28 @@ bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x
     set_true(visited, x, y);
     if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y-1))
     {
-        if(has_exit_cascade_aux(maze, visited, x, y - 1))
+        if(has_exit_right_hand_aux(maze, visited, x, y - 1))
         {
             return true;
         }
     }
     if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
     {
-        if(has_exit_cascade_aux(maze, visited, x, y + 1))
+        if(has_exit_right_hand_aux(maze, visited, x, y + 1))
         {
             return true;
         }
     }
     if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
     {
-        if(has_exit_cascade_aux(maze, visited, x - 1, y))
+        if(has_exit_right_hand_aux(maze, visited, x - 1, y))
         {
             return true;
         }
     }
     if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
     {
-        if(has_exit_cascade_aux(maze, visited, x + 1, y))
+        if(has_exit_right_hand_aux(maze, visited, x + 1, y))
         {
             return true;
         }
@@ -671,15 +671,15 @@ bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x
     return false;
 }
 
-bool has_exit_cascade(const maze_t maze)
+bool has_exit_right_hand(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height);
-    const bool s = has_exit_cascade_aux(maze, visited, 0, 0);
+    const bool s = has_exit_right_hand_aux(maze, visited, 0, 0);
     free_booltab(visited);
     return s;
 }
 
-//fonction auxiliaire de is_perfect_cascade
+//fonction auxiliaire de is_perfect_right_hand
 //renvoie false si le labyrinth est évidemment non parfait, true sinon
 //maze : le labyrinthe
 //visited : tableau de booléens pour savoir si on est déjà passé par une case
@@ -687,33 +687,33 @@ bool has_exit_cascade(const maze_t maze)
 //y : ordonnée de la case actuelle
 //p_x : abscisse de la case précédente
 //p_y : ordonnée de la case précédente
-bool is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x,const int p_y)
+bool is_perfect_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x,const int p_y)
 {
     set_true(visited, x, y);
     if(!has_wall_up(maze, x, y) && (p_y != y - 1 || p_x != x))
     {
-        if(get_bool(visited, x, y - 1) || !is_perfect_cascade_aux(maze, visited, x, y - 1, x, y))
+        if(get_bool(visited, x, y - 1) || !is_perfect_right_hand_aux(maze, visited, x, y - 1, x, y))
         {
             return false;
         }
     }
     if(!has_wall_down(maze, x, y) && (p_y != y + 1 || p_x != x))
     {
-        if(get_bool(visited, x, y + 1) || !is_perfect_cascade_aux(maze, visited, x, y + 1, x, y))
+        if(get_bool(visited, x, y + 1) || !is_perfect_right_hand_aux(maze, visited, x, y + 1, x, y))
         {
             return false;
         }
     }
     if(!has_wall_left(maze, x, y) && (p_x != x - 1 || p_y != y))
     {
-        if(get_bool(visited, x - 1, y) || !is_perfect_cascade_aux(maze, visited, x - 1, y, x, y))
+        if(get_bool(visited, x - 1, y) || !is_perfect_right_hand_aux(maze, visited, x - 1, y, x, y))
         {
             return false;
         }
     }
     if(!has_wall_right(maze, x, y) && (p_x != x + 1 || p_y != y))
     {
-        if(get_bool(visited, x + 1, y) || !is_perfect_cascade_aux(maze, visited, x + 1, y, x, y))
+        if(get_bool(visited, x + 1, y) || !is_perfect_right_hand_aux(maze, visited, x + 1, y, x, y))
         {
             return false;
         }
@@ -721,10 +721,10 @@ bool is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, const int
     return true;
 }
 
-bool is_perfect_cascade(const maze_t maze)
+bool is_perfect_right_hand(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height);
-    if(!is_perfect_cascade_aux(maze, visited, 0, 0, 0, 0))
+    if(!is_perfect_right_hand_aux(maze, visited, 0, 0, 0, 0))
     {
         free_booltab(visited);
         return false;
@@ -744,7 +744,7 @@ bool is_perfect_cascade(const maze_t maze)
     return true;
 }
 
-//fonction auxiliaire de show_has_exit_cascade
+//fonction auxiliaire de show_has_exit_right_hand
 //colorie la case de coordonnées x et y
 //renderer : le renderer
 //x : abscisse de la case
@@ -776,7 +776,7 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
     SDL_Delay(delay); //pause de 0.01 secondes
 }
 
-//fonction auxiliaire de show_has_exit_cascade
+//fonction auxiliaire de show_has_exit_right_hand
 //affiche le labyrinthe et la progression du solveur
 //renvoie true si on peut atteindre la sortie, false sinon
 //maze : le labyrinthe
@@ -784,7 +784,7 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
 //x : abscisse de la case actuelle
 //y : ordonnée de la case actuelle
 //renderer : le renderer
-bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, const int delay)
+bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, const int delay)
 {
     SDL_Event event;
     SDL_WaitEventTimeout(&event, delay); //attente d'un event
@@ -817,19 +817,19 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
     //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
     if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
     {
-         s = show_has_exit_cascade_aux(maze, visited, x, y - 1, renderer, delay);
+         s = show_has_exit_right_hand_aux(maze, visited, x, y - 1, renderer, delay);
     }
     if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
     {
-        s = (s || show_has_exit_cascade_aux(maze, visited, x, y + 1, renderer, delay));
+        s = (s || show_has_exit_right_hand_aux(maze, visited, x, y + 1, renderer, delay));
     }
     if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
     {
-        s = (s || show_has_exit_cascade_aux(maze, visited, x - 1, y, renderer, delay));
+        s = (s || show_has_exit_right_hand_aux(maze, visited, x - 1, y, renderer, delay));
     }
     if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
     {
-        s = (s || show_has_exit_cascade_aux(maze, visited, x + 1, y, renderer, delay));
+        s = (s || show_has_exit_right_hand_aux(maze, visited, x + 1, y, renderer, delay));
     }
     //deuxième condition d'arrêt : on est bloqué
     if(s)
@@ -852,7 +852,7 @@ bool show_has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const 
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
 //delay : le delay de refresh (2 * delay + 1 ms/case)
-int true_show_has_exit_cascade(const maze_t maze, const int delay)
+int true_show_has_exit_right_hand(const maze_t maze, const int delay)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -862,7 +862,7 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("has_exit_cascade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("has_exit_right_hand", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();
@@ -928,7 +928,7 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     color_case(renderer, maze, 0, 0, delay);
-    if(show_has_exit_cascade_aux(maze, visited, 0, 0, renderer, delay))
+    if(show_has_exit_right_hand_aux(maze, visited, 0, 0, renderer, delay))
     {
         SDL_SetWindowTitle(fenetre, "maze solvable");
     }
@@ -954,9 +954,9 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
     return 1;
 }
 
-int show_has_exit_cascade(const maze_t maze)
+int show_has_exit_right_hand(const maze_t maze)
 {
-    if(true_show_has_exit_cascade(maze, 7) == -1)
+    if(true_show_has_exit_right_hand(maze, 7) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -964,9 +964,9 @@ int show_has_exit_cascade(const maze_t maze)
     return 1;
 }
 
-int show_fast_has_exit_cascade(const maze_t maze)
+int show_fast_has_exit_right_hand(const maze_t maze)
 {
-    if(true_show_has_exit_cascade(maze, 1) == -1)
+    if(true_show_has_exit_right_hand(maze, 1) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -974,7 +974,7 @@ int show_fast_has_exit_cascade(const maze_t maze)
     return 1;
 }
 
-//fonction auxiliaire de show_is_perfect_cascade
+//fonction auxiliaire de show_is_perfect_right_hand
 //affiche le labyrinthe et la progression du solveur
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
@@ -985,7 +985,7 @@ int show_fast_has_exit_cascade(const maze_t maze)
 //p_y : ordonnée de la case précédente
 //renderer : le renderer
 //delay : le delay de refresh (2 * delay + 1 ms/case)
-bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x, const int p_y, SDL_Renderer *renderer, const int delay)
+bool show_is_perfect_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x, const int p_y, SDL_Renderer *renderer, const int delay)
 {
     SDL_Event event;
     SDL_WaitEventTimeout(&event, delay); //attente d'un event
@@ -1006,7 +1006,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
     color_case(renderer, maze, x, y, delay);
     if(!has_wall_up(maze, x, y) && (p_y != y - 1 || p_x != x))
     {
-        if(get_bool(visited, x, y - 1) || !show_is_perfect_cascade_aux(maze, visited, x, y - 1, x, y, renderer, delay))
+        if(get_bool(visited, x, y - 1) || !show_is_perfect_right_hand_aux(maze, visited, x, y - 1, x, y, renderer, delay))
         {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
             color_case(renderer, maze, x, y, delay);
@@ -1016,7 +1016,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
     }
     if(!has_wall_down(maze, x, y) && (p_y != y + 1 || p_x != x))
     {
-        if(get_bool(visited, x, y + 1) || !show_is_perfect_cascade_aux(maze, visited, x, y + 1, x, y, renderer, delay))
+        if(get_bool(visited, x, y + 1) || !show_is_perfect_right_hand_aux(maze, visited, x, y + 1, x, y, renderer, delay))
         {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
             color_case(renderer, maze, x, y, delay);
@@ -1026,7 +1026,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
     }
     if(!has_wall_left(maze, x, y) && (p_x != x - 1 || p_y != y))
     {
-        if(get_bool(visited, x - 1, y) || !show_is_perfect_cascade_aux(maze, visited, x - 1, y, x, y, renderer, delay))
+        if(get_bool(visited, x - 1, y) || !show_is_perfect_right_hand_aux(maze, visited, x - 1, y, x, y, renderer, delay))
         {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
             color_case(renderer, maze, x, y, delay);
@@ -1036,7 +1036,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
     }
     if(!has_wall_right(maze, x, y) && (p_x != x + 1 || p_y != y))
     {
-        if(get_bool(visited, x + 1, y) || !show_is_perfect_cascade_aux(maze, visited, x + 1, y, x, y, renderer, delay))
+        if(get_bool(visited, x + 1, y) || !show_is_perfect_right_hand_aux(maze, visited, x + 1, y, x, y, renderer, delay))
         {
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
             color_case(renderer, maze, x, y, delay);
@@ -1055,7 +1055,7 @@ bool show_is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, cons
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
 //delay : le delay de refresh (2 * delay + 1 ms/case)
-int true_show_is_perfect_cascade(const maze_t maze, const int delay)
+int true_show_is_perfect_right_hand(const maze_t maze, const int delay)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -1065,7 +1065,7 @@ int true_show_is_perfect_cascade(const maze_t maze, const int delay)
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("is_perfect_cascade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    SDL_Window *fenetre = SDL_CreateWindow("is_perfect_right_hand", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
         const char *error = SDL_GetError();
@@ -1131,7 +1131,7 @@ int true_show_is_perfect_cascade(const maze_t maze, const int delay)
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     color_case(renderer, maze, 0, 0, delay);
-    if(show_is_perfect_cascade_aux(maze, visited, 0, 0, 0, 0, renderer, delay))
+    if(show_is_perfect_right_hand_aux(maze, visited, 0, 0, 0, 0, renderer, delay))
     {
         bool b = false;
         for(int i =0; i < maze.height; i++)
@@ -1182,9 +1182,9 @@ int true_show_is_perfect_cascade(const maze_t maze, const int delay)
     return 1;
 }
 
-int show_is_perfect_cascade(const maze_t maze)
+int show_is_perfect_right_hand(const maze_t maze)
 {
-    if(true_show_is_perfect_cascade(maze, 7) == -1)
+    if(true_show_is_perfect_right_hand(maze, 7) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1192,9 +1192,9 @@ int show_is_perfect_cascade(const maze_t maze)
     return 1;
 }
 
-int show_fast_is_perfect_cascade(const maze_t maze)
+int show_fast_is_perfect_right_hand(const maze_t maze)
 {
-    if(true_show_is_perfect_cascade(maze, 1) == -1)
+    if(true_show_is_perfect_right_hand(maze, 1) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
