@@ -5,6 +5,9 @@
 #include <SDL2/SDL.h>
 #define NB_GENERATEURS 6
 
+// --- mini-jeux ---
+
+
 int minigame1(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -623,6 +626,9 @@ int r_minigame(const maze_t maze)
     return -1;
 }
 
+
+// --- Solveur de labyrinthes ---
+
 //fonction auxiliaire de right_hand
 //renvoie true si on peut atteindre la sortie, false sinon
 //maze : le labyrinthe
@@ -743,6 +749,9 @@ bool is_perfect_right_hand(const maze_t maze)
     free_booltab(visited);
     return true;
 }
+
+// --- Visualisation des algorithmes de résolution de labyrinthes ---
+
 
 //fonction auxiliaire de show_has_exit_right_hand
 //colorie la case de coordonnées x et y

@@ -2,7 +2,7 @@
 #define SOLVEUR_H
 #include "case.h"
 
-//mini-jeu
+// --- mini-jeux ---
 
 //une mini-jeu où il faut trouver la sortie
 //version de base
@@ -52,9 +52,8 @@ int rminigame(int width, int height);
 //maze : le labyrinthe
 int r_minigame(maze_t maze);
 
-//solveur
+// --- solveur left hand (parcours en profondeur) ---
 
-//solveur right hand (parcours en profondeur)
 
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
@@ -64,7 +63,8 @@ bool has_exit_right_hand(maze_t maze);
 //maze : le labyrinthe
 bool is_perfect_right_hand(maze_t maze);
 
-//visualisation des solveurs right_hand
+// --- visualisation ---
+
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
