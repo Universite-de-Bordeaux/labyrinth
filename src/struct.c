@@ -401,7 +401,7 @@ void connected_way(const waytab tab, const int x, const int y, const int dad_x, 
     new_dad(tab.tab[y] + x, tab.tab[dad_y] + dad_x);
 }
 
-int length_waytab(const waytab tab, const int x, const int y)
+unsigned int length_waytab(const waytab tab, const int x, const int y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
@@ -427,11 +427,11 @@ void print_way(const way *w)
     printf("(%d, %d) ", w->x, w->y);
 }
 
-int length_way(const way *w)
+unsigned int length_way(const way *w)
 {
     if(is_empty(w))
     {
-        return 4294967295;
+        return 4294967294;
     }
     if(w->dad == NULL)
     {
@@ -479,7 +479,7 @@ bool is_empty(const way *w)
 {
     if(w->dad == NULL)
     {
-        return !(w -> x == 0 && w -> y == 0); //un chemin vide est un chemin qui ne pointe pas vers la case (0, 0)
+        return w -> x != 0 || w -> y != 0; //un chemin est vide s'il n'est pas relié à la case (0, 0)
     }
     return is_empty(w->dad);
 }

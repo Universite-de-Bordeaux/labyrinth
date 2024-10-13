@@ -268,8 +268,8 @@ void connected_way(waytab tab, int x, int y, int dad_x, int dad_y);
 //tab : le tableau de chemin
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
-//renvoie 4294967295 si le chemin n'existe pas
-int length_waytab(waytab tab, int x, int y);
+//renvoie 4294967294 si le chemin n'existe pas
+unsigned int length_waytab(waytab tab, int x, int y);
 
 
 // --- WAY ---
@@ -280,8 +280,8 @@ void print_way(const way *w);
 
 //renvoie la longueur du chemin
 //w : le chemin
-//renvoie 4294967295 si le chemin n'existe pas
-int length_way(const way *w);
+//renvoie 4294967294 si le chemin n'existe pas
+unsigned int length_way(const way *w);
 
 //change le père du chemin
 //son : le chemin
