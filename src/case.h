@@ -1,7 +1,10 @@
 #ifndef CASE_H
 #define CASE_H
-#include <stdio.h>
 #include <stdbool.h>
+
+//Structure - typedef - fonction (dans l'ordre)
+
+// --- Structures ---
 
 struct cell {
     bool wall_up;
@@ -14,22 +17,42 @@ struct maze {
     int height;
     struct cell **cells;
 };
+
 struct bool_tab {
     int width;
     int height;
     bool **tab;
 };
 
+struct way
+{
+    int x;
+    int y;
+    struct way *dad;
+};
+
+struct waytab
+{
+    int width;
+    int height;
+    struct way **tab;
+};
+
+
+// --- Typedef ---
+
 //Structure représentant une cellule
 //contient 4 booléens représentant les murs de la cellule :
 //wall_up, wall_down, wall_left, wall_right
 typedef struct cell cell;
+
 //Structure représentant un labyrinthe
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 //cells : tableau de tableau de cellules
 //malloc utilisés, penser à free_maze pour libérer la mémoire
 typedef struct maze maze_t;
+
 //Structure représentant un tableau de booléens
 //width : largeur du tableau
 //height : hauteur du tableau
@@ -37,7 +60,21 @@ typedef struct maze maze_t;
 //malloc utilisés, penser à free_booltab pour libérer la mémoire
 typedef struct bool_tab bool_tab;
 
-//maze_t
+//Structure représentant un chemin depuis le début du labyrinthe
+//dad : cellule précédente
+//count : nombre de cellules parcourues
+typedef struct way way;
+
+//Structure représentant un tableau de chemins
+//width : largeur du tableau
+//height : hauteur du tableau
+//tab : tableau de tableau de chemins
+//malloc utilisés, penser à free_way_tab pour libérer la mémoire
+typedef struct waytab waytab;
+
+
+// --- Fonctions ---
+// --- MAZE ---
 
 // Create a maze of width x height cells
 // width : width of the maze
@@ -154,7 +191,8 @@ bool has_wall_right(maze_t maze, int x, int y);
 //le programme se ferme quand on appuie sur ECHAP, ENTRER, ou tente de fermer la fenetre
 int print_maze(maze_t maze);
 
-//bool_tab
+
+// --- BOOL_TAB ---
 
 //crée un tableau de booléens sur false de taille width x height
 //width : largeur du tableau
@@ -186,4 +224,57 @@ void set_false(bool_tab tab, int x, int y);
 //y : la coordonnée y de la case
 //gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool get_bool(bool_tab tab, int x, int y);
+
+
+// --- WAYTAB ---
+
+//crée un tableau de chemin vide de taille width x height
+//width : largeur du tableau
+//height : hauteur du tableau
+//renvoie le tableau de chemin
+waytab create_waytab(int width, int height);
+
+//désalloue la mémoire allouée pour le tableau de chemin
+//way : le tableau de chemin à désallouer
+void free_waytab(waytab tab);
+
+//renvoie true si la case x, y du tableau connait un chemin vers le début du labyrinthe, false sinon
+//tab : le tableau de chemin
+//x : la coordonnée x de la case
+//y : la coordonnée y de la case
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+bool has_way(waytab tab, int x, int y);
+
+//renvoie le chemin de la case x, y du tableau
+//tab : le tableau de chemin
+//x : la coordonnée x de la case
+//y : la coordonnée y de la case
+//gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
+way *get_way(waytab tab, int x, int y);
+
+//met un chemin dans la case x, y du tableau
+//tab : le tableau de chemin
+//x : la coordonnée x de la case
+//y : la coordonnée y de la case
+//way : le chemin à mettre
+//gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
+void set_way(waytab tab, int x, int y, const way *way);
+
+
+// --- WAY ---
+
+//écrit le chemin de la case x, y du tableau à la case (0, 0)
+//way : le chemin
+void print_way(const way *way);
+
+//renvoie la longueur du chemin
+//way : le chemin
+//renvoie -1 si le chemin n'existe pas
+int length_way(const way *way);
+
+//change le père du chemin
+//son : le chemin
+//dad : le nouveau père
+//mettre dad à NULL pour supprimer le chemin
+void new_dad(way *son, way *dad);
 #endif //CASE_H

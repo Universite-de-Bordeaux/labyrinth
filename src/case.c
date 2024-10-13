@@ -1,6 +1,9 @@
 #include "case.h"
 #include <SDL2/SDL.h>
 
+
+// --- MAZE FUNCTIONS ---
+
 maze_t create_basic_maze(const int width, const int height) {
     if(width < 1 || height < 1)
     {
@@ -267,12 +270,15 @@ bool has_wall_right(const maze_t maze, const int x, const int y)
     return maze.cells[y][x].wall_right;
 }
 
+
+// --- BOOLTAB FUNCTIONS ---
+
 bool_tab create_booltab(const int width, const int height)
 {
     if(width < 1 || height < 1)
     {
         fprintf(stderr, "Erreur dans la fonction create_booltab : \nles dimensions du tableau de booléens doivent être strictements positives, width : %d, height : %d\n", width, height);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     bool** booltab = malloc(sizeof(bool *) * height);
     for(int i = 0; i < height; i++)
@@ -325,6 +331,98 @@ bool get_bool(const bool_tab tab, const int x, const int y)
     }
     return tab.tab[y][x];
 }
+
+
+// --- WAYTAB FUNCTIONS ---
+
+waytab create_waytab(const int width,const int height)
+{
+    if(width < 1 || height < 1)
+    {
+        fprintf(stderr, "Erreur dans la fonction create_waytab : \nles dimensions du tableau de chemin doivent être strictements positives, width : %d, height : %d\n", width, height);
+        exit(EXIT_FAILURE);
+    }
+    way** way_tab = malloc(sizeof(way*) * height);
+    for(int i = 0; i < height; i++)
+    {
+        way_tab[i] = malloc(sizeof(way) * width);
+        for(int j = 0; j < width; j++)
+        {
+            way_tab[i][j].dad = NULL;
+            way_tab[i][j].x = j;
+            way_tab[i][j].y = i;
+        }
+    }
+    const waytab tab = {width, height, way_tab};
+    return tab;
+}
+
+void free_waytab(const waytab tab)
+{
+    for(int i = 0; i < tab.height; i++)
+    {
+        free(tab.tab[i]);
+    }
+    free(tab.tab);
+}
+
+bool has_way(const waytab tab, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction has_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        exit(EXIT_FAILURE);
+    }
+    return tab.tab[y][x].dad != NULL;
+}
+
+way *get_way(const waytab tab, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction get_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        exit(EXIT_FAILURE);
+    }
+    return &tab.tab[y][x];
+}
+
+void set_way(const waytab tab, const int x, const int y, const way *way)
+{
+    if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction set_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        return;
+    }
+    tab.tab[y][x] = *way;
+}
+
+// --- WAY FUNCTIONS ---
+
+void print_way(const way *way)
+{
+    if(way->dad != NULL)
+    {
+        print_way(way->dad);
+    }
+    printf("(%d, %d) ", way->x, way->y);
+}
+
+int length_way(const way *way)
+{
+    if(way->dad != NULL)
+    {
+        return 1 + length_way(way->dad);
+    }
+    return 1;
+}
+
+void new_dad(way *son, way *dad)
+{
+    son->dad = dad;
+}
+
+
+// --- MAZE PRINTING ---
 
 int print_maze(maze_t const maze)
 {
