@@ -32,4 +32,19 @@ int evaluate_mazemaker(func_ptr f);
         } \
     } while(0)
 #define EVALUATE_MAZEMAKER(générateur) EVALUATE_MAZEMAKERN(générateur, "Le générateur de labyrinthe")
+
+#define EVALUATE_TIME(générateur, name, x, y) \
+    do { \
+        clock_t start = clock(); \
+        for(int i = 1; i < x; i++) \
+        { \
+            for(int j = 1; j < y; j++) \
+            { \
+                const maze_t maze = générateur(i, j); \
+                free_maze(maze); \
+            } \
+        } \
+        clock_t end = clock(); \
+        printf("Temps de génération par %s : \t%f secondes\n", name, (double)(end - start) / CLOCKS_PER_SEC); \
+    } while(0)
 #endif //TEST_H
