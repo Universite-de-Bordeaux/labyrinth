@@ -424,7 +424,7 @@ void print_way(const way *w)
     {
         print_way(w->dad);
     }
-    printf("(%d, %d) ", w->x, w->y);
+    printf("(%d, %d)\n", w->x, w->y);
 }
 
 unsigned int length_way(const way *w)
