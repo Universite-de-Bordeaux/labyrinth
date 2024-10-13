@@ -1,4 +1,4 @@
-#include "case.h"
+#include "struct.h"
 #include <SDL2/SDL.h>
 
 
@@ -421,7 +421,7 @@ int length_way(const way *w)
 {
     if(is_empty(w))
     {
-        return -1;
+        return 4294967295;
     }
     if(w->dad == NULL)
     {
