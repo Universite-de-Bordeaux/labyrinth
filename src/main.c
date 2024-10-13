@@ -2,6 +2,7 @@
 #include "solveur.h"
 #include "test.h"
 #include <time.h>
+#include <stdio.h>
 
 int main() {
     //EVALUATE_MAZEMAKERN(perfect_one_way_maze, "perfect_one_way_maze");        //théoriquement parfait
@@ -15,7 +16,7 @@ int main() {
 
     //technique de la flemme
     #define EVALUATE_TIME(générateur, name, x, y) do { \
-        time_t t = time(NULL); \
+        clock_t start = clock(); \
         for(int i = 1; i < x; i++) \
         { \
             for(int j = 1; j < y; j++) \
@@ -24,7 +25,8 @@ int main() {
                 free_maze(maze); \
             } \
         } \
-        printf("Temps de génération par %s : \t%li secondes\n", name, time(NULL) - t); \
+        clock_t end = clock(); \
+        printf("Temps de génération par %s : \t%f secondes\n", name, (double)(end - start) / CLOCKS_PER_SEC); \
     } while(0)
     EVALUATE_TIME(create_basic_maze, "create_basic_maze", 100, 100);
     EVALUATE_TIME(create_wall_maze, "create_wall_maze", 100, 100);
