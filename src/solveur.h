@@ -1,6 +1,6 @@
 #ifndef SOLVEUR_H
 #define SOLVEUR_H
-#include "case.h"
+#include "struct.h"
 
 // --- mini-jeux ---
 
@@ -66,7 +66,7 @@ bool is_perfect_right_hand(maze_t maze);
 //renvoie le chemin le plus court pour sortir du labyrinthe
 //maze : le labyrinthe
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
-way shortest_exit_right_hand(maze_t maze); //TODO : en cours
+way *shortest_exit_right_hand(maze_t maze); //TODO : en cours
 
 // --- visualisation ---
 

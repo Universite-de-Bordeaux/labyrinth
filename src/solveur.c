@@ -750,6 +750,56 @@ bool is_perfect_right_hand(const maze_t maze)
     return true;
 }
 
+//fonction auxiliaire de shortest_exit_right_hand
+//renvoie le chemin le plus court pour atteindre la sortie
+//maze : le labyrinthe
+//visited : tableau de booléens pour savoir si on est déjà passé par une case
+//x : abscisse de la case actuelle
+//y : ordonnée de la case actuelle
+//wayt : tableau de chemins
+void shortest_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const waytab wayt)
+{
+    if(x == maze.width - 1 && y == maze.height - 1)
+    {
+        return;
+    }
+    set_true(visited, x, y);
+    const int l = length_waytab(wayt, x, y);
+    if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1) && length_waytab(wayt, x, y - 1) > l + 1)
+    {
+        connected_way(wayt, x, y, x, y - 1);
+        shortest_exit_right_hand_aux(maze, visited, x, y - 1, wayt);
+    }
+    if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1) && length_waytab(wayt, x, y + 1) > l + 1)
+    {
+        connected_way(wayt, x, y, x, y + 1);
+        shortest_exit_right_hand_aux(maze, visited, x, y + 1, wayt);
+    }
+    if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y) && length_waytab(wayt, x - 1, y) > l + 1)
+    {
+        connected_way(wayt, x, y, x - 1, y);
+        shortest_exit_right_hand_aux(maze, visited, x - 1, y, wayt);
+    }
+    if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y) && length_waytab(wayt, x + 1, y) > l + 1)
+    {
+        connected_way(wayt, x, y, x + 1, y);
+        shortest_exit_right_hand_aux(maze, visited, x + 1, y, wayt);
+    }
+    set_false(visited, x, y);
+}
+
+
+way *shortest_exit_right_hand(const maze_t maze)
+{
+    const waytab wayt = create_waytab(maze.width, maze.height);
+    const bool_tab visited = create_booltab(maze.width, maze.height);
+    shortest_exit_right_hand_aux(maze, visited, 0, 0, wayt);
+    free_booltab(visited);
+    way *w = copy_way(get_way(wayt, maze.width - 1, maze.height - 1));
+    free_waytab(wayt);
+    return w;
+}
+
 // --- Visualisation des algorithmes de résolution de labyrinthes ---
 
 
