@@ -5,12 +5,6 @@
 #include <SDL2/SDL.h>
 #define NB_GENERATEURS 6
 
-//une mini-jeu où il faut trouver la sortie
-//version de base
-//le chemin apparaît au fur et à mesure que le joueur avance
-//maze : le labyrinthe
-//appuier sur ECHAP ou la croix fermera proprement le jeu
-//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int minigame1(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -161,9 +155,6 @@ int minigame1(const maze_t maze)
     return 0;
 }
 
-//lance minigame1 avec un générateur de labyrinthe aléatoire
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 int rminigame1(const int width, const int height)
 {
     srand(time(NULL));
@@ -214,12 +205,6 @@ int rminigame1(const int width, const int height)
     return -1;
 }
 
-//une mini-jeu où il faut trouver la sortie
-//le chemin n'apparaît que sur la case où le joueur est
-//version mi-blind
-//maze : le labyrinthe
-//appuier sur ECHAP ou la croix fermera proprement le jeu
-//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int minigame2(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -381,11 +366,6 @@ int minigame2(const maze_t maze)
     return 0;
 }
 
-//lance minigame2 avec un générateur de labyrinthe aléatoire
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//appuier sur ECHAP ou la croix fermera proprement le jeu
-//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
 int rminigame2(const int width, const int height)
 {
     srand(time(NULL));
@@ -436,10 +416,6 @@ int rminigame2(const int width, const int height)
     return -1;
 }
 
-//une mini-jeu où il faut trouver la sortie
-//le chemin n'apparaît pas, même sur la case où le joueur est
-//version full-blind
-//maze : le labyrinthe
 int minigame3(const maze_t maze)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -557,9 +533,6 @@ int minigame3(const maze_t maze)
     return 0;
 }
 
-//lance minigame3 avec un générateur de labyrinthe aléatoire
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 int rminigame3(const int width, const int height)
 {
     srand(time(NULL));
@@ -610,82 +583,10 @@ int rminigame3(const int width, const int height)
     return -1;
 }
 
-
-//une mini-jeu où il faut trouver la sortie
-//le chemin apparaît sur la case où le joueur est et sur les cases adjacentes
-//version avec un téléporteur
-//maze : le labyrinthe
-//appuier sur ECHAP ou la croix fermera proprement le jeu
-//appuier sur ENTER abandonnera le jeu et affichera le labyrinthe en entier
-int minigame4(const maze_t maze)
-{
-    fprintf(stderr, "La fonction minigame4 n'a pas été implémentée\n");
-    const maze_t t = perfect_one_way_maze(2, 1);
-    minigame1(t);
-    free_maze(t);
-    return -1;
-}
-
-//lance minigame4 avec un générateur de labyrinthe aléatoire
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-int rminigame4(const int width, const int height)
-{
-    srand(time(NULL));
-    const int r = rand() % NB_GENERATEURS;
-    if(r == 0)
-    {
-        const maze_t maze = line_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    else if(r == 1)
-    {
-        const maze_t maze = column_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    else if(r == 2)
-    {
-        const maze_t maze = imperfect_one_way_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    else if(r == 3)
-    {
-        const maze_t maze = perfect_one_way_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    else if(r == 4)
-    {
-        const maze_t maze = hunt_kill_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    else if(r == 5)
-    {
-        const maze_t maze = by_path_maze(width, height);
-        const int s = minigame4(maze);
-        free_maze(maze);
-        return s;
-    }
-    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
-    return -1;
-}
-
-//lance un mini-jeu avec un générateur de labyrinthe et une difficulté aléatoires
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 int rminigame(const int width, const int height)
 {
     srand(time(NULL));
-    const int r = rand() % 4;
+    const int r = rand() % 3;
     if(r == 0)
     {
         return rminigame1(width, height);
@@ -698,20 +599,14 @@ int rminigame(const int width, const int height)
     {
         return rminigame3(width, height);
     }
-    else if(r == 3)
-    {
-        return rminigame4(width, height);
-    }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
 }
 
-//lance un mini-jeu avec un labyrinthe donné et une difficulté aléatoire
-//maze : le labyrinthe
 int r_minigame(const maze_t maze)
 {
     srand(time(NULL));
-    const int r = rand() % 4;
+    const int r = rand() % 3;
     if(r == 0)
     {
         return minigame1(maze);
@@ -723,10 +618,6 @@ int r_minigame(const maze_t maze)
     else if (r == 2)
     {
         return minigame3(maze);
-    }
-    else if (r == 3)
-    {
-        return minigame4(maze);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
@@ -780,8 +671,6 @@ bool has_exit_cascade_aux(const maze_t maze, const bool_tab visited, const int x
     return false;
 }
 
-//renvoie true si le labyrinthe est solvable, false sinon
-//maze : le labyrinthe
 bool has_exit_cascade(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height);
@@ -832,8 +721,6 @@ bool is_perfect_cascade_aux(const maze_t maze, const bool_tab visited, const int
     return true;
 }
 
-//renvoie true si le labyrinthe est parfait, false sinon
-//maze : le labyrinthe
 bool is_perfect_cascade(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height);
@@ -1067,14 +954,9 @@ int true_show_has_exit_cascade(const maze_t maze, const int delay)
     return 1;
 }
 
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
 int show_has_exit_cascade(const maze_t maze)
 {
-    if(true_show_has_exit_cascade(maze, 4) == -1)
+    if(true_show_has_exit_cascade(maze, 7) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1082,12 +964,6 @@ int show_has_exit_cascade(const maze_t maze)
     return 1;
 }
 
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-//version rapide, risque de suppression de la visualisation active
-//utilisation fortement déconseillée
 int show_fast_has_exit_cascade(const maze_t maze)
 {
     if(true_show_has_exit_cascade(maze, 1) == -1)
@@ -1306,11 +1182,6 @@ int true_show_is_perfect_cascade(const maze_t maze, const int delay)
     return 1;
 }
 
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
 int show_is_perfect_cascade(const maze_t maze)
 {
     if(true_show_is_perfect_cascade(maze, 7) == -1)
@@ -1321,12 +1192,6 @@ int show_is_perfect_cascade(const maze_t maze)
     return 1;
 }
 
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-//version rapide, risque de suppression de la visualisation active
-//utilisation fortement déconseillée
 int show_fast_is_perfect_cascade(const maze_t maze)
 {
     if(true_show_is_perfect_cascade(maze, 1) == -1)
