@@ -435,7 +435,7 @@ void new_dad(way *son, way *dad)
     son->dad = dad;
 }
 
-way *copy_way(way *w)
+way *copy_way(const way *w)
 {
     way *copy = malloc(sizeof(way));
     if(w->dad != NULL)
