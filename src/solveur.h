@@ -66,7 +66,7 @@ bool is_perfect_right_hand(maze_t maze);
 //renvoie le chemin le plus court pour sortir du labyrinthe
 //maze : le labyrinthe
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
-way *shortest_exit_right_hand(maze_t maze); //TODO : en cours
+way *shortest_exit_right_hand(const maze_t maze);
 
 // --- visualisation ---
 
@@ -103,7 +103,7 @@ int show_fast_is_perfect_right_hand(maze_t maze);
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-int show_shortest_exit_right_hand(maze_t maze); //TODO
+int show_shortest_exit_right_hand(maze_t maze); //TODO : en cours
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
@@ -111,7 +111,7 @@ int show_shortest_exit_right_hand(maze_t maze); //TODO
 //maze : le labyrinthe
 //version rapide, risque de suppression de la visualisation active
 //utilisation fortement déconseillée
-int show_fast_shortest_exit_right_hand(maze_t maze); //TODO
+int show_fast_shortest_exit_right_hand(maze_t maze); //TODO : en cours
 
 //fonction de visualisation
 //affiche le chemin dans le labyrinthe
