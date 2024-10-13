@@ -386,32 +386,32 @@ way *get_way(const waytab tab, const int x, const int y)
     return &tab.tab[y][x];
 }
 
-void set_way(const waytab tab, const int x, const int y, const way *way)
+void set_way(const waytab tab, const int x, const int y, const way *w)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
         fprintf(stderr, "Erreur dans la fonction set_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
-    tab.tab[y][x] = *way;
+    tab.tab[y][x] = *w;
 }
 
 // --- WAY FUNCTIONS ---
 
-void print_way(const way *way)
+void print_way(const way *w)
 {
-    if(way->dad != NULL)
+    if(w->dad != NULL)
     {
-        print_way(way->dad);
+        print_way(w->dad);
     }
-    printf("(%d, %d) ", way->x, way->y);
+    printf("(%d, %d) ", w->x, w->y);
 }
 
-int length_way(const way *way)
+int length_way(const way *w)
 {
-    if(way->dad != NULL)
+    if(w->dad != NULL)
     {
-        return 1 + length_way(way->dad);
+        return 1 + length_way(w->dad);
     }
     return 1;
 }
@@ -421,6 +421,30 @@ void new_dad(way *son, way *dad)
     son->dad = dad;
 }
 
+way *copy_way(way *w)
+{
+    way *copy = malloc(sizeof(way));
+    if(w->dad != NULL)
+    {
+        copy->dad = copy_way(w->dad);
+    }
+    else
+    {
+        copy->dad = NULL;
+    }
+    copy->x = w->x;
+    copy->y = w->y;
+    return copy;
+}
+
+void free_way(way *w)
+{
+    if(w->dad != NULL)
+    {
+        free_way(w->dad);
+    }
+    free(w);
+}
 
 // --- MAZE PRINTING ---
 

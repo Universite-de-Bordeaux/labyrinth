@@ -256,25 +256,35 @@ way *get_way(waytab tab, int x, int y);
 //tab : le tableau de chemin
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
-//way : le chemin à mettre
+//w : le chemin à mettre
 //gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
-void set_way(waytab tab, int x, int y, const way *way);
+void set_way(waytab tab, int x, int y, const way *w);
 
 
 // --- WAY ---
 
 //écrit le chemin de la case x, y du tableau à la case (0, 0)
-//way : le chemin
-void print_way(const way *way);
+//w : le chemin
+void print_way(const way *w);
 
 //renvoie la longueur du chemin
-//way : le chemin
+//w : le chemin
 //renvoie -1 si le chemin n'existe pas
-int length_way(const way *way);
+int length_way(const way *w);
 
 //change le père du chemin
 //son : le chemin
 //dad : le nouveau père
 //mettre dad à NULL pour supprimer le chemin
 void new_dad(way *son, way *dad);
+
+//crée une copie du chemin
+//w : le chemin à copier
+//renvoie la copie du chemin
+way *copy_way(const way *w);
+
+//désalloue la mémoire allouée pour le chemin
+//w : le chemin à désallouer
+//NE PAS UTILISER DANS UN WAYTAB !!!
+void free_way(way *w);
 #endif //CASE_H
