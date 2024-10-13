@@ -254,13 +254,15 @@ bool has_way(waytab tab, int x, int y);
 //gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 way *get_way(waytab tab, int x, int y);
 
-//met un chemin dans la case x, y du tableau
+//impose un chemin à la case x, y du tableau
 //tab : le tableau de chemin
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
-//w : le chemin à mettre
+//dad_x : la coordonnée x du nouveau père
+//dad_y : la coordonnée y du nouveau père
 //gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
-void set_way(waytab tab, int x, int y, const way *w);
+//ne vérifie pas si le chemin est valide
+void connected_way(waytab tab, int x, int y, int dad_x, int dad_y);
 
 //renvoie la longueur du chemin de la case x, y du tableau
 //tab : le tableau de chemin

@@ -386,14 +386,19 @@ way *get_way(const waytab tab, const int x, const int y)
     return &tab.tab[y][x];
 }
 
-void set_way(const waytab tab, const int x, const int y, const way *w)
+void connected_way(const waytab tab, const int x, const int y, const int dad_x, const int dad_y)
 {
     if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
     {
-        fprintf(stderr, "Erreur dans la fonction set_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        fprintf(stderr, "Erreur dans la fonction connected_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
-    tab.tab[y][x] = *w;
+    if(dad_x < 0 || dad_y < 0 || dad_x >= tab.width || dad_y >= tab.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction connected_way : \nles coordonnées du père sont en dehors des limites du tableau, cible : %d, %d\n", dad_x, dad_y);
+        return;
+    }
+    new_dad(tab.tab[y] + x, tab.tab[dad_y] + dad_x);
 }
 
 int length_waytab(const waytab tab, const int x, const int y)
@@ -410,6 +415,11 @@ int length_waytab(const waytab tab, const int x, const int y)
 
 void print_way(const way *w)
 {
+    if(is_empty(w))
+    {
+        printf("Chemin vide\n");
+        return;
+    }
     if(w->dad != NULL)
     {
         print_way(w->dad);
@@ -432,6 +442,11 @@ int length_way(const way *w)
 
 void new_dad(way *son, way *dad)
 {
+    if(son -> x == 0 && son -> y == 0)
+    {
+        fprintf(stderr, "Erreur dans la fonction new_dad : \nla case de départ ne peut pas avoir de père\n");
+        return;
+    }
     son->dad = dad;
 }
 
