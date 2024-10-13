@@ -112,4 +112,11 @@ int show_shortest_exit_right_hand(maze_t maze); //TODO
 //version rapide, risque de suppression de la visualisation active
 //utilisation fortement déconseillée
 int show_fast_shortest_exit_right_hand(maze_t maze); //TODO
+
+//fonction de visualisation
+//affiche le chemin dans le labyrinthe
+//maze : le labyrinthe
+//w : le chemin
+//ne gère pas les cas d'erreur, ni les murs
+int show_the_way(const maze_t maze, const way *w);
 #endif //SOLVEUR_H

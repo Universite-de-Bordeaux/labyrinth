@@ -1260,3 +1260,111 @@ int show_fast_is_perfect_right_hand(const maze_t maze)
     }
     return 1;
 }
+
+//fonction auxiliaire de show_the_way
+//colorie la case du chemin
+//renderer : le renderer
+//maze : le labyrinthe
+//w : le chemin
+//delay : le delay de refresh (2 * delay + 1 ms/case)
+void color_way(SDL_Renderer *renderer, const maze_t maze, const way *w, const int delay)
+{
+    const way *s = w;
+    if(s == NULL)
+    {
+        return;
+    }
+    color_way(renderer, maze, s->dad, delay);
+    color_case(renderer, maze, s->x, s->y, delay);
+}
+
+
+
+int show_the_way(const maze_t maze, const way *w)
+{
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", error);
+        SDL_Quit();
+        return -1;
+    }
+    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(fenetre == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de creation de la fenetre : %s\n", error);
+        SDL_DestroyWindow(fenetre);
+        SDL_Quit();
+        return -1;
+    }
+    SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
+    if(renderer == NULL)
+    {
+        renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_SOFTWARE);
+        if(renderer == NULL)
+        {
+            const char *error = SDL_GetError();
+            fprintf(stderr, "Erreur de creation du renderer : %s\n", error);
+            SDL_DestroyRenderer(renderer);
+            SDL_DestroyWindow(fenetre);
+            SDL_Quit();
+            return -1;
+        }
+    }
+    SDL_Delay(100); //pause de 1 secondes
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
+
+    for(int x = 0; x < maze.width; x++)
+    {
+        for(int y = 0; y < maze.height; y++)
+        {
+            if(maze.cells[y][x].wall_up)
+            {
+                SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20); //on dessine un mur en haut
+            }
+            if(maze.cells[y][x].wall_down)
+            {
+                SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19); //on dessine un mur en bas
+            }
+            if(maze.cells[y][x].wall_left)
+            {
+                SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19); //on dessine un mur à gauche
+            }
+            if(maze.cells[y][x].wall_right)
+            {
+                SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19); //on dessine un mur à droite
+            }
+        }
+    }
+
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    SDL_Delay(1); //pause de 0.001 secondes
+    SDL_SetRenderDrawColor(renderer, 0, 50, 255, 255); //on définit la couleur en bleu
+    SDL_RenderDrawLine(renderer, 0, 0, 0, 20); //l'entrée en vert
+    SDL_RenderDrawLine(renderer, 0, 0, 20, 0); //l'entrée en vert
+
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    SDL_Delay(1); //pause de 0.001 secondes
+    SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
+    SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
+    SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
+
+    SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
+    const way* s = w;
+    color_way(renderer, maze, s, 7);
+
+    SDL_RenderPresent(renderer); //on met à jour l'affichage
+    SDL_Delay(100); //pause de 0.1 secondes
+    SDL_Event event = {0}; //on crée un event
+    while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
+        (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
+            event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)))) //tant que l'utilisateur n'a pas fermé la fenetre
+    {
+        SDL_WaitEvent(&event); //on attend un event
+    }
+    SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
+    SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
+    SDL_Quit(); //desalocation de la memoire
+    return 1;
+}
