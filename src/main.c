@@ -23,7 +23,7 @@ int main() {
     //EVALUATE_TIME(perfect_one_way_maze, "perfect_one_way_maze", 100, 100);    //convenable
     //EVALUATE_TIME(hunt_kill_maze, "hunt_kill_maze", 100, 100);                //WTF c'est SUPER LENT !!!
     //EVALUATE_TIME(by_path_maze, "by_path_maze", 100, 100);                    //un peu lent
-    const maze_t maze = perfect_one_way_maze(20, 20);
+    const maze_t maze = by_path_maze(20, 20);
     way *w = shortest_exit_right_hand(maze);
     print_way(w);
     printf("Le meilleur chemin entre le départ et l'arrivée est de longueur %u\n", length_way(w));
