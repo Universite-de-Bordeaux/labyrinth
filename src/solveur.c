@@ -767,22 +767,22 @@ void shortest_exit_right_hand_aux(const maze_t maze, const bool_tab visited, con
     const int l = length_waytab(wayt, x, y);
     if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1) && length_waytab(wayt, x, y - 1) > l + 1)
     {
-        connected_way(wayt, x, y, x, y - 1);
+        connected_way(wayt, x, y - 1, x, y);
         shortest_exit_right_hand_aux(maze, visited, x, y - 1, wayt);
     }
     if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1) && length_waytab(wayt, x, y + 1) > l + 1)
     {
-        connected_way(wayt, x, y, x, y + 1);
+        connected_way(wayt, x, y + 1, x, y);
         shortest_exit_right_hand_aux(maze, visited, x, y + 1, wayt);
     }
     if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y) && length_waytab(wayt, x - 1, y) > l + 1)
     {
-        connected_way(wayt, x, y, x - 1, y);
+        connected_way(wayt, x - 1, y, x, y);
         shortest_exit_right_hand_aux(maze, visited, x - 1, y, wayt);
     }
     if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y) && length_waytab(wayt, x + 1, y) > l + 1)
     {
-        connected_way(wayt, x, y, x + 1, y);
+        connected_way(wayt, x + 1, y, x, y);
         shortest_exit_right_hand_aux(maze, visited, x + 1, y, wayt);
     }
     set_false(visited, x, y);
