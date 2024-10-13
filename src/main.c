@@ -1,5 +1,4 @@
 #include "mazemaker.h"
-#include "solveur.h"
 #include "test.h"
 #include <time.h>
 #include <stdio.h>

@@ -1,6 +1,6 @@
 #ifndef MAZEMAKER_H
 #define MAZEMAKER_H
-#include "case.h"
+#include "struct.h"
 
 //un labyrinth parfait est un labyrinthe où il existe un unique chemin entre chaque paire de cellules
 //un labyrinthe est parfait si et seulement si il existe un chemin entre chaque paire de cellules et qu'il n'existe pas de boucle (principe des solveurs)

@@ -5,7 +5,7 @@ SDLFLAGS = `sdl2-config --cflags --libs`
 
 all : src/main
 
-src/main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o src/test.o
+src/main : src/main.o src/case.o src/outside.o src/mazemaker.o src/solveur.o src/struct.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
 	@echo "Compilation done"
 
@@ -13,7 +13,7 @@ main.o : src/main.c
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 	@echo "main.o done"
 
-case.o : src/case.c src/case.h
+struct.o : src/struct.c src/struct.h
 	$(CC) $(CFLAGS) -c $< $(SDLFLAGS)
 	@echo "case.o done"
 
