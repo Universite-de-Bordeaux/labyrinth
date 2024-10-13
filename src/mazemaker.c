@@ -1,5 +1,4 @@
 #include "mazemaker.h"
-#include "case.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>

@@ -1,6 +1,6 @@
 #ifndef OUTSIDE_H
 #define OUTSIDE_H
-#include "case.h"
+#include "struct.h"
 
 // crée et renvoie un labyrinthe selon les configurations spécifiées dans le fichier
 // filename : le nom du fichier
