@@ -62,7 +62,9 @@ typedef struct bool_tab bool_tab;
 
 //Structure représentant un chemin depuis le début du labyrinthe
 //dad : cellule précédente
-//count : nombre de cellules parcourues
+//x, y : coordonnées de la cellule
+//malloc utilisés, penser à free_way pour libérer la mémoire
+//toujours privilégier les fonctions de waytab pour manipuler les chemins
 typedef struct way way;
 
 //Structure représentant un tableau de chemins
@@ -260,6 +262,13 @@ way *get_way(waytab tab, int x, int y);
 //gère les cas d'erreur et affiche un message d'erreur sans arrêter le programme
 void set_way(waytab tab, int x, int y, const way *w);
 
+//renvoie la longueur du chemin de la case x, y du tableau
+//tab : le tableau de chemin
+//x : la coordonnée x de la case
+//y : la coordonnée y de la case
+//renvoie -1 si le chemin n'existe pas
+int length_waytab(waytab tab, int x, int y);
+
 
 // --- WAY ---
 
@@ -287,4 +296,8 @@ way *copy_way(const way *w);
 //w : le chemin à désallouer
 //NE PAS UTILISER DANS UN WAYTAB !!!
 void free_way(way *w);
+
+//renvoie true si le chemin est vide (c'est à dire qu'il n'est pas relié à la case (0, 0)), false sinon
+//w : le chemin
+bool is_empty(const way *w);
 #endif //CASE_H

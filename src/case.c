@@ -373,7 +373,7 @@ bool has_way(const waytab tab, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_way : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    return tab.tab[y][x].dad != NULL;
+    return !is_empty(&tab.tab[y][x]);
 }
 
 way *get_way(const waytab tab, const int x, const int y)
@@ -396,6 +396,16 @@ void set_way(const waytab tab, const int x, const int y, const way *w)
     tab.tab[y][x] = *w;
 }
 
+int length_waytab(const waytab tab, const int x, const int y)
+{
+    if(y < 0 || x < 0 || x >= tab.width || y >= tab.height)
+    {
+        fprintf(stderr, "Erreur dans la fonction length_waytab : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
+        exit(EXIT_FAILURE);
+    }
+    return length_way(&tab.tab[y][x]);
+}
+
 // --- WAY FUNCTIONS ---
 
 void print_way(const way *w)
@@ -409,11 +419,15 @@ void print_way(const way *w)
 
 int length_way(const way *w)
 {
-    if(w->dad != NULL)
+    if(is_empty(w))
     {
-        return 1 + length_way(w->dad);
+        return -1;
     }
-    return 1;
+    if(w->dad == NULL)
+    {
+        return 0;
+    }
+    return 1 + length_way(w->dad);
 }
 
 void new_dad(way *son, way *dad)
@@ -444,6 +458,15 @@ void free_way(way *w)
         free_way(w->dad);
     }
     free(w);
+}
+
+bool is_empty(const way *w)
+{
+    if(w->dad == NULL)
+    {
+        return !(w -> x == 0 && w -> y == 0); //un chemin vide est un chemin qui ne pointe pas vers la case (0, 0)
+    }
+    return is_empty(w->dad);
 }
 
 // --- MAZE PRINTING ---
