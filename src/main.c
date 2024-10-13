@@ -14,27 +14,13 @@ int main() {
     //EVALUATE_MAZEMAKERN(create_basic_maze, "create_basic_maze");              //théoriquement solvable
     //EVALUATE_MAZEMAKERN(create_wall_maze, "create_wall_maze");                //théoriquement insolvable
 
-    //technique de la flemme
-    #define EVALUATE_TIME(générateur, name, x, y) do { \
-        clock_t start = clock(); \
-        for(int i = 1; i < x; i++) \
-        { \
-            for(int j = 1; j < y; j++) \
-            { \
-                const maze_t maze = générateur(i, j); \
-                free_maze(maze); \
-            } \
-        } \
-        clock_t end = clock(); \
-        printf("Temps de génération par %s : \t%f secondes\n", name, (double)(end - start) / CLOCKS_PER_SEC); \
-    } while(0)
-    EVALUATE_TIME(create_basic_maze, "create_basic_maze", 100, 100);
-    EVALUATE_TIME(create_wall_maze, "create_wall_maze", 100, 100);
-    EVALUATE_TIME(line_maze, "line_maze", 100, 100);
-    EVALUATE_TIME(column_maze, "column_maze", 100, 100);
-    EVALUATE_TIME(imperfect_one_way_maze, "imperfect_one_way_maze", 100, 100);
-    EVALUATE_TIME(perfect_one_way_maze, "perfect_one_way_maze", 100, 100);
-    EVALUATE_TIME(hunt_kill_maze, "hunt_kill_maze", 100, 100);
-    EVALUATE_TIME(by_path_maze, "by_path_maze", 100, 100);
+    EVALUATE_TIME(create_basic_maze, "create_basic_maze", 100, 100);            //très rapide
+    EVALUATE_TIME(create_wall_maze, "create_wall_maze", 100, 100);              //très rapide
+    EVALUATE_TIME(line_maze, "line_maze", 100, 100);                            //très rapide
+    EVALUATE_TIME(column_maze, "column_maze", 100, 100);                        //très rapide
+    EVALUATE_TIME(imperfect_one_way_maze, "imperfect_one_way_maze", 100, 100);  //plutot rapide
+    EVALUATE_TIME(perfect_one_way_maze, "perfect_one_way_maze", 100, 100);      //convenable
+    EVALUATE_TIME(hunt_kill_maze, "hunt_kill_maze", 100, 100);                  //WTF c'est SUPER LENT !!!
+    EVALUATE_TIME(by_path_maze, "by_path_maze", 100, 100);                      //un peu lent
     return 0;
 }
