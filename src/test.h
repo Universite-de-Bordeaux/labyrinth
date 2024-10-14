@@ -44,6 +44,6 @@ int evaluate_mazemaker(func_ptr f, int x, int y);
             } \
         } \
         clock_t end = clock(); \
-        printf("Temps de génération par %s : \t%f secondes\n", name, (double)(end - start) / CLOCKS_PER_SEC); \
+        printf("Temps de génération moyen par %s : \t%f secondes\n", name, (double)(end - start) / CLOCKS_PER_SEC /(x * y)); \
     } while(0)
 #endif //TEST_H
