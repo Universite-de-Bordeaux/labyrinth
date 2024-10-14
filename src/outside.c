@@ -102,3 +102,54 @@ void maze_to_file(const maze_t maze, const char *filename)
     fclose(fp); // fermeture du fichier
     return;
 }
+
+//fonction auxiliaire pour way_from_file
+void way_to_file_aux(const way *w, FILE *file)
+{
+    if(w -> x == 0 && w -> y == 0)
+    {
+        fprintf(file, "%d %d\n", w -> x, w -> y);
+        return;
+    }
+    way_to_file_aux(w -> dad, file);
+}
+
+void way_to_file(const way* w, const char *filename)
+{
+    if(w == NULL || is_empty(w))
+    {
+        fprintf(stderr, "Erreur: le chemin est NULL\n");
+        exit(1);
+    }
+    FILE *file = fopen(filename, "w");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Error: impossible d'ouvrir le fichier %s\n", filename);
+        exit(1);
+    }
+    way_to_file_aux(w, file);
+    fclose(file);
+}
+
+way* way_from_file(const char *filename)
+{
+    FILE *file = fopen(filename,"r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Error: impossible d'ouvrir le fichier %s\n", filename);
+        exit(1);
+    }
+    int x = 0, y = 0;
+    way *w = create_way();
+    way *current = w;
+    while(fscanf(file, "%d %d", &x, &y) != EOF)
+    {
+        current -> x = x;
+        current -> y = y;
+        current -> dad = create_way();
+        current = current -> dad;
+    }
+    fclose(file);
+    return w;
+}
+
