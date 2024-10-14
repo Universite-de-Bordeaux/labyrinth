@@ -8,15 +8,15 @@ typedef maze_t (*func_ptr)(int, int);
 //Fonction permettant d'évaluer un générateur de labyrinthe
 //f : pointeur de fonction de génération de labyrinthe
 //retourne 0 si le générateur est incorrect, 1 si le générateur semble créer des labyrinthes solvables, 2 si le générateur semble créer des labyrinthes parfaits
-int evaluate_mazemaker(func_ptr f);
+int evaluate_mazemaker(func_ptr f, int x, int y);
 
 //Macro permettant d'évaluer un générateur de labyrinthe
 //générateur : pointeur sur la fonction de génération de labyrinthe
 //name : nom de la fonction de génération de labyrinthe
 //la fonction peut prendre du temp à s'exécuter
-#define EVALUATE_MAZEMAKERN(générateur, name) \
+#define EVALUATE_MAZEMAKERN(générateur, name, x, y) \
     do { \
-        const int t = evaluate_mazemaker(f); \
+        const int t = evaluate_mazemaker(f, x, y); \
         if(t == 2) \
         { \
             printf("%s semble créer des labyrinthes parfaits\n", name); \
