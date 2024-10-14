@@ -87,23 +87,18 @@ maze_t maze_from_file(const char *filename) {
 
 void maze_to_file(maze_t maze, const char *filename)
 {
-<<<<<<< HEAD
-    FILE *fp = fopen (filename, "w");
-    fprintf(fp, "%d %d\n", maze.width, maze.height);
+    FILE *fp = fopen (filename, "w"); //ouvre le fichier de nom filename en mode écriture
+    fprintf(fp, "%d %d\n", maze.width, maze.height); // écrit les dimensions du labyrinthe
     for (int y=0; y<maze.height; y++){
         for (int x=0; x<maze.width; x++){
             if (x!=maze.width-1 && has_wall_right(maze, x, y)){
-                fprintf(fp, "%d %d V\n", x ,y);
+                fprintf(fp, "%d %d V\n", x ,y); // écrit x y et V si il y a un mur à droite
             }
             if (y!=maze.height-1 && has_wall_down(maze, x, y)){
-                fprintf(fp, "%d %d H\n", x ,y);
+                fprintf(fp, "%d %d H\n", x ,y); // écrit x y et H si il y a un mur en bas
             }
         }
     }
-    fclose(fp);
+    fclose(fp); // fermeture du fichier
     return;
-=======
-    //Anna je te laisse gérer ;)
-    //TODO
->>>>>>> 3bf251e47d2871c2908ccd90e87f29bc59de6aee
 }
