@@ -62,9 +62,9 @@ int main(const int argc, char *argv[]) {
     }
     if(!strcmp(argv[1], "-e") || !strcmp(argv[1], "--evaluate"))
     {
-        if(argv[2] == NULL || argv[3] == NULL)
+        if(argv[2] == NULL || argv[3] == NULL || argv[4] == NULL || argv[5] == NULL)
         {
-            printf("Usage : %s -e <generator> <type eval>\n", argv[0]);
+            printf("Usage : %s -e <generator> <type eval> <max_x> <max_y>\n", argv[0]);
             return 1;
         }
         func_ptr f;
@@ -101,25 +101,24 @@ int main(const int argc, char *argv[]) {
         }
         else
         {
-            printf("Usage : %s -e <generator> <type eval>\n", argv[0]);
+            printf("Usage : %s -e <generator> <type eval> <max_x> <max_y>\n", argv[0]);
             printf("<generator> : powm, iowm, hkm, bpm, lm, cm\n");
             return 1;
         }
         if(!strcmp(argv[3], "time"))
         {
-            EVALUATE_TIME(f, name, 100, 100);
+            EVALUATE_TIME(f, name, atoi(argv[4]), atoi(argv[5]));
+            return 0;
         }
-        else if(!strcmp(argv[3], "type"))
+        if(!strcmp(argv[3], "type"))
         {
-            EVALUATE_MAZEMAKER(f);
+            EVALUATE_MAZEMAKERN(f, name, atoi(argv[4]), atoi(argv[5]));
+            return 0;
         }
-        else
-        {
-            printf("Usage : %s -e <generator> <type eval>\n", argv[0]);
-            printf("<generator> : powm, iowm, hkm, bpm, lm, cm\n");
-            printf("<type eval> : time, type\n");
-            return 1;
-        }
+        printf("Usage : %s -e <generator> <type eval> <max_x> <max_y>\n", argv[0]);
+        printf("<generator> : powm, iowm, hkm, bpm, lm, cm\n");
+        printf("<type eval> : time, type\n");
+        return 1;
     }
     if(!strcmp(argv[1], "-s") || !strcmp(argv[1], "--show"))
     {
@@ -139,12 +138,10 @@ int main(const int argc, char *argv[]) {
         printf("<type eval> : time, type\n");
         printf("Usage : %s -g <generator> <width> <height> <namefile>\n", argv[0]);
         printf("Usage : %s -s <namefile>\n", argv[0]);
-        printf("Usage : %s -e <generator> <type eval>\n", argv[0]);
+        printf("Usage : %s -e <generator> <type eval> <max_x> <max_y>\n", argv[0]);
         printf("Usage : %s -h\n", argv[0]);
+        return 0;
     }
-    else
-    {
-        printf("Usage : %s arg1 arg2 ... \n", argv[0]);
-    }
+    printf("Usage : %s arg1 arg2 ... \n", argv[0]);
     return 0;
 }
