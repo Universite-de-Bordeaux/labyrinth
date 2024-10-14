@@ -73,7 +73,7 @@ maze_t maze_from_file(const char *filename) {
         }
         else //caractère invalide ou bug du programme
         {
-            fprintf(stderr, "Erreur: caractère invalide ou inconnu : '%c'. Attendu : 'v' ou 'h'\n", c);
+            fprintf(stderr, "Erreur: caractère invalide ou inconnu : '%c'. Attendu : 'V' ou 'H'\n", c);
             free_maze(maze);
             fclose(file);
             exit(1);
