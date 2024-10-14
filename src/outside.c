@@ -1,5 +1,5 @@
 #include "outside.h"
-#include "case.h"
+#include "struct.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,11 +63,11 @@ maze_t maze_from_file(const char *filename) {
             exit(1);
         }
         c = fgetc(file); //lire le caractère suivant
-        if(c == 'h') //mur horizontal
+        if(c == 'H') //mur horizontal
         {
             wall_down(maze, x, y);
         }
-        else if(c == 'v') //mur vertical
+        else if(c == 'V') //mur vertical
         {
             wall_right(maze, x, y);
         }
@@ -85,16 +85,16 @@ maze_t maze_from_file(const char *filename) {
     return maze;
 }
 
-void maze_to_file(maze_t maze, const char *filename)
+void maze_to_file(const maze_t maze, const char *filename)
 {
     FILE *fp = fopen (filename, "w"); //ouvre le fichier de nom filename en mode écriture
     fprintf(fp, "%d %d\n", maze.width, maze.height); // écrit les dimensions du labyrinthe
-    for (int y=0; y<maze.height; y++){
-        for (int x=0; x<maze.width; x++){
-            if (x!=maze.width-1 && has_wall_right(maze, x, y)){
+    for (int y = 0; y < maze.height; y++){
+        for (int x = 0; x < maze.width; x++){
+            if (x != maze.width - 1 && has_wall_right(maze, x, y)){
                 fprintf(fp, "%d %d V\n", x ,y); // écrit x y et V si il y a un mur à droite
             }
-            if (y!=maze.height-1 && has_wall_down(maze, x, y)){
+            if (y != maze.height - 1 && has_wall_down(maze, x, y)){
                 fprintf(fp, "%d %d H\n", x ,y); // écrit x y et H si il y a un mur en bas
             }
         }
