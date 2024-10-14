@@ -1,4 +1,5 @@
 #include "outside.h"
+#include "case.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -91,5 +92,18 @@ maze_t maze_from_file(const char *filename) {
 // filename : le nom du fichier où écrire le labyrinthe, sera écrasé s'il existe déjà
 void maze_to_file(maze_t maze, const char *filename)
 {
-    //Anna je te laisse gérer ;)
+    FILE *fp = fopen (filename, "w");
+    fprintf(fp, "%d %d\n", maze.width, maze.height);
+    for (int y=0; y<maze.height; y++){
+        for (int x=0; x<maze.width; x++){
+            if (x!=maze.width-1 && has_wall_right(maze, x, y)){
+                fprintf(fp, "%d %d V\n", x ,y);
+            }
+            if (y!=maze.height-1 && has_wall_down(maze, x, y)){
+                fprintf(fp, "%d %d H\n", x ,y);
+            }
+        }
+    }
+    fclose(fp);
+    return;
 }
