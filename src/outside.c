@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// crée et renvoie un labyrinthe selon les configurations spécifiées dans le fichier
-// filename : le nom du fichier
 maze_t maze_from_file(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (file == NULL)
@@ -87,11 +85,9 @@ maze_t maze_from_file(const char *filename) {
     return maze;
 }
 
-// écrit le labyrinthe dans un fichier texte
-// maze : le labyrinthe
-// filename : le nom du fichier où écrire le labyrinthe, sera écrasé s'il existe déjà
 void maze_to_file(maze_t maze, const char *filename)
 {
+<<<<<<< HEAD
     FILE *fp = fopen (filename, "w");
     fprintf(fp, "%d %d\n", maze.width, maze.height);
     for (int y=0; y<maze.height; y++){
@@ -106,4 +102,8 @@ void maze_to_file(maze_t maze, const char *filename)
     }
     fclose(fp);
     return;
+=======
+    //Anna je te laisse gérer ;)
+    //TODO
+>>>>>>> 3bf251e47d2871c2908ccd90e87f29bc59de6aee
 }

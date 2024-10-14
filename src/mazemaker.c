@@ -1,14 +1,11 @@
 #include "mazemaker.h"
-#include "case.h"
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#define NB_MAZE_GENERATOR 5
-#define NB_PERFECT_MAZE_GENERATOR 4
+#define NB_MAZE_GENERATOR 6
+#define NB_PERFECT_MAZE_GENERATOR 5
 #define NB_IMPERFECT_MAZE_GENERATOR 1
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont verticaux
 maze_t line_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -28,8 +25,6 @@ maze_t line_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont horizontaux
 maze_t column_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -49,10 +44,6 @@ maze_t column_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe imparfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//seuls le chemins de sortie possèdent des embranchements
 maze_t imperfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
@@ -117,16 +108,14 @@ maze_t imperfect_one_way_maze(const int width, const int height)
     return maze;
 }
 
-//Crée un labyrinthe parfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//seuls le chemins de sortie possèdent des embranchements
 maze_t perfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab visited = create_booltab(width, height);
     const time_t t = time(NULL);
     srand(t);
+
+    //création du chemin principal
     int x = 0;
     int y = 0;
     while(!(x == width - 1 && y == height - 1))
@@ -153,6 +142,8 @@ maze_t perfect_one_way_maze(const int width, const int height)
         }
     }
     set_true(visited, width - 1, height - 1);
+
+    //création des embranchements
     bool is_done = false;
     while(!is_done)
     {
@@ -163,26 +154,23 @@ maze_t perfect_one_way_maze(const int width, const int height)
             {
                 if(!get_bool(visited, i, j))
                 {
+                    x = i;
+                    y = j;
                     is_done = false;
-                    if(j < height - 1 && get_bool(visited, i, j + 1))
+                    while(!get_bool(visited, x, y))
                     {
-                        unwall_down(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(j > 0 && get_bool(visited, i, j - 1))
-                    {
-                        unwall_up(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(i < width - 1 && get_bool(visited, i + 1, j))
-                    {
-                        unwall_right(maze, i, j);
-                        set_true(visited, i, j);
-                    }
-                    else if(i > 0 && get_bool(visited, i - 1, j))
-                    {
-                        unwall_left(maze, i, j);
-                        set_true(visited, i, j);
+                        if(rand() % 2 == 0 && i > 0)
+                        {
+                            unwall_left(maze, x, y);
+                            set_true(visited, x, y);
+                            x--;
+                        }
+                        else if(j > 0)
+                        {
+                            unwall_up(maze, x, y);
+                            set_true(visited, x, y);
+                            y--;
+                        }
                     }
                 }
             }
@@ -194,7 +182,8 @@ maze_t perfect_one_way_maze(const int width, const int height)
 
 //FONCTION AUXILIAIRE (hunt_kill_maze)
 //fonction qui permet de trouver une cellule non visitée adjacente à une cellule visitée
-//modifie les coordonnées de la cellule non visitée et retourne true si une cellule a été trouvée, false sinon
+//modifie les coordonnées px et py pour les coordonnées de la cellule non visitée
+//retourne true si une cellule non visitée adjacente à une cellule visitée a été trouvée, false sinon
 bool finding_hunt(const int width, const int height, const bool_tab visited, int *px, int *py){
     for(int i = 0; i < height; i++)
     {
@@ -212,12 +201,12 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
                     *py = i;
                     return true;
                 }
-                if(j > 2 && get_bool(visited, j - 1, i)){
+                if(j > 1 && get_bool(visited, j - 1, i)){
                     *px = j;
                     *py = i;
                     return true;
                 }
-                if(i > 2 && get_bool(visited, j, i - 1)){
+                if(i > 1 && get_bool(visited, j, i - 1)){
                     *px = j;
                     *py = i;
                     return true;
@@ -228,8 +217,6 @@ bool finding_hunt(const int width, const int height, const bool_tab visited, int
     return false;
 }
 
-//d'après la méthode du hunt and kill
-//Crée un labyrinthe parfait de taille width x height
 maze_t hunt_kill_maze(const int width, const int height)
 {
     //INITIALISATION
@@ -307,7 +294,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         }
         else{
             char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-            //chercher une cellule non visitée adjacente à une cellule visitée
+            //chercher une cellule visitée adjacente à notre cellule non visitée
             c = '\0';
             size = 4;
             while(c == '\0')
@@ -340,10 +327,9 @@ maze_t hunt_kill_maze(const int width, const int height)
                     if(size == 0){
                         fprintf(stderr, "Erreur: direction hunt invalide\n");
                         printf("x : %d, y : %d\n", x, y);
-                        print_maze(maze, "maze");
                         free_booltab(visited);
                         free_maze(maze);
-                        exit(1);
+                        exit(EXIT_FAILURE);
                     }
                 }
             }
@@ -431,7 +417,7 @@ bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
 }
 //Fonction Auxilliaire de lab_by_path
 //fonction qui crée tout les chemins et ajoute les murs
-void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, bool_tab tab_visited){
+void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab tab_visited){
     int width = maze -> width, height = maze -> height;
     set_true(tab_visited, *x, *y);
 
@@ -508,14 +494,11 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, bool_tab tab_vis
         return;
 }
 
-//Crée un labyrinthe parfait de taille width x height dont toutes les cases sont accessibles
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-maze_t lab_by_path(int width, int height){
+maze_t by_path_maze(const int width, const int height){
     //const time_t t = time(NULL); //Création de la graine du random
     const time_t t = 50; // Création du graine fixe (pour les tests)
     srand(t);
-    bool_tab tab_visited = create_booltab(width, height);
+    const bool_tab tab_visited = create_booltab(width, height);
     maze_t maze = create_basic_maze(width, height);
 
     if (width==1 || height ==1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
@@ -555,10 +538,7 @@ maze_t lab_by_path(int width, int height){
    return maze;
 }
 
-//Crée un labyrinthe à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-maze_t rmaze(const int width, const int height)
+maze_t r_maze(const int width, const int height)
 {
     srand(time(NULL));
     const int choice = rand() % NB_MAZE_GENERATOR;
@@ -578,15 +558,16 @@ maze_t rmaze(const int width, const int height)
     {
         return perfect_one_way_maze(width, height);
     }
+    else if(choice == 4)
+    {
+        return by_path_maze(width, height);
+    }
     else
     {
         return hunt_kill_maze(width, height);
     }
 }
 
-//Crée un labyrinthe parfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 maze_t rperfect_maze(const int width, const int height)
 {
     const int choice = rand() % NB_PERFECT_MAZE_GENERATOR;
@@ -602,12 +583,13 @@ maze_t rperfect_maze(const int width, const int height)
     {
         return perfect_one_way_maze(width, height);
     }
+    else if(choice == 3)
+    {
+        return by_path_maze(width, height);
+    }
     return hunt_kill_maze(width, height);
 }
 
-//Crée un labyrinthe imparfait de taille width x height à l'aide d'une méthode existante chosie aléatoirement
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
 maze_t rimperfect_maze(const int width, const int height)
 {
     const int choice = rand() % NB_IMPERFECT_MAZE_GENERATOR;
