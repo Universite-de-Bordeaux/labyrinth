@@ -348,7 +348,7 @@ waytab create_waytab(const int width,const int height)
         way_tab[i] = malloc(sizeof(way) * width);
         for(int j = 0; j < width; j++)
         {
-            way_tab[i][j].dad = NULL;
+            way_tab[i][j] = *create_way();
             way_tab[i][j].x = j;
             way_tab[i][j].y = i;
         }
@@ -412,6 +412,15 @@ unsigned int length_waytab(const waytab tab, const int x, const int y)
 }
 
 // --- WAY FUNCTIONS ---
+
+way *create_way()
+{
+    way *w = malloc(sizeof(way));
+    w -> dad = NULL;
+    w -> x = -1;
+    w -> y = -1;
+    return w;
+}
 
 void print_way(const way *w)
 {

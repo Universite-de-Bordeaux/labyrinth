@@ -274,6 +274,10 @@ unsigned int length_waytab(waytab tab, int x, int y);
 
 // --- WAY ---
 
+//crée un chemin vide
+//renvoie le chemin
+way *create_way();
+
 //écrit le chemin de la case x, y du tableau à la case (0, 0)
 //w : le chemin
 void print_way(const way *w);
