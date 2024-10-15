@@ -6,6 +6,8 @@
 #include "outside.h"
 #include <string.h>
 
+#include "solveur.h"
+
 int main(const int argc, char *argv[]) {
     if(argv[1] == NULL)
     {
@@ -132,13 +134,60 @@ int main(const int argc, char *argv[]) {
         free_maze(maze);
         return 0;
     }
+    if(!strcmp(argv[1], "-sg") || !strcmp(argv[1], "--show_generation"))
+    {
+        if(argv[2] == NULL || argv[3] == NULL || argv[4] == NULL)
+        {
+            printf("Usage : %s -sg <generator> <width> <height>\n", argv[0]);
+            return 1;
+        }
+        maze_t maze;
+        if(!strcmp(argv[2], "powm"))
+        {
+            maze = perfect_one_way_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else if(!strcmp(argv[2], "iowm"))
+        {
+            maze = imperfect_one_way_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else if(!strcmp(argv[2], "hkm"))
+        {
+            maze = hunt_kill_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else if(!strcmp(argv[2], "bpm"))
+        {
+            maze = by_path_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else if(!strcmp(argv[2], "lm"))
+        {
+            maze = line_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else if(!strcmp(argv[2], "cm"))
+        {
+            maze = column_maze(atoi(argv[3]), atoi(argv[4]));
+        }
+        else
+        {
+            printf("Usage : %s -sg <generator> <width> <height>\n", argv[0]);
+            printf("<generator> : powm, iowm, hkm, bpm, lm, cm\n");
+            return 1;
+        }
+        print_maze(maze);
+        free_maze(maze);
+        return 0;
+    }
     if(!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
     {
         printf("<generator> : powm, iowm, hkm, bpm, lm, cm\n");
         printf("<type eval> : time, type\n");
         printf("Usage : %s -g <generator> <width> <height> <namefile>\n", argv[0]);
         printf("Usage : %s -s <namefile>\n", argv[0]);
+        printf("Usage : %s -sg <generator> <width> <height>\n", argv[0]);
         printf("Usage : %s -e <generator> <type eval> <max_x> <max_y>\n", argv[0]);
+        printf("Usage : %s -slv <filename>\n", argv[0]);
+        printf("Usage : %s -gslv <generator> <width> <height>\n", argv[0]);
+        printf("Usage : %s -slv <namefile>\n", argv[0]);
+        printf("Usage : %s -gslvs <generator> <width> <height>\n", argv[0]);
         printf("Usage : %s -h\n", argv[0]);
         return 0;
     }
