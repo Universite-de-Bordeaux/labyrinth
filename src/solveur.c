@@ -765,6 +765,10 @@ void shortest_exit_right_hand_aux(const maze_t maze, const int x, const int y, c
         return;
     }
     const int l = length_waytab(wayt, x, y);
+    if(l > length_waytab(wayt, maze.width - 1, maze.height - 1))
+    {
+        return;
+    }
     if(!has_wall_up(maze, x, y) && length_waytab(wayt, x, y - 1) > l + 1)
     {
         connected_way(wayt, x, y - 1, x, y);
@@ -1195,21 +1199,13 @@ int true_show_is_perfect_right_hand(const maze_t maze, const bool fast)
         bool b = false;
         for(int i =0; i < maze.height; i++)
         {
-            if (b)
-            {
-                break;
-            }
             for(int j = 0; j < maze.width; j++)
             {
-                if(b)
-                {
-                    break;
-                }
                 if(!get_bool(visited, j, i))
                 {
                     SDL_SetWindowTitle(fenetre, "maze imperfect");
                     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
-                    color_case(renderer, maze, j, i, fast);
+                    color_case(renderer, maze, j, i, false);
                     b = true;
                 }
             }
@@ -1225,8 +1221,8 @@ int true_show_is_perfect_right_hand(const maze_t maze, const bool fast)
     }
 
     //à la fin
+    SDL_Delay(1); //pause de 1 ms pour éviter certains anachronismes
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(100); //pause de 0.1 secondes
     SDL_Event event = {0}; //on crée un event
     while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
         (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
@@ -1266,11 +1262,11 @@ int show_fast_is_perfect_right_hand(const maze_t maze)
 //renderer : le renderer
 //maze : le labyrinthe
 //w : le chemin
-//delay : le delay de refresh (2 * delay + 1 ms/case)
-void color_way(SDL_Renderer *renderer, const maze_t maze, const way *w, const int delay)
+//fast : true si on veut aller vite, false pour avoir un affichage fluide
+void color_way(SDL_Renderer *renderer, const maze_t maze, const way *w, const bool fast)
 {
     SDL_Event event;
-    SDL_WaitEventTimeout(&event, delay); //attente d'un event
+    SDL_WaitEventTimeout(&event, 5); //attente d'un event
     if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
@@ -1289,8 +1285,8 @@ void color_way(SDL_Renderer *renderer, const maze_t maze, const way *w, const in
     {
         return;
     }
-    color_way(renderer, maze, s->dad, delay);
-    color_case(renderer, maze, s->x, s->y, delay);
+    color_way(renderer, maze, s->dad, fast);
+    color_case(renderer, maze, s->x, s->y, !fast);
 }
 
 
@@ -1367,7 +1363,7 @@ int show_the_way(const maze_t maze, const way *w)
 
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     const way* s = w;
-    color_way(renderer, maze, s, 7);
+    color_way(renderer, maze, s, false);
 
     SDL_RenderPresent(renderer); //on met à jour l'affichage
     SDL_Delay(100); //pause de 0.1 secondes
@@ -1393,11 +1389,11 @@ int show_the_way(const maze_t maze, const way *w)
 //x : abscisse de la case actuelle
 //y : ordonnée de la case actuelle
 //wayt : tableau de chemins
-//delay : le delay de refresh (2 * delay + 1 ms/case)
-bool show_shortest_exit_right_hand_aux(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const waytab wayt, const int delay)
+//fast : true si on veut aller vite, false pour avoir un affichage fluide
+bool show_shortest_exit_right_hand_aux(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const waytab wayt, const bool fast)
 {
     SDL_Event event;
-    SDL_WaitEventTimeout(&event, delay); //attente d'un event
+    SDL_WaitEventTimeout(&event, 5); //attente d'un event
     if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
@@ -1415,45 +1411,41 @@ bool show_shortest_exit_right_hand_aux(const maze_t maze, SDL_Renderer *renderer
     if(x == maze.width - 1 && y == maze.height - 1)//première condition d'arrêt : atteindre la sortie
     {
         SDL_SetRenderDrawColor(renderer, 10, 200, 10, 255); //on définit la couleur en vert
-        color_case(renderer, maze, x, y, delay);
+        color_case(renderer, maze, x, y, fast);
         return true;
     }
     const int l = length_waytab(wayt, x, y);
     if(!has_wall_up(maze, x, y) &&  length_waytab(wayt, x, y - 1) > l + 1) //si on peut aller en haut et que ça crée un chemin plus court que l'actuel
     {
         connected_way(wayt, x, y - 1, x, y); //on connecte les deux cases
-        color_case(renderer, maze, x, y, delay); //on colorie la case
-        color_case(renderer, maze, x, y - 1, delay); //on colorie la case
-        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y - 1, wayt, delay); //on continue la recherche
+        color_case(renderer, maze, x, y, !fast); //on colorie la case
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y - 1, wayt, fast); //on continue la recherche
     }
     if(!has_wall_down(maze, x, y) && length_waytab(wayt, x, y + 1) > l + 1)
     {
         connected_way(wayt, x, y + 1, x, y); //on connecte les deux cases
-        color_case(renderer, maze, x, y, delay);
-        color_case(renderer, maze, x, y + 1, delay);
-        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y + 1, wayt, delay) || s;
+        color_case(renderer, maze, x, y, !fast);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y + 1, wayt, fast) || s;
     }
     if(!has_wall_left(maze, x, y) && length_waytab(wayt, x - 1, y) > l + 1)
     {
         connected_way(wayt, x - 1, y, x, y);
-        color_case(renderer, maze, x, y, delay);
-        color_case(renderer, maze, x - 1, y, delay);
-        s = show_shortest_exit_right_hand_aux(maze, renderer, x - 1, y, wayt, delay) || s;
+        color_case(renderer, maze, x, y, !fast);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x - 1, y, wayt, fast) || s;
     }
     if(!has_wall_right(maze, x, y) && length_waytab(wayt, x + 1, y) > l + 1)
     {
         connected_way(wayt, x + 1, y, x, y);
-        color_case(renderer, maze, x, y, delay);
-        color_case(renderer, maze, x + 1, y, delay);
-        s = show_shortest_exit_right_hand_aux(maze, renderer, x + 1, y, wayt, delay) || s;
+        color_case(renderer, maze, x, y, !fast);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x + 1, y, wayt, fast) || s;
     }
     SDL_SetRenderDrawColor(renderer, 50, 0, 0, 255); //on définit la couleur en rouge
-    color_case(renderer, maze, x, y, delay);
+    color_case(renderer, maze, x, y, !fast);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     if(s) //si on a un chemin correcte, on l'affiche en vert, sinon en rouge
     {
-        SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
-        color_case(renderer, maze, x, y, delay);
+        SDL_SetRenderDrawColor(renderer, 10, 235, 200, 255); //on définit la couleur en cyan
+        color_case(renderer, maze, x, y, fast);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
         return true;
     }
@@ -1542,11 +1534,12 @@ int true_show_shortest_exit_right_hand(const maze_t maze, const bool fast)
     const waytab wayt = create_waytab(maze.width, maze.height);
     show_shortest_exit_right_hand_aux(maze, renderer, 0, 0, wayt, fast);
     SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
+    color_way(renderer, maze, get_way(wayt, maze.width - 1, maze.height - 1), fast); //on affiche le chemin le plus court
     free_waytab(wayt);
 
     //à la fin
+    SDL_Delay(1); //pause de 1 ms pour éviter certains anachronismes
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(100); //pause de 0.1 secondes
     SDL_Event event = {0}; //on crée un event
     while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
         (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
