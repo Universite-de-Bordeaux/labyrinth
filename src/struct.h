@@ -1,6 +1,7 @@
 #ifndef CASE_H
 #define CASE_H
 #include <stdbool.h>
+#define L_TP 3000000000
 
 //Structure - typedef - fonction (dans l'ordre)
 
@@ -29,6 +30,7 @@ struct way
     int x;
     int y;
     struct way *dad;
+    unsigned int length;
 };
 
 struct waytab
@@ -63,6 +65,7 @@ typedef struct bool_tab bool_tab;
 //Structure représentant un chemin depuis le début du labyrinthe
 //dad : cellule précédente
 //x, y : coordonnées de la cellule
+//length : le longueur du chemin depuis le départ, on peut se téléporter pour un coût de L_TP
 //malloc utilisés, penser à free_way pour libérer la mémoire
 //toujours privilégier les fonctions de waytab pour manipuler les chemins
 typedef struct way way;
@@ -268,7 +271,6 @@ void connected_way(waytab tab, int x, int y, int dad_x, int dad_y);
 //tab : le tableau de chemin
 //x : la coordonnée x de la case
 //y : la coordonnée y de la case
-//renvoie 4294967294 si le chemin n'existe pas
 unsigned int length_waytab(waytab tab, int x, int y);
 
 
@@ -284,7 +286,6 @@ void print_way(const way *w);
 
 //renvoie la longueur du chemin
 //w : le chemin
-//renvoie 4294967294 si le chemin n'existe pas
 unsigned int length_way(const way *w);
 
 //change le père du chemin

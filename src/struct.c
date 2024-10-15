@@ -353,6 +353,7 @@ waytab create_waytab(const int width,const int height)
             way_tab[i][j].y = i;
         }
     }
+    way_tab[0][0].length = 0;
     const waytab tab = {width, height, way_tab};
     return tab;
 }
@@ -419,6 +420,7 @@ way *create_way()
     w -> dad = NULL;
     w -> x = -1;
     w -> y = -1;
+    w -> length = L_TP;
     return w;
 }
 
@@ -438,15 +440,7 @@ void print_way(const way *w)
 
 unsigned int length_way(const way *w)
 {
-    if(is_empty(w))
-    {
-        return 4294967294;
-    }
-    if(w->dad == NULL)
-    {
-        return 0;
-    }
-    return 1 + length_way(w->dad);
+    return w -> x == 0 && w -> y == 0 ? 0 : w -> length;
 }
 
 void new_dad(way *son, way *dad)
@@ -457,6 +451,7 @@ void new_dad(way *son, way *dad)
         return;
     }
     son->dad = dad;
+    son->length = dad->length + 1;
 }
 
 way *copy_way(const way *w)
@@ -472,6 +467,7 @@ way *copy_way(const way *w)
     }
     copy->x = w->x;
     copy->y = w->y;
+    copy->length = w->length;
     return copy;
 }
 
@@ -489,6 +485,10 @@ bool is_empty(const way *w)
     if(w->dad == NULL)
     {
         return w -> x != 0 || w -> y != 0; //un chemin est vide s'il n'est pas relié à la case (0, 0)
+    }
+    if(w->length == L_TP)
+    {
+        return false;
     }
     return is_empty(w->dad);
 }
