@@ -4,6 +4,7 @@
 #include <time.h>
 #include <SDL2/SDL.h>
 #define NB_GENERATEURS 6
+#define DELAY 5
 
 // --- mini-jeux ---
 
@@ -804,7 +805,7 @@ way *shortest_exit_right_hand(const maze_t maze)
 //renderer : le renderer
 //x : abscisse de la case
 //y : ordonnée de la case
-void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const int y, const int delay)
+void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const int y, const bool refresh)
 {
     for(int i = 1; i < 20; i++)
     {
@@ -826,9 +827,12 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
     {
         SDL_RenderDrawLine(renderer, (x * 20) + 19, (y * 20) + 1, (x * 20) + 19, (y * 20) + 19);
     }
-    SDL_Delay(1); //pour éviter certains anachronismes
-    SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(delay); //pause de 0.01 secondes
+    if(refresh)
+    {
+        SDL_Delay(1); //pour éviter certains anachronismes
+        SDL_RenderPresent(renderer); //on met à jour l'affichage
+        SDL_Delay(DELAY); //pause de 0.01 secondes
+    }
 }
 
 //fonction auxiliaire de show_has_exit_right_hand
@@ -839,10 +843,10 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
 //x : abscisse de la case actuelle
 //y : ordonnée de la case actuelle
 //renderer : le renderer
-bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, const int delay)
+bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, bool fast)
 {
     SDL_Event event;
-    SDL_WaitEventTimeout(&event, delay); //attente d'un event
+    SDL_WaitEventTimeout(&event, DELAY); //attente d'un event
     if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
@@ -861,42 +865,42 @@ bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, con
     if(x == maze.width - 1 && y == maze.height - 1)
     {
         SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
-        color_case(renderer, maze, x, y, delay);
+        color_case(renderer, maze, x, y, true);
         return true;
     }
 
-    color_case(renderer, maze, x, y, delay);
+    color_case(renderer, maze, x, y, !fast);
     set_true(visited, x, y);
     bool s = false;
 
     //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
     if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
     {
-         s = show_has_exit_right_hand_aux(maze, visited, x, y - 1, renderer, delay);
+         s = show_has_exit_right_hand_aux(maze, visited, x, y - 1, renderer, fast);
     }
     if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
     {
-        s = (s || show_has_exit_right_hand_aux(maze, visited, x, y + 1, renderer, delay));
+        s = s || show_has_exit_right_hand_aux(maze, visited, x, y + 1, renderer, fast);
     }
     if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
     {
-        s = (s || show_has_exit_right_hand_aux(maze, visited, x - 1, y, renderer, delay));
+        s = s || show_has_exit_right_hand_aux(maze, visited, x - 1, y, renderer, fast);
     }
     if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
     {
-        s = (s || show_has_exit_right_hand_aux(maze, visited, x + 1, y, renderer, delay));
+        s = s || show_has_exit_right_hand_aux(maze, visited, x + 1, y, renderer, fast);
     }
     //deuxième condition d'arrêt : on est bloqué
     if(s)
     {
         SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
-        color_case(renderer, maze, x, y, delay);
+        color_case(renderer, maze, x, y, fast);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     }
     else
     {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
-        color_case(renderer, maze, x, y, delay);
+        color_case(renderer, maze, x, y, fast);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     }
     return s;
@@ -906,8 +910,8 @@ bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, con
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-//delay : le delay de refresh (2 * delay + 1 ms/case)
-int true_show_has_exit_right_hand(const maze_t maze, const int delay)
+//fast : true si on veut aller vite, false si on veut avoir un affichage fluide
+int true_show_has_exit_right_hand(const maze_t maze, const bool fast)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -982,8 +986,8 @@ int true_show_has_exit_right_hand(const maze_t maze, const int delay)
     //on commence la recherche
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
-    color_case(renderer, maze, 0, 0, delay);
-    if(show_has_exit_right_hand_aux(maze, visited, 0, 0, renderer, delay))
+    color_case(renderer, maze, 0, 0, fast);
+    if(show_has_exit_right_hand_aux(maze, visited, 0, 0, renderer, fast))
     {
         SDL_SetWindowTitle(fenetre, "maze solvable");
     }
@@ -1011,7 +1015,7 @@ int true_show_has_exit_right_hand(const maze_t maze, const int delay)
 
 int show_has_exit_right_hand(const maze_t maze)
 {
-    if(true_show_has_exit_right_hand(maze, 7) == -1)
+    if(true_show_has_exit_right_hand(maze, false) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1021,7 +1025,7 @@ int show_has_exit_right_hand(const maze_t maze)
 
 int show_fast_has_exit_right_hand(const maze_t maze)
 {
-    if(true_show_has_exit_right_hand(maze, 1) == -1)
+    if(true_show_has_exit_right_hand(maze, true) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1109,8 +1113,8 @@ bool show_is_perfect_right_hand_aux(const maze_t maze, const bool_tab visited, c
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-//delay : le delay de refresh (2 * delay + 1 ms/case)
-int true_show_is_perfect_right_hand(const maze_t maze, const int delay)
+//fast : true si on veut aller vite, false pour avoir un affichage fluide
+int true_show_is_perfect_right_hand(const maze_t maze, const bool fast)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -1185,8 +1189,8 @@ int true_show_is_perfect_right_hand(const maze_t maze, const int delay)
     //on commence la recherche
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
-    color_case(renderer, maze, 0, 0, delay);
-    if(show_is_perfect_right_hand_aux(maze, visited, 0, 0, 0, 0, renderer, delay))
+    color_case(renderer, maze, 0, 0, fast);
+    if(show_is_perfect_right_hand_aux(maze, visited, 0, 0, 0, 0, renderer, fast))
     {
         bool b = false;
         for(int i =0; i < maze.height; i++)
@@ -1205,7 +1209,7 @@ int true_show_is_perfect_right_hand(const maze_t maze, const int delay)
                 {
                     SDL_SetWindowTitle(fenetre, "maze imperfect");
                     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on définit la couleur en rouge
-                    color_case(renderer, maze, j, i, delay);
+                    color_case(renderer, maze, j, i, fast);
                     b = true;
                 }
             }
@@ -1239,7 +1243,7 @@ int true_show_is_perfect_right_hand(const maze_t maze, const int delay)
 
 int show_is_perfect_right_hand(const maze_t maze)
 {
-    if(true_show_is_perfect_right_hand(maze, 7) == -1)
+    if(true_show_is_perfect_right_hand(maze, false) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1249,7 +1253,7 @@ int show_is_perfect_right_hand(const maze_t maze)
 
 int show_fast_is_perfect_right_hand(const maze_t maze)
 {
-    if(true_show_is_perfect_right_hand(maze, 1) == -1)
+    if(true_show_is_perfect_right_hand(maze, true) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -1408,55 +1412,60 @@ bool show_shortest_exit_right_hand_aux(const maze_t maze, SDL_Renderer *renderer
         }
     }
     bool s = false;
-    if(x == maze.width - 1 && y == maze.height - 1)
+    if(x == maze.width - 1 && y == maze.height - 1)//première condition d'arrêt : atteindre la sortie
     {
         SDL_SetRenderDrawColor(renderer, 10, 200, 10, 255); //on définit la couleur en vert
         color_case(renderer, maze, x, y, delay);
         return true;
     }
     const int l = length_waytab(wayt, x, y);
-    if(!has_wall_up(maze, x, y) &&  length_waytab(wayt, x, y - 1) > l + 1)
+    if(!has_wall_up(maze, x, y) &&  length_waytab(wayt, x, y - 1) > l + 1) //si on peut aller en haut et que ça crée un chemin plus court que l'actuel
     {
-        connected_way(wayt, x, y - 1, x, y);
-        color_case(renderer, maze, x, y, delay);
-        color_case(renderer, maze, x, y - 1, delay);
-        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y - 1, wayt, delay);
+        connected_way(wayt, x, y - 1, x, y); //on connecte les deux cases
+        color_case(renderer, maze, x, y, delay); //on colorie la case
+        color_case(renderer, maze, x, y - 1, delay); //on colorie la case
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y - 1, wayt, delay); //on continue la recherche
     }
     if(!has_wall_down(maze, x, y) && length_waytab(wayt, x, y + 1) > l + 1)
     {
-        connected_way(wayt, x, y + 1, x, y);
+        connected_way(wayt, x, y + 1, x, y); //on connecte les deux cases
         color_case(renderer, maze, x, y, delay);
         color_case(renderer, maze, x, y + 1, delay);
-        s = s || show_shortest_exit_right_hand_aux(maze, renderer, x, y + 1, wayt, delay);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x, y + 1, wayt, delay) || s;
     }
     if(!has_wall_left(maze, x, y) && length_waytab(wayt, x - 1, y) > l + 1)
     {
         connected_way(wayt, x - 1, y, x, y);
         color_case(renderer, maze, x, y, delay);
         color_case(renderer, maze, x - 1, y, delay);
-        s = s || show_shortest_exit_right_hand_aux(maze, renderer, x - 1, y, wayt, delay);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x - 1, y, wayt, delay) || s;
     }
     if(!has_wall_right(maze, x, y) && length_waytab(wayt, x + 1, y) > l + 1)
     {
         connected_way(wayt, x + 1, y, x, y);
         color_case(renderer, maze, x, y, delay);
         color_case(renderer, maze, x + 1, y, delay);
-        s = s || show_shortest_exit_right_hand_aux(maze, renderer, x + 1, y, wayt, delay);
+        s = show_shortest_exit_right_hand_aux(maze, renderer, x + 1, y, wayt, delay) || s;
     }
-    if(s)
+    SDL_SetRenderDrawColor(renderer, 50, 0, 0, 255); //on définit la couleur en rouge
+    color_case(renderer, maze, x, y, delay);
+    SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
+    if(s) //si on a un chemin correcte, on l'affiche en vert, sinon en rouge
     {
         SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
         color_case(renderer, maze, x, y, delay);
         SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
         return true;
     }
-    SDL_SetRenderDrawColor(renderer, 50, 0, 0, 255); //on définit la couleur en rouge
-    color_case(renderer, maze, x, y, delay);
-    SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
     return false;
 }
 
-int true_show_shortest_exit_right_hand(const maze_t maze, const int delay)
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+//fast : true si on veut aller vite, false pour avoir un affichage fluide
+int true_show_shortest_exit_right_hand(const maze_t maze, const bool fast)
 {
     //on commence par afficher le labyrinthe
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
@@ -1531,7 +1540,7 @@ int true_show_shortest_exit_right_hand(const maze_t maze, const int delay)
 
     //on commence la recherche
     const waytab wayt = create_waytab(maze.width, maze.height);
-    show_shortest_exit_right_hand_aux(maze, renderer, 0, 0, wayt, delay);
+    show_shortest_exit_right_hand_aux(maze, renderer, 0, 0, wayt, fast);
     SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
     free_waytab(wayt);
 
@@ -1554,7 +1563,7 @@ int true_show_shortest_exit_right_hand(const maze_t maze, const int delay)
 int show_shortest_exit_right_hand(const maze_t maze)
 {
     {
-        if(true_show_shortest_exit_right_hand(maze, 7) == -1)
+        if(true_show_shortest_exit_right_hand(maze, false) == -1)
         {
             fprintf(stderr, "Erreur de visualisation\n");
             return -1;
@@ -1566,7 +1575,7 @@ int show_shortest_exit_right_hand(const maze_t maze)
 int show_fast_shortest_exit_right_hand(const maze_t maze)
 {
     {
-        if(true_show_shortest_exit_right_hand(maze, 1) == -1)
+        if(true_show_shortest_exit_right_hand(maze, true) == -1)
         {
             fprintf(stderr, "Erreur de visualisation\n");
             return -1;
