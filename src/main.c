@@ -189,8 +189,10 @@ int main(const int argc, char *argv[]) {
         printf("Usage : %s -slv <namefile>\n", argv[0]);
         printf("Usage : %s -gslvs <generator> <width> <height>\n", argv[0]);
         printf("Usage : %s -h\n", argv[0]);
+        printf("Certains arguments n'ont pas été implémentés\n");
         return 0;
     }
     printf("Usage : %s arg1 arg2 ... \n", argv[0]);
+    printf("Certains arguments n'ont pas été implémentés\n");
     return 0;
 }
