@@ -43,6 +43,17 @@ int minigame3(maze_t maze);
 //height : hauteur du labyrinthe
 int rminigame3(int width, int height);
 
+//lance un mini-jeu où il faut trouver la sortie
+//seul la case où le joueur est est affichée
+//le reste du labyrinthe est caché
+//maze : le labyrinthe
+int minigame4(maze_t maze);
+
+//lance minigame4 avec un générateur de labyrinthe aléatoire
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+int rminigame4(int width, int height);
+
 //lance un mini-jeu avec un générateur de labyrinthe et une difficulté aléatoires
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe

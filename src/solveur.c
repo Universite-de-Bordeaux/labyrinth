@@ -587,21 +587,171 @@ int rminigame3(const int width, const int height)
     return -1;
 }
 
+int minigame4(const maze_t maze)
+{
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", error);
+        SDL_Quit();
+        return -1;
+    }
+    SDL_Window *fenetre = SDL_CreateWindow("full-blind mode", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 40, 40, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(fenetre == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de création de la fenetre : %s\n", error);
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
+
+    if(renderer == NULL)
+    {
+        const char *error = SDL_GetError();
+        fprintf(stderr, "Erreur de création du renderer : %s\n", error);
+        SDL_DestroyWindow(fenetre);
+        SDL_Quit();
+        return -1;
+    }
+    SDL_RenderDrawLine(renderer, 7, 20, 33, 20); //on dessine le joueur
+    SDL_RenderDrawLine(renderer, 20, 7, 20, 33); //on dessine le joueur
+    int x = 0, y = 0;
+    while(x != maze.width - 1 || y != maze.height - 1)
+    {
+        SDL_Event event;
+        if(has_wall_up(maze, x, y))
+        {
+            SDL_RenderDrawLine(renderer, 0, 0, 39, 0); //on dessine le mur du haut
+        }
+        if(has_wall_down(maze, x, y))
+        {
+            SDL_RenderDrawLine(renderer, 0, 39, 39, 39); //on dessine le mur du bas
+        }
+        if(has_wall_left(maze, x, y))
+        {
+            SDL_RenderDrawLine(renderer, 0, 0, 0, 39); //on dessine le mur de gauche
+        }
+        if(has_wall_right(maze, x, y))
+        {
+            SDL_RenderDrawLine(renderer, 39, 0, 39, 39); //on dessine le mur de droite
+        }
+        SDL_Delay(1);
+        SDL_RenderPresent(renderer); //on met à jour l'affichage
+        SDL_WaitEvent(&event);
+        if(event.type == SDLK_RETURN || event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
+        {
+            fprintf(stderr, "L'utilisateur a quitté le jeu\n");
+            SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
+            SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
+            SDL_Quit(); //desalocation de la memoire
+            return 1;
+        }
+        if(event.type == SDL_KEYUP)
+        {
+            if(event.key.keysym.sym == SDLK_UP && !has_wall_up(maze, x, y))
+            {
+                y--;
+            }
+            else if(event.key.keysym.sym == SDLK_DOWN && !has_wall_down(maze, x, y))
+            {
+                y++;
+            }
+            else if(event.key.keysym.sym == SDLK_LEFT && !has_wall_left(maze, x, y))
+            {
+                x--;
+            }
+            else if(event.key.keysym.sym == SDLK_RIGHT && !has_wall_right(maze, x, y))
+            {
+                x++;
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); //on définit la couleur en gomme
+        SDL_RenderDrawLine(renderer, 0, 0, 39, 0); //on efface le mur du haut
+        SDL_RenderDrawLine(renderer, 0, 39, 39, 39); //on efface le mur du bas
+        SDL_RenderDrawLine(renderer, 0, 0, 0, 39); //on efface le mur de gauche
+        SDL_RenderDrawLine(renderer, 39, 0, 39, 39); //on efface le mur de droite
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on choisit la couleur du renderer
+    }
+    SDL_Delay(100);
+    print_maze(maze);
+    SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
+    SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
+    SDL_Quit(); //desalocation de la memoire
+    return 1;
+}
+
+int rminigame4(const int width, const int height)
+{
+    srand(time(NULL));
+    const int r = rand() % NB_GENERATEURS;
+    if(r == 0)
+    {
+        const maze_t maze = line_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    if(r == 1)
+    {
+        const maze_t maze = column_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    if(r == 2)
+    {
+        const maze_t maze = imperfect_one_way_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    if(r == 3)
+    {
+        const maze_t maze = perfect_one_way_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    if(r == 4)
+    {
+        const maze_t maze = hunt_kill_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    if(r == 5)
+    {
+        const maze_t maze = by_path_maze(width, height);
+        const int s = minigame4(maze);
+        free_maze(maze);
+        return s;
+    }
+    fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
+    return -1;
+}
+
 int rminigame(const int width, const int height)
 {
     srand(time(NULL));
-    const int r = rand() % 3;
+    const int r = rand() % 4;
     if(r == 0)
     {
         return rminigame1(width, height);
     }
-    else if(r == 1)
+    if(r == 1)
     {
         return rminigame2(width, height);
     }
-    else if (r == 2)
+    if (r == 2)
     {
         return rminigame3(width, height);
+    }
+    if(r == 3)
+    {
+        return rminigame4(width, height);
     }
     fprintf(stderr, "Erreur de gestion de l'aléatoire\n");
     return -1;
