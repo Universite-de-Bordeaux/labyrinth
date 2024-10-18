@@ -31,7 +31,8 @@ void print_cmd_help(char* namefile)
 {
     printf("\nUsage %s: \n", namefile);
     printf("\nFor initiating a maze : \n");
-    printf("-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm\n");
+    printf("-g <type> <nb> <nb> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
+    printf("-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
     printf("-r <filename> : read maze from file\n");
 
     printf("\nFor initiating a way : \n");
@@ -76,34 +77,39 @@ void cmd(char *argv[], const int argc)
     //-rw <filename> -> read way in file (if way)
     //-shw -> show way (if way & maze)
     //-h -> help (only if no other command)
-    bool generate = false;          // -g
-    char *generator = '\0';         // <type>
 
-    bool read = false;              // -r
-    const char *filename = '\0';          // <filename>
+    //initialisation des variables
+    bool generate = false;                  // -g
+    char *generator = '\0';                 // <type>
+    bool is_size = false;                   // internal
+    int width = 0;                          // <nb>
+    int height = 0;                         // <nb>
 
-    bool is_maze = false;           // internal
-    maze_t maze;                    // maze (internal)
+    bool read = false;                      // -r
+    const char *filename = '\0';            // <filename>
 
-    bool solve = false;             // -slv
-    int solve_type = 0;             // <nb>
+    bool is_maze = false;                   // internal
+    maze_t maze;                            // maze (internal)
 
-    bool read_way = false;          // -rw
-    const char *filename_read_way = '\0'; // <filename>
+    bool solve = false;                     // -slv
+    int solve_type = 0;                     // <nb>
 
-    bool is_way = false;            // internal
-    way *w;                         // way (internal)
+    bool read_way = false;                  // -rw
+    const char *filename_read_way = '\0';   // <filename>
 
-    bool write = false;             // -w
-    const char *filename_write = '\0';    // <filename>
+    bool is_way = false;                    // internal
+    way *w;                                 // way (internal)
 
-    bool write_way = false;         // -ww
-    const char *filename_write_way = '\0';// <filename>
+    bool write = false;                     // -w
+    const char *filename_write = '\0';      // <filename>
 
-    bool show = false;              // -sh
-    int type_show = 0;              // <nb>
+    bool write_way = false;                 // -ww
+    const char *filename_write_way = '\0';  // <filename>
 
-    bool show_way = false;          // -shw
+    bool show = false;                      // -sh
+    int type_show = 0;                      // <nb>
+
+    bool show_way = false;                  // -shw
 
 
     //tri des arguments
@@ -122,6 +128,24 @@ void cmd(char *argv[], const int argc)
             {
                 fprintf(stderr, "Error : -g <type> : <type> must be specified\n type : powm, iowm, hkm, bpm, lm, cm\n");
                 return;
+            }
+
+            if(i < argc - 1 && safe_atoi(argv[i+1], &width))
+            {
+                if(i < argc - 2 && safe_atoi(argv[i+2], &height))
+                {
+                    is_size = true;
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error : -g <type> <nb> <nb2> : <nb2> hasn't been found or is not an integer\n");
+                    return;
+                }
+            }
+            else
+            {
+                is_size = false;
             }
         }
         else if(!strcmp(argv[i], "-r"))
@@ -225,29 +249,34 @@ void cmd(char *argv[], const int argc)
     //traitements des arguments
     if(generate)
     {
+        if(!is_size)
+        {
+            width = 10;
+            height = 10;
+        }
         if(!strcmp(generator, "powm"))
         {
-            maze = perfect_one_way_maze(10, 10);
+            maze = perfect_one_way_maze(width, height);
         }
         else if(!strcmp(generator, "iowm"))
         {
-            maze = imperfect_one_way_maze(10, 10);
+            maze = imperfect_one_way_maze(width, height);
         }
         else if(!strcmp(generator, "hkm"))
         {
-            maze = hunt_kill_maze(10, 10);
+            maze = hunt_kill_maze(width, height);
         }
         else if(!strcmp(generator, "bpm"))
         {
-            maze = by_path_maze(10, 10);
+            maze = by_path_maze(width, height);
         }
         else if(!strcmp(generator, "lm"))
         {
-            maze = line_maze(10, 10);
+            maze = line_maze(width, height);
         }
         else if(!strcmp(generator, "cm"))
         {
-            maze = column_maze(10, 10);
+            maze = column_maze(width, height);
         }
         else
         {
