@@ -181,20 +181,24 @@ way *shortest_exit_right_hand(const maze_t maze)
 
 int show_has_exit_right_hand(maze_t maze)
 {
+    printf("Le visualisateur de l'algorithme de résolution de labyrinthes n'est pas encore implémenté.\n");
     return 1;
 }
 
 int show_is_perfect_right_hand(maze_t maze)
 {
+    printf("Le visualisateur de l'algorithme de recherche de labyrinthes parfaits n'est pas encore implémenté.\n");
     return 1;
 }
 
 int show_shortest_exit_right_hand(maze_t maze)
 {
+    printf("Le visualisateur de l'algorithme de recherche du chemin le plus court pour sortir du labyrinthe n'est pas encore implémenté.\n");
     return 1;
 }
 
 int show_the_way(const maze_t maze, const way *w)
 {
+    printf("Le visualisateur du chemin dans le labyrinthe n'est pas encore implémenté.\n");
     return 1;
 }
