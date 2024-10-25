@@ -1,12 +1,7 @@
 #include "test.h"
 #include "solveur.h"
 
-//Fonction permettant d'évaluer un générateur de labyrinthe
-//f : pointeur de fonction de génération de labyrinthe
-//x :
-//retourne true si le générateur semble correct, false sinon
-//risque de faux positifs
-bool create_solvable_maze(const func_ptr f, const int x, const int y)
+bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
 {
     for(int i = 1; i < x; i++)
     {
@@ -24,11 +19,7 @@ bool create_solvable_maze(const func_ptr f, const int x, const int y)
     return true;
 }
 
-//Fonction permettant d'évaluer un générateur de labyrinthe
-//f : pointeur de fonction de génération de labyrinthe
-//retourne true si le générateur semble correct, false sinon
-//risque de faux positifs
-bool create_perfect_maze(const func_ptr f, const int x, const int y)
+bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
 {
     for(int i = 1; i < x; i++)
     {
@@ -48,9 +39,23 @@ bool create_perfect_maze(const func_ptr f, const int x, const int y)
 
 int evaluate_mazemaker(const func_ptr f, const int x, const int y)
 {
-    if(create_perfect_maze(f, x, y))
+    int t = 2;
+    for(int i = 1; i < x; i++)
     {
-        return 2;
+        for(int j = 1; j < y; j++)
+        {
+            const maze_t maze = f(i, j);
+            if(t == 2 && !is_perfect_right_hand(maze))
+            {
+                t = 1;
+            }
+            if(t == 1 && !has_exit_right_hand(maze))
+            {
+                free_maze(maze);
+                return 0;
+            }
+            free_maze(maze);
+        }
     }
-    return create_solvable_maze(f, x, y) ? 1 : 0;
+    return t;
 }

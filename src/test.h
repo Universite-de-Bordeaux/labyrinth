@@ -7,13 +7,33 @@ typedef maze_t (*func_ptr)(int, int);
 
 //Fonction permettant d'évaluer un générateur de labyrinthe
 //f : pointeur de fonction de génération de labyrinthe
+//x : largeur maximale du labyrinthe
+//y : hauteur maximale du labyrinthe
+//retourne true si le générateur semble correct, false sinon
+//risque de faux positifs
+bool do_made_solvable_maze(const func_ptr f, const int x, const int y);
+
+//Fonction permettant d'évaluer un générateur de labyrinthe
+//f : pointeur de fonction de génération de labyrinthe
+//x : largeur maximale du labyrinthe
+//y : hauteur maximale du labyrinthe
+//retourne true si le générateur semble correct, false sinon
+//risque de faux positifs
+//exponentiel en temps
+bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
+
+//Fonction permettant d'évaluer un générateur de labyrinthe
+//f : pointeur de fonction de génération de labyrinthe
 //retourne 0 si le générateur est incorrect, 1 si le générateur semble créer des labyrinthes solvables, 2 si le générateur semble créer des labyrinthes parfaits
+//risque de faux positifs
+//exponentiel en temps
 int evaluate_mazemaker(func_ptr f, int x, int y);
 
 //Macro permettant d'évaluer un générateur de labyrinthe
 //générateur : pointeur sur la fonction de génération de labyrinthe
 //name : nom de la fonction de génération de labyrinthe
-//la fonction peut prendre du temp à s'exécuter
+//risque de faux positifs
+//exponentiel en temps
 #define EVALUATE_MAZEMAKERN(générateur, name, x, y) \
     do { \
         const int t = evaluate_mazemaker(f, x, y); \
@@ -30,7 +50,6 @@ int evaluate_mazemaker(func_ptr f, int x, int y);
             printf("%s n'est pas conforme au cahier des charges\n", name); \
         } \
     } while(0)
-#define EVALUATE_MAZEMAKER(générateur) EVALUATE_MAZEMAKERN(générateur, "Le générateur de labyrinthe")
 
 #define EVALUATE_TIME(générateur, name, x, y) \
     do { \
