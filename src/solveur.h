@@ -17,8 +17,8 @@ bool is_perfect_right_hand(maze_t maze);
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
 way *shortest_exit_right_hand(const maze_t maze);
 
-// --- visualisation ---
 
+// --- visualisation ---
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
@@ -30,34 +30,13 @@ int show_has_exit_right_hand(maze_t maze);
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-//version rapide, affichage par "bloc"
-int show_fast_has_exit_right_hand(maze_t maze);
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
 int show_is_perfect_right_hand(maze_t maze);
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-//version rapide, affichage par "bloc"
-int show_fast_is_perfect_right_hand(maze_t maze);
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
 int show_shortest_exit_right_hand(maze_t maze); //TODO : en cours
-
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-//version rapide, affichage par "bloc"
-int show_fast_shortest_exit_right_hand(maze_t maze); //TODO : en cours
 
 //fonction de visualisation
 //affiche le chemin dans le labyrinthe

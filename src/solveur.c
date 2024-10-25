@@ -403,16 +403,6 @@ int show_has_exit_right_hand(const maze_t maze)
     return 1;
 }
 
-int show_fast_has_exit_right_hand(const maze_t maze)
-{
-    if(true_show_has_exit_right_hand(maze, true) == -1)
-    {
-        fprintf(stderr, "Erreur de visualisation\n");
-        return -1;
-    }
-    return 1;
-}
-
 //fonction auxiliaire de show_is_perfect_right_hand
 //affiche le labyrinthe et la progression du solveur
 //renvoie true si le labyrinthe est parfait, false sinon
@@ -616,16 +606,6 @@ int true_show_is_perfect_right_hand(const maze_t maze, const bool fast)
 int show_is_perfect_right_hand(const maze_t maze)
 {
     if(true_show_is_perfect_right_hand(maze, false) == -1)
-    {
-        fprintf(stderr, "Erreur de visualisation\n");
-        return -1;
-    }
-    return 1;
-}
-
-int show_fast_is_perfect_right_hand(const maze_t maze)
-{
-    if(true_show_is_perfect_right_hand(maze, true) == -1)
     {
         fprintf(stderr, "Erreur de visualisation\n");
         return -1;
@@ -931,18 +911,6 @@ int show_shortest_exit_right_hand(const maze_t maze)
 {
     {
         if(true_show_shortest_exit_right_hand(maze, false) == -1)
-        {
-            fprintf(stderr, "Erreur de visualisation\n");
-            return -1;
-        }
-        return 1;
-    }
-}
-
-int show_fast_shortest_exit_right_hand(const maze_t maze)
-{
-    {
-        if(true_show_shortest_exit_right_hand(maze, true) == -1)
         {
             fprintf(stderr, "Erreur de visualisation\n");
             return -1;
