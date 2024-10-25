@@ -207,7 +207,7 @@ bool has_wall_up(const maze_t maze, const int x, const int y)
     }
     if(x == 0)
     {
-        return false;
+        return true;
     }
     return maze.cells[y][x - 1].wall_down;
 }
@@ -231,7 +231,7 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
     }
     if(y == 0)
     {
-        return false;
+        return true;
     }
     return maze.cells[y - 1][x].wall_right;
 }
