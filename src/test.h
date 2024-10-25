@@ -20,7 +20,7 @@ bool do_made_solvable_maze(const func_ptr f, const int x, const int y);
 //retourne true si le générateur semble correct, false sinon
 //risque de faux positifs
 //exponentiel en temps
-bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
+bool do_made_perfect_maze(const func_ptr f, const int x, const int y);
 
 //Fonction permettant d'évaluer un générateur de labyrinthe
 //f : pointeur de fonction de génération de labyrinthe
