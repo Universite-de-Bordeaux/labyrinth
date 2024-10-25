@@ -112,6 +112,7 @@ void way_to_file_aux(const way *w, FILE *file)
         return;
     }
     way_to_file_aux(w -> dad, file);
+    fprintf(file, "%d %d\n", w -> x, w -> y);
 }
 
 void way_to_file(const way* w, const char *filename)
