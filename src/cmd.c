@@ -30,30 +30,32 @@ bool safe_atoi(const char *str, int *out)
 void print_cmd_help(char* namefile)
 {
     printf("\nUsage %s: \n", namefile);
-    printf("\nFor initiating a maze : \n");
-    printf("-g <type> <nb> <nb> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
-    printf("-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
-    printf("-r <filename> : read maze from file\n");
+    printf("\nTo make a maze : \n");
+    printf("\t-g <type> <nb> <nb> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
+    printf("\t-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
+    printf("\t-r <filename> : read maze from file\n");
 
-    printf("\nFor initiating a way : \n");
-    printf("-rw <filename> : read way from file\n");
-    printf("-slv 3 also initiate a way\n");
+    printf("\nTo make a way : \n");
+    printf("\t-rw <filename> : read way from file\n");
+    printf("You can also use the solve command with parameter 3 to generate a way\n");
 
-    printf("\nFor solving a maze : (a maze must be initiated)\n");
-    printf("-slv <nb> : solve 1 : is perfect, 2 : has exit, 3 : shortest exit (and save way)\n");
+    printf("\nTo solve a maze : (a maze must be initiated)\n");
+    printf("\t-slv <nb> : solve 1 : is perfect, 2 : has exit, 3 : shortest exit (and save way)\n");
 
 
-    printf("\nFor writing: \n");
-    printf("-w <filename> : write maze in file (if maze)\n");
-    printf("-ww <filename> : write way in file (if way)\n");
+    printf("\nTo write: \n");
+    printf("\t-w <filename> : write maze in file (if maze)\n");
+    printf("\t-ww <filename> : write way in file (if way)\n");
 
-    printf("\nFor showing (a maze must be initiated) : \n");
-    printf("-sh : show maze\n");
-    printf("-sh <nb> : show 0 : show maze, 1 : is perfect, 2 : has exit, 3 : shortest exit\n");
-    printf("-shw : show way (a way must be initiated)\n");
+    printf("\nTo show (a maze must be initiated) : \n");
+    printf("\t-sh : show maze\n");
+    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect, 2 : has exit, 3 : shortest exit\n");
+    printf("\t-shw : show way (a way must be initiated)\n");
 
-    printf("\n-h : help\n");
-    printf("\nArguments order don't matter, but only one maze and one way can be initiated\n");
+    printf("\n\t-h : help\n");
+    printf("\nArguments order doesn't matter, but only one maze and one way are allowed\n");
+    printf("If an argument occures multiple times, the last one will be taken\n");
+    printf("If an argument is unknown, it will be ignored\n");
 }
 
 void cmd(char *argv[], const int argc)
