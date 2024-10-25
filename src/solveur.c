@@ -1,7 +1,6 @@
 #include "solveur.h"
 #include "mazemaker.h"
 #include <stdio.h>
-#include <time.h>
 #include <SDL2/SDL.h>
 
 // --- Solveur de labyrinthes ---
