@@ -8,9 +8,7 @@
 // --- Structures ---
 
 struct cell {
-    bool wall_up;
     bool wall_down;
-    bool wall_left;
     bool wall_right;
 };
 struct maze {
