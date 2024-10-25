@@ -211,7 +211,7 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
     {
         SDL_Delay(1); //pour éviter certains anachronismes
         SDL_RenderPresent(renderer); //on met à jour l'affichage
-        SDL_Delay(DELAY); //pause de 0.01 secondes
+        SDL_Delay(1); //pause de 0.01 secondes TODO : changer en une constante
     }
 }
 
@@ -226,7 +226,7 @@ void color_case(SDL_Renderer *renderer, const maze_t maze, const int x, const in
 bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, SDL_Renderer *renderer, bool fast)
 {
     SDL_Event event;
-    SDL_WaitEventTimeout(&event, DELAY); //attente d'un event
+    SDL_WaitEventTimeout(&event, 1); //attente d'un event TODO : changer le 1 en une constante
     if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE))
     {
         //l'utilisateur ferme la fenetre ou clique sur la croix
@@ -286,27 +286,37 @@ bool show_has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, con
     return s;
 }
 
-//fonction de visualisation
-//affiche le labyrinthe et la progression du solveur
-//renvoie -1 en cas d'erreur, 1 sinon
-//maze : le labyrinthe
-//fast : true si on veut aller vite, false si on veut avoir un affichage fluide
-int true_show_has_exit_right_hand(const maze_t maze, const bool fast)
+int show_has_exit_right_hand(const maze_t maze)
 {
-    //on commence par afficher le labyrinthe
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
+    //affichage initial
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
-        const char *error = SDL_GetError();
-        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", error);
+        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
-    SDL_Window *fenetre = SDL_CreateWindow("has_exit_right_hand", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * 20, maze.height * 20, SDL_WINDOW_SHOWN); //creation d'une fenetre
+
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) { //on obtient le mode d'affichage de l'écran
+        fprintf(stderr, "Erreur lors de l'obtention du mode d'affichage : %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    int d_h = displayMode.h/maze.height; int d_w = displayMode.w/maze.width; //on définie le ratio de la taille des cellules
+    d_h = d_h > d_w ? d_w : d_h; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
+    d_w = d_h;
+    if(d_w < 2) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
+    {
+        fprintf(stderr, "Warning : la taille des cellules est trop petite pour être affichée correctement, l'affichage va dépasser de l'écran\n");
+        d_w = 2;
+        d_h = 2;
+    }
+
+    SDL_Window *fenetre = SDL_CreateWindow("Is maze solvable ?", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
     {
-        const char *error = SDL_GetError();
-        fprintf(stderr, "Erreur de creation de la fenetre : %s\n", error);
-        SDL_DestroyWindow(fenetre);
+        fprintf(stderr, "Erreur de creation de la fenetre : %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
@@ -316,58 +326,47 @@ int true_show_has_exit_right_hand(const maze_t maze, const bool fast)
         renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_SOFTWARE);
         if(renderer == NULL)
         {
-            const char *error = SDL_GetError();
-            fprintf(stderr, "Erreur de creation du renderer : %s\n", error);
-            SDL_DestroyRenderer(renderer);
+            fprintf(stderr, "Erreur de creation du renderer : %s\n", SDL_GetError());
             SDL_DestroyWindow(fenetre);
             SDL_Quit();
             return -1;
         }
     }
-    SDL_Delay(100); //pause de 1 secondes
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
 
     for(int x = 0; x < maze.width; x++)
     {
         for(int y = 0; y < maze.height; y++)
         {
-            if(has_wall_up(maze, x, y))
+            if(maze.cells[y][x].wall_down)
             {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20); //on dessine un mur en haut
+                SDL_RenderDrawLine(renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur en bas
             }
-            if(has_wall_down(maze, x, y))
+            if(maze.cells[y][x].wall_right)
             {
-                SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19); //on dessine un mur en bas
-            }
-            if(has_wall_left(maze, x, y))
-            {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19); //on dessine un mur à gauche
-            }
-            if(has_wall_right(maze, x, y))
-            {
-                SDL_RenderDrawLine(renderer, (x * 20) + 19, y * 20, (x * 20) + 19, (y * 20) + 19); //on dessine un mur à droite
+                SDL_RenderDrawLine(renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur à droite
             }
         }
     }
+    SDL_RenderDrawLine(renderer, 0, 0, 0, maze.height * d_h); //on dessine les murs de la bordure gauche
+    SDL_RenderDrawLine(renderer, 0, 0, maze.width * d_w, 0); //on dessine les murs de la bordure haute
 
-    SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(1); //pause de 0.001 secondes
     SDL_SetRenderDrawColor(renderer, 0, 50, 255, 255); //on définit la couleur en bleu
-    SDL_RenderDrawLine(renderer, 0, 0, 0, 20); //l'entrée en vert
-    SDL_RenderDrawLine(renderer, 0, 0, 20, 0); //l'entrée en vert
+    SDL_RenderDrawLine(renderer, 0, 0, d_w, 0); //on dessine l'entrée
+    SDL_RenderDrawLine(renderer, 0, 0, 0, d_h); //on dessine l'entrée
 
-    SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(1); //pause de 0.001 secondes
     SDL_SetRenderDrawColor(renderer, 10, 235, 10, 255); //on définit la couleur en vert
-    SDL_RenderDrawLine(renderer, (maze.width * 20) - 1, (maze.height * 20) - 20, (maze.width * 20) - 1, (maze.height * 20)); //la sortie en bleu
-    SDL_RenderDrawLine(renderer, (maze.width * 20) - 20, (maze.height * 20) - 1, (maze.width * 20), (maze.height * 20) - 1); //la sortie en bleu
+    SDL_RenderDrawLine(renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
+    SDL_RenderDrawLine(renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
+
+    SDL_Delay(displayMode.refresh_rate); //pause pour laisser aux données le temps de s'afficher
     SDL_RenderPresent(renderer); //on met à jour l'affichage
 
     //on commence la recherche
     const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetRenderDrawColor(renderer, 0, 55, 155, 255); //on définit la couleur en bleu
-    color_case(renderer, maze, 0, 0, fast);
-    if(show_has_exit_right_hand_aux(maze, visited, 0, 0, renderer, fast))
+    color_case(renderer, maze, 0, 0, true);
+    if(show_has_exit_right_hand_aux(maze, visited, 0, 0, renderer, true)) //on affiche la progression du solveur
     {
         SDL_SetWindowTitle(fenetre, "maze solvable");
     }
@@ -377,8 +376,8 @@ int true_show_has_exit_right_hand(const maze_t maze, const bool fast)
     }
 
     //à la fin
+    SDL_Delay(displayMode.refresh_rate); //pause pour laisser aux données le temps de s'afficher
     SDL_RenderPresent(renderer); //on met à jour l'affichage
-    SDL_Delay(100); //pause de 0.1 secondes
     SDL_Event event = {0}; //on crée un event
     while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
         (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
@@ -390,16 +389,6 @@ int true_show_has_exit_right_hand(const maze_t maze, const bool fast)
     SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
-    return 1;
-}
-
-int show_has_exit_right_hand(const maze_t maze)
-{
-    if(true_show_has_exit_right_hand(maze, false) == -1)
-    {
-        fprintf(stderr, "Erreur de visualisation\n");
-        return -1;
-    }
     return 1;
 }
 
@@ -684,17 +673,9 @@ int show_the_way(const maze_t maze, const way *w)
     {
         for(int y = 0; y < maze.height; y++)
         {
-            if(maze.cells[y][x].wall_up)
-            {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, (x * 20) + 19, y * 20); //on dessine un mur en haut
-            }
             if(maze.cells[y][x].wall_down)
             {
                 SDL_RenderDrawLine(renderer, x * 20, (y * 20) + 19, (x * 20) + 19, (y * 20) + 19); //on dessine un mur en bas
-            }
-            if(maze.cells[y][x].wall_left)
-            {
-                SDL_RenderDrawLine(renderer, x * 20, y * 20, x * 20, (y * 20) + 19); //on dessine un mur à gauche
             }
             if(maze.cells[y][x].wall_right)
             {
