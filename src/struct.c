@@ -205,11 +205,11 @@ bool has_wall_up(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    if(x == 0)
+    if(y == 0)
     {
         return true;
     }
-    return maze.cells[y][x - 1].wall_down;
+    return maze.cells[y - 1][x].wall_down;
 }
 
 bool has_wall_down(const maze_t maze, const int x, const int y)
@@ -229,11 +229,11 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    if(y == 0)
+    if(x == 0)
     {
         return true;
     }
-    return maze.cells[y - 1][x].wall_right;
+    return maze.cells[y][x - 1].wall_right;
 }
 
 bool has_wall_right(const maze_t maze, const int x, const int y)
