@@ -490,8 +490,7 @@ int print_maze(maze_t const maze)
     }
 
     int d_h = displayMode.h/maze.height; int d_w = displayMode.w/maze.width; //on définie le ratio de la taille des cellules
-    printf("h : %d, w : %d\n", d_h, d_w);
-    d_h = d_h > d_w ? d_w : d_h; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
+    d_h = d_h - 1 > d_w ? d_w : d_h - 1; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
     d_w = d_h;
     if(d_w < 2) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
     {
@@ -499,7 +498,6 @@ int print_maze(maze_t const maze)
         d_w = 2;
         d_h = 2;
     }
-    printf("d_h : %d, d_w : %d\n", d_h, d_w);
 
     SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(fenetre == NULL)
