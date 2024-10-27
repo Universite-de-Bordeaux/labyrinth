@@ -1,6 +1,4 @@
 #include "struct.h"
-#include <SDL2/SDL.h>
-
 
 // --- MAZE FUNCTIONS ---
 
@@ -471,6 +469,201 @@ bool is_empty(const way *w)
     return is_empty(w->dad);
 }
 
+// --- QUEUE FUNCTIONS ---
+
+// Fonction auxiliaire de grow_queue
+// Double la taille du tableau utilisé dans la représentation.
+// Cette fonction sera utilisée lorsque le tableau est plein et qu'on veut y
+// ajouter une valeur.
+static void grow_queue(queue *p) {
+  int *new_array = malloc(sizeof(int) * p -> size_array * 2);
+  for(int i = 0; i < p -> size_array; i++)
+  {
+    new_array[i] = p -> array[(i + p -> left) % p -> size_array];
+  }
+  free(p -> array);
+  p -> array = new_array;
+  p -> left = 0;
+  p -> right = p -> size_array;
+  p -> size_array *= 2;
+}
+
+// Fonction auxiliaire de dequeue
+// Divise par deux la taille du tableau utilisé dans la représentation
+// Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
+// sa capacité.
+static void shrink_queue(queue *p) {
+  if(p -> size_array < 2)
+    return;
+  int* new_array = malloc(sizeof(int) * p -> size_array / 2);
+  int c = 0;
+  for(int i = 0; i < p -> size_array / 2; i++)
+  {
+    new_array[i] = p -> array[(p -> left + i) % p -> size_array];
+    c++;
+  }
+  free(p -> array);
+  p -> left = 0;
+  p -> right = c;
+  p -> array = new_array;
+}
+
+queue *create_queue(void) {
+  int *array = malloc(sizeof(int));
+  queue *p = malloc(sizeof(queue));
+  if(p == NULL || array == NULL)
+  {
+    fprintf(stderr, "Erreur malloc\n");
+    exit(1);
+  }
+  p -> size_array = 1;
+  p -> left = 0;
+  p -> right = 0;
+  p -> empty = true;
+  p -> array = array;
+  return p;
+}
+
+void delete_queue(queue *p) {
+  free(p -> array);
+  p -> array = NULL;
+  p -> size_array = 0;
+  p -> left = 0;
+  p -> right = 0;
+  p -> empty = true;
+  free(p);
+}
+
+bool isempty_queue(const queue *p) {
+  return p -> empty;
+}
+
+int size_queue(const queue *p){
+  const int t = p -> right - p -> left;
+  if(t == 0)
+  {
+    return isempty_queue(p) ? 0 : p -> size_array;
+  }
+  if(t > 0)
+  {
+    return t;
+  }
+  return -t;
+}
+
+void enqueue(const int val, queue *p)
+{
+  if(p -> right == p -> left && !isempty_queue(p))
+  {
+    grow_queue(p);
+  }
+  p -> array[p -> right] = val;
+  p -> right = (p -> right + 1) % p -> size_array;
+  p -> empty = false;
+}
+
+int dequeue(queue *p) {
+  if(p -> empty)
+  {
+    fprintf(stderr, "Error : try to dequeue an empty queue\n");
+    exit(1);
+  }
+  const int t = p -> array[p -> left];
+  p -> left = (p -> left + 1) % p -> size_array;
+  if(p -> left == p -> right)
+  {
+    p -> empty = true;
+  }
+  if(size_queue(p) < p -> size_array / 4)
+  {
+    shrink_queue(p);
+  }
+  return t;
+}
+
+// --- STACK FUNCTIONS ---
+
+// Fonction auxiliaire de grow_stack
+// Double la taille du tableau utilisé dans la représentation.
+// Cette fonction sera utilisée lorsque le tableau est plein et qu'on veut y
+// ajouter une valeur.
+static void grow_stack(stack *p) {
+    p -> size_array *= 2  ;
+    realloc(p -> array, sizeof(int) * p -> size_array);
+    if(p -> array == NULL)
+    {
+        fprintf(stderr, "Erreur realloc\n");
+        exit(1);
+    }
+}
+
+// Fonction auxiliaire de shrink_stack
+// Divise par deux la taille du tableau utilisé dans la représentation.
+// Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
+// sa capacité.
+static void shrink_stack(stack *p) {
+    if(p -> size_array < 2)
+        return;
+    p -> size_array /= 2;
+    realloc(p -> array, sizeof(int) * p -> size_array);
+    if(p -> array == NULL)
+    {
+        fprintf(stderr, "Erreur realloc\n");
+        exit(1);
+    }
+}
+
+stack *create_stack(void) {
+  stack *p = malloc(sizeof(stack));
+  if(p == NULL)
+  {
+    fprintf(stderr, "Erreur maloc\n");
+    exit(1);
+  }
+  p -> size_array = 1;
+  p -> size_stack = 0;
+  p -> array = (int *)malloc(sizeof(int));
+  if(p -> array == NULL)
+  {
+    fprintf(stderr, "Erreur malloc\n");
+    exit(1);
+  }
+  return p;
+}
+
+void delete_stack(stack *p) {
+  free(p -> array);
+  free(p);
+}
+
+bool isempty_stack(const stack *p) {
+  return p -> size_stack == 0;
+}
+
+int size_stack(const stack *p) {
+  return p -> size_stack;
+}
+
+int pop(stack *p) {
+  if(p -> size_stack == 0)
+  {
+    fprintf(stderr, "Error : try to pop en empty pill\n");
+    exit(1);
+  }
+  const int t = p -> array[p -> size_stack - 1];
+  p -> size_stack--;
+  if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
+    shrink_stack(p);
+  return t;
+}
+
+void push(const int val, stack *p) {
+  if(p -> size_stack == p -> size_array)
+    grow_stack(p);
+  p -> array[p -> size_stack] = val;
+  p -> size_stack++;
+}
+
 // --- MAZE PRINTING ---
 
 int print_maze(maze_t const maze)
@@ -558,4 +751,102 @@ int print_maze(maze_t const maze)
     SDL_DestroyWindow(fenetre); //destruction de la fenetre (desallocation de la memoire)
     SDL_Quit(); //desalocation de la memoire
     return 1;
+}
+
+int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, const SDL_Window *window, int *dw, int *dh)
+{
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
+    {
+        fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) { //on obtient le mode d'affichage de l'écran
+        fprintf(stderr, "Erreur lors de l'obtention du mode d'affichage : %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    int d_h = displayMode.h/maze.height; int d_w = displayMode.w/maze.width; //on définie le ratio de la taille des cellules
+    d_h = d_h - 1 > d_w ? d_w : d_h - 1; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
+    d_w = d_h;
+    if(d_w < 2) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
+    {
+        fprintf(stderr, "Warning : la taille des cellules est trop petite pour être affichée correctement, l'affichage va dépasser de l'écran\n");
+        d_w = 2;
+        d_h = 2;
+    }
+
+    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(fenetre == NULL)
+    {
+        fprintf(stderr, "Erreur de creation de la fenetre : %s\n", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+    SDL_Renderer *m_renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
+    if(m_renderer == NULL)
+    {
+        m_renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_SOFTWARE);
+        if(m_renderer == NULL)
+        {
+            fprintf(stderr, "Erreur de creation du renderer : %s\n", SDL_GetError());
+            SDL_DestroyWindow(fenetre);
+            SDL_Quit();
+            return -1;
+        }
+    }
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
+
+    for(int x = 0; x < maze.width; x++)
+    {
+        for(int y = 0; y < maze.height; y++)
+        {
+            if(maze.cells[y][x].wall_down)
+            {
+                SDL_RenderDrawLine(m_renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur en bas
+            }
+            if(maze.cells[y][x].wall_right)
+            {
+                SDL_RenderDrawLine(m_renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur à droite
+            }
+        }
+    }
+    SDL_RenderDrawLine(m_renderer, 0, 0, 0, maze.height * d_h); //on dessine les murs de la bordure gauche
+    SDL_RenderDrawLine(m_renderer, 0, 0, maze.width * d_w, 0); //on dessine les murs de la bordure haute
+
+    SDL_SetRenderDrawColor(m_renderer, 0, 50, 255, 255); //on définit la couleur en bleu
+    SDL_RenderDrawLine(m_renderer, 0, 0, d_w, 0); //on dessine l'entrée
+    SDL_RenderDrawLine(m_renderer, 0, 0, 0, d_h); //on dessine l'entrée
+
+    SDL_SetRenderDrawColor(m_renderer, 10, 235, 10, 255); //on définit la couleur en vert
+    SDL_RenderDrawLine(m_renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
+    SDL_RenderDrawLine(m_renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
+
+    renderer = m_renderer;
+    window = fenetre;
+    *dw = d_w;
+    *dh = d_h;
+    return 1;
+}
+
+void destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window)
+{
+    SDL_DestroyRenderer(renderer); //destruction du renderer (desallocation de la memoire)
+    SDL_DestroyWindow(window); //destruction de la fenetre (desallocation de la memoire)
+    SDL_Quit(); //desalocation de la memoire
+}
+
+void wait_and_destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window)
+{
+    SDL_Event event = {0}; //on crée un event vide
+    while(!(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
+        (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || \
+            event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN)))) //tant que l'utilisateur n'a pas fermé la fenetre
+    {
+        SDL_WaitEvent(&event); //on enregistre les events entrants
+    }
+    destroy_print_maze(renderer, window);
 }

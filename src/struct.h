@@ -1,6 +1,7 @@
 #ifndef CASE_H
 #define CASE_H
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 #define L_TP 3000000000
 
 //Structure - typedef - fonction (dans l'ordre)
@@ -38,6 +39,19 @@ struct waytab
     struct way **tab;
 };
 
+typedef struct {
+    int *array;     // Tableau des valeurs.
+    int size_array; // Taille du tableau des valeurs.
+    int left;       // Indice de la valeur à gauche de la file (si non-vide).
+    int right;      // Indice qui suit celui de la valeur à droite de la fil (si elle est non-vide).
+    bool empty;     // Booléen indiquant si la file est vide.
+} queue;
+
+typedef struct {
+    int size_array; // Taille totale du tableau alloué en mémoire.
+    int size_stack; // Nombre d'éléments dans la pile représentée.
+    int *array;     // Tableau contenant les valeurs de la pile représentée.
+} stack;
 
 // --- Typedef ---
 
@@ -187,13 +201,32 @@ bool has_wall_left(maze_t maze, int x, int y);
 //gère les cas d'erreur et affiche un message d'erreur avant d'arrêter le programme
 bool has_wall_right(maze_t maze, int x, int y);
 
+// --- VISUALISATION ---
+
+
 //affiche le labyrinthe, renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe à afficher
 //les murs d'entré sont en bleu, les murs de sortie en vert
-//chaque cellule est de taille 20x20 pixels
+//la taille de chaque cellules est automatiquement ajustée pour remplir la fenêtre
 //le programme se ferme quand on appuie sur ECHAP, ENTRER, ou tente de fermer la fenetre
 int print_maze(maze_t maze);
 
+//affiche le labyrinthe, renvoie -1 en cas d'erreur, 1 sinon
+//assigne les valeurs utiles aux variables d'entrées
+//maze : le labyrinthe à afficher
+//renderer : le renderer de la fenêtre résultante
+//window : la fenêtre résultante
+//dw : la largeur résultante de chaque cellule
+//dh : la hauteur résultante de chaque cellule
+//les murs d'entré sont en bleu, les murs de sortie en vert
+//la taille de chaque cellules est automatiquement ajustée pour remplir la fenêtre
+int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, const SDL_Window *window, int *dw, int *dh);
+
+//désalloue la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre
+void destroy_print_maze(SDL_DisplayMode *display, const SDL_Renderer *renderer, const SDL_Window *window);
+
+//désalloue la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre quand on appuie sur les touchent ECHAP, ENTRER, ou tente de fermer la fenetre
+void wait_and_destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window);
 
 // --- BOOL_TAB ---
 
@@ -305,4 +338,49 @@ void free_way(way *w);
 //renvoie true si le chemin est vide (c'est à dire qu'il n'est pas relié à la case (0, 0)), false sinon
 //w : le chemin
 bool is_empty(const way *w);
+
+// --- QUEUE ---
+
+// Crée une file vide.
+queue *create_queue(void);
+
+// Libère la mémoire allouée pour la file.
+void delete_queue(queue *);
+
+// Renvoie le nombre d'éléments dans la file.
+int size_queue(const queue *);
+
+// Renvoie vrai si la file est vide, faux sinon.
+bool isempty_queue(const queue *);
+
+// Ajoute une valeur dans la file, à gauche de la valeur la plus à gauche.
+void enqueue(int, queue *);
+
+// Renvoie la valeur la plus à droite de la file et la retire.
+int dequeue(queue *);
+
+// --- STACK ---
+
+// Crée une pile vide.
+stack *create_stack(void);
+
+// Libère la mémoire allouée pour la pile.
+void delete_stack(stack *);
+
+// Renvoie vrai si la pile est vide, faux sinon.
+bool isempty_stack(const stack *);
+
+// Renvoie le nombre d'éléments dans la pile.
+int size_stack(const stack *);
+
+// Renvoie la valeur au sommet de la pile et la retire. Si la pile est vide, la
+// fonction affiche un message sur la sortie erreur standard et termine le
+// programme. Si l'occupation du tableau tombe à 25% après le pop(), le tableau
+// est redimensionné par la fonction shrink_stack().
+int pop(stack *);
+
+// Ajoute une valeur au sommet de la pile. Si le tableau est plein, il est
+// redimensionné au préalable, par la fonction grow_stack.
+void push(int, stack *);
+
 #endif //CASE_H
