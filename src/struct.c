@@ -551,34 +551,41 @@ int size_queue(const queue *p){
   return -t;
 }
 
-void enqueue(const int val, queue *p)
+void enqueue(const int val1, const int val2, queue *p)
 {
-  if(p -> right == p -> left && !isempty_queue(p))
-  {
-    grow_queue(p);
-  }
-  p -> array[p -> right] = val;
-  p -> right = (p -> right + 1) % p -> size_array;
-  p -> empty = false;
+    if(p -> right == p -> left && !isempty_queue(p))
+    {
+        grow_queue(p);
+    }
+    p -> array[p -> right] = val1;
+    p -> right = (p -> right + 1) % p -> size_array;
+    p -> empty = false;
+    if(p -> right == p -> left)
+    {
+        grow_queue(p);
+    }
+    p -> array[p -> right] = val2;
+    p -> right = (p -> right + 1) % p -> size_array;
 }
 
-int dequeue(queue *p) {
-  if(p -> empty)
-  {
-    fprintf(stderr, "Error : try to dequeue an empty queue\n");
-    exit(1);
-  }
-  const int t = p -> array[p -> left];
-  p -> left = (p -> left + 1) % p -> size_array;
-  if(p -> left == p -> right)
-  {
-    p -> empty = true;
-  }
-  if(size_queue(p) < p -> size_array / 4)
-  {
-    shrink_queue(p);
-  }
-  return t;
+void dequeue(queue *p, int *val1, int *val2) {
+    if(p -> empty)
+    {
+        fprintf(stderr, "Error : try to dequeue an empty queue\n");
+        exit(1);
+    }
+    *val1 = p -> array[p -> left];
+    p -> left = (p -> left + 1) % p -> size_array;
+    if(size_queue(p) < p -> size_array / 4)
+    {
+        shrink_queue(p);
+    }
+    *val2 = p -> array[p -> left];
+    p -> left = (p -> left + 1) % p -> size_array;
+    if(p -> left == p -> right)
+    {
+        p -> empty = true;
+    }
 }
 
 // --- STACK FUNCTIONS ---
@@ -644,24 +651,34 @@ int size_stack(const stack *p) {
   return p -> size_stack;
 }
 
-int pop(stack *p) {
-  if(p -> size_stack == 0)
-  {
-    fprintf(stderr, "Error : try to pop en empty pill\n");
-    exit(1);
-  }
-  const int t = p -> array[p -> size_stack - 1];
-  p -> size_stack--;
-  if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
-    shrink_stack(p);
-  return t;
+void pop(stack *p, int *val1, int *val2) {
+    if(p -> size_stack == 0)
+    {
+        fprintf(stderr, "Error : try to pop en empty pill\n");
+        exit(1);
+    }
+    *val1 = p -> array[p -> size_stack - 1];
+    *val2 = p -> array[p -> size_stack -2];
+    p -> size_stack -= 2;
+    if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
+    {
+        shrink_stack(p);
+    }
 }
 
-void push(const int val, stack *p) {
-  if(p -> size_stack == p -> size_array)
-    grow_stack(p);
-  p -> array[p -> size_stack] = val;
-  p -> size_stack++;
+void push(const int val1, const int val2, stack *p) {
+    if(p -> size_stack == p -> size_array)
+    {
+        grow_stack(p);
+    }
+    p -> array[p -> size_stack] = val1;
+    p -> size_stack++;
+    if(p -> size_stack == p -> size_array)
+    {
+        grow_stack(p);
+    }
+    p -> array[p -> size_stack] = val2;
+    p -> size_stack++;
 }
 
 // --- MAZE PRINTING ---

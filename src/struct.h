@@ -354,10 +354,10 @@ int size_queue(const queue *);
 bool isempty_queue(const queue *);
 
 // Ajoute une valeur dans la file, à gauche de la valeur la plus à gauche.
-void enqueue(int, queue *);
+void enqueue(int, int, queue *);
 
 // Renvoie la valeur la plus à droite de la file et la retire.
-int dequeue(queue *);
+void dequeue(queue *, int *, int *);
 
 // --- STACK ---
 
@@ -377,10 +377,10 @@ int size_stack(const stack *);
 // fonction affiche un message sur la sortie erreur standard et termine le
 // programme. Si l'occupation du tableau tombe à 25% après le pop(), le tableau
 // est redimensionné par la fonction shrink_stack().
-int pop(stack *);
+void pop(stack *, int *, int *);
 
 // Ajoute une valeur au sommet de la pile. Si le tableau est plein, il est
 // redimensionné au préalable, par la fonction grow_stack.
-void push(int, stack *);
+void push(int, int, stack *);
 
 #endif //CASE_H
