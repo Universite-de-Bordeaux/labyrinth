@@ -6,25 +6,28 @@
 
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
-bool exit_deep_seeker(maze_t maze);
+bool has_exit_deep_seeker(maze_t maze);
 
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
-bool perfect_deep_inspector(maze_t maze); //TODO : réecrire à l'aide de piles
+bool is_perfect_deep_inspector(maze_t maze);
 
 //renvoie le chemin le plus court pour sortir du labyrinthe
 //maze : le labyrinthe
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
-way *best_exit_deep_seeker(const maze_t maze); //TODO : réecrire à l'aide de piles
+way *best_exit_deep_seeker(const maze_t maze);
+
 
 // --- solveurs en largeur ---
+
+
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
-bool exit_breadth_seeker(maze_t maze); //TODO
+bool has_exit_breadth_seeker(maze_t maze); //TODO
 
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
-bool perfect_breadth_inspector(maze_t maze); //TODO
+bool is_perfect_breadth_inspector(maze_t maze); //TODO
 
 //renvoie le chemin le plus court pour sortir du labyrinthe
 //maze : le labyrinthe
@@ -51,6 +54,24 @@ int show_perfect_deep_inspector(maze_t maze); //TODO
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
 int show_best_exit_deep_seeker(maze_t maze); //TODO
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+int show_exit_breadth_seeker(maze_t maze); //TODO
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+int show_perfect_breadth_inspector(maze_t maze); //TODO
+
+//fonction de visualisation
+//affiche le labyrinthe et la progression du solveur
+//renvoie -1 en cas d'erreur, 1 sinon
+//maze : le labyrinthe
+int show_best_exit_breadth_seeker(maze_t maze); //TODO
 
 //fonction de visualisation
 //affiche le chemin dans le labyrinthe
