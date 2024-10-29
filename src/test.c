@@ -8,7 +8,7 @@ bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
         for(int j = 1; j < y; j++)
         {
             const maze_t maze = f(i, j);
-            if(!has_exit_right_hand(maze))
+            if(!has_exit_deep_seeker(maze))
             {
                 free_maze(maze);
                 return false;
@@ -26,7 +26,7 @@ bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
         for(int j = 1; j < y; j++)
         {
             const maze_t maze = f(i, j);
-            if(!is_perfect_right_hand(maze))
+            if(!is_perfect_deep_inspector(maze))
             {
                 free_maze(maze);
                 return false;
@@ -45,11 +45,11 @@ int evaluate_mazemaker(const func_ptr f, const int x, const int y)
         for(int j = 1; j < y; j++)
         {
             const maze_t maze = f(i, j);
-            if(t == 2 && !is_perfect_right_hand(maze))
+            if(t == 2 && !is_perfect_deep_inspector(maze))
             {
                 t = 1;
             }
-            if(t == 1 && !has_exit_right_hand(maze))
+            if(t == 1 && !has_exit_deep_seeker(maze))
             {
                 free_maze(maze);
                 return 0;

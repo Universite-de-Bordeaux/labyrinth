@@ -37,10 +37,10 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo make a way : \n");
     printf("\t-rw <filename> : read way from file\n");
-    printf("You can also use the solve command with parameter 3 to generate a way\n");
+    printf("You can also use the solve command with parameter 3 or 6 to generate a way\n");
 
     printf("\nTo solve a maze : (a maze must be initiated)\n");
-    printf("\t-slv <nb> : solve 1 : is perfect, 2 : has exit, 3 : shortest exit (and save way)\n");
+    printf("\t-slv <nb> : solve 1 : is perfect (deep inspector), 2 : has exit (deep seeker), 3 : shortest exit (deep seeker)(and save way), 4 : is perfect (breadth inspector), 5 : has exit (breadth seeker), 6 : shortest exit (breadth seeker)(and save way)\n");
 
 
     printf("\nTo write: \n");
@@ -49,7 +49,7 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo show (a maze must be initiated) : \n");
     printf("\t-sh : show maze\n");
-    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect, 2 : has exit, 3 : shortest exit\n");
+    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect (deep inspector), 2 : has exit (deep seeker), 3 : shortest exit (deep seeker), 4 : is perfect (breadth inspector), 5 : has exit (breadth seeker), 6 : shortest exit (breadth seeker)\n");
     printf("\t-shw : show way (a way must be initiated)\n");
 
     printf("\n\t-h : help\n");
@@ -236,7 +236,7 @@ void cmd(char *argv[], const int argc)
         {
             if(argc != 2)
             {
-                fprintf(stderr, "Error : -h : -h must be the only command\n");
+                fprintf(stderr, "Warning : -h must be the only command\n");
             }
             print_cmd_help(argv[0]);
             return;
@@ -316,7 +316,7 @@ void cmd(char *argv[], const int argc)
         if(solve_type == 1)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if(is_perfect_right_hand(maze))
+            if(is_perfect_deep_inspector(maze))
             {
                 printf("The maze is perfect\n");
             }
@@ -328,7 +328,7 @@ void cmd(char *argv[], const int argc)
         else if(solve_type == 2)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if(has_exit_right_hand(maze))
+            if(has_exit_deep_seeker(maze))
             {
                 printf("The maze has an exit\n");
             }
@@ -340,7 +340,45 @@ void cmd(char *argv[], const int argc)
         else if(solve_type == 3)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            w = shortest_exit_right_hand(maze);
+            w = best_exit_deep_seeker(maze);
+            if(is_empty(w))
+            {
+                printf("The maze has no exit\n");
+            }
+            else
+            {
+                is_way = true;
+                printf("way found and saved\n");
+            }
+        }
+        else if(solve_type == 4)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            if(is_perfect_breadth_inspector(maze))
+            {
+                printf("The maze is perfect\n");
+            }
+            else
+            {
+                printf("The maze is not perfect\n");
+            }
+        }
+        else if(solve_type == 5)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            if(has_exit_breadth_seeker(maze))
+            {
+                printf("The maze has an exit\n");
+            }
+            else
+            {
+                printf("The maze has no exit\n");
+            }
+        }
+        else if(solve_type == 6)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            w = best_exit_breadth_seeker(maze);
             if(is_empty(w))
             {
                 printf("The maze has no exit\n");
@@ -353,7 +391,7 @@ void cmd(char *argv[], const int argc)
         }
         else
         {
-            fprintf(stderr, "Error : -slv <nb> : %d is no reconized as type\n type : 1 (is perfect), 2 (has exit), 3 (shortest exit)\n", solve_type);
+            fprintf(stderr, "Error : -slv <nb> : %d is no reconized as type\n type : 1 (is perfect deep), 2 (has exit deep), 3 (shortest exit deep), 4 (is perfect breadth), 5 (has exit breadth), 6 (shortest exit breadth)\n", solve_type);
             return;
         }
     }
@@ -378,26 +416,41 @@ void cmd(char *argv[], const int argc)
         if(type_show == 1)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_is_perfect_right_hand(maze);
+            show_is_perfect_deep_inspector(maze);
         }
         else if(type_show == 2)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_has_exit_right_hand(maze);
+            show_has_exit_deep_seeker(maze);
         }
         else if(type_show == 3)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_shortest_exit_right_hand(maze);
+            show_best_exit_deep_seeker(maze);
         }
         else if(type_show == 0)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             print_maze(maze);
         }
+        else if(type_show == 4)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            show_is_perfect_breadth_inspector(maze);
+        }
+        else if(type_show == 5)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            show_has_exit_breadth_seeker(maze);
+        }
+        else if(type_show == 6)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            show_best_exit_breadth_seeker(maze);
+        }
         else
         {
-            fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n type : 1 (is perfect), 2 (has exit), 3 (shortest exit)\n", type_show);
+            fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n type : 0 (show maze), 1 (is perfect deep), 2 (has exit deep), 3 (shortest exit deep), 4 (is perfect breadth), 5 (has exit breadth), 6 (shortest exit breadth)\n", type_show);
             return;
         }
     }

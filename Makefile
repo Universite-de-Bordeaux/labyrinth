@@ -3,7 +3,8 @@ CFLAGS = -Wall -std=c99
 LDFLAGS = -lm
 SDLFLAGS = `sdl2-config --cflags --libs`
 
-all : src/main
+all : src/main src/struct.o src/outside.o src/mazemaker.o src/solveur.o src/test.o src/cmd.o
+	@echo "Compilation done"
 
 src/main : src/main.o src/struct.o src/outside.o src/mazemaker.o src/solveur.o src/test.o src/cmd.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
