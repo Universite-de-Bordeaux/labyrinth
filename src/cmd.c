@@ -1,12 +1,11 @@
-#include "cmd.h"
-#include "solveur.h"
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
 #include <stdio.h>
 #include "mazemaker.h"
-#include "outside.h"
+#include "outside.h"#include "cmd.h"
+#include "solveur.h"
 
 //convertit une chaine de caractère en entier de manière sécurisée
 //str : chaine de caractère
