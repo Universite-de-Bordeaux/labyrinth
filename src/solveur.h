@@ -2,11 +2,11 @@
 #define SOLVEUR_H
 #include "struct.h"
 
-// --- solveurs ---
+// --- solveurs en profondeur ---
 
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
-bool exit_deep_seeker(maze_t maze); //TODO : réecrire à l'aide de piles
+bool exit_deep_seeker(maze_t maze);
 
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
@@ -16,6 +16,20 @@ bool perfect_deep_inspector(maze_t maze); //TODO : réecrire à l'aide de piles
 //maze : le labyrinthe
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
 way *best_exit_deep_seeker(const maze_t maze); //TODO : réecrire à l'aide de piles
+
+// --- solveurs en largeur ---
+//renvoie true si le labyrinthe est solvable, false sinon
+//maze : le labyrinthe
+bool exit_breadth_seeker(maze_t maze); //TODO
+
+//renvoie true si le labyrinthe est parfait, false sinon
+//maze : le labyrinthe
+bool perfect_breadth_inspector(maze_t maze); //TODO
+
+//renvoie le chemin le plus court pour sortir du labyrinthe
+//maze : le labyrinthe
+//renvoie un chemin vide si le labyrinthe n'est pas solvable
+way *best_exit_breadth_seeker(const maze_t maze); //TODO
 
 
 // --- visualisation ---
