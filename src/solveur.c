@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
-// --- Solveur de labyrinthes ---
+// --- Solveur en profondeur ---
 
 
 bool exit_deep_seeker(const maze_t maze)
@@ -178,25 +178,65 @@ way *best_exit_deep_seeker(const maze_t maze)
     return w;
 }
 
+// --- Solveur en largeur ---
+
+bool has_exit_breadth_seeker(maze_t maze)
+{
+    fprintf(stderr, "La fonction has_exit_breadth_seeker n'est pas encore implémentée.\n");
+    return false;
+}
+
+bool is_perfect_breadth_inspector(maze_t maze)
+{
+    fprintf(stderr, "La fonction is_perfect_breadth_inspector n'est pas encore implémentée.\n");
+    return false;
+}
+
+way *best_exit_breadth_seeker(const maze_t maze)
+{
+    fprintf(stderr, "La fonction best_exit_breadth_seeker n'est pas encore implémentée.\n");
+    return NULL;
+}
+
 // --- Visualisation des algorithmes de résolution de labyrinthes ---
 
-int show_has_exit_right_hand(maze_t maze)
+int show_has_exit_deep_seeker(maze_t maze)
 {
-    printf("Le visualisateur de l'algorithme de résolution de labyrinthes n'est pas encore implémenté.\n");
+    printf("Le visualisateur de la sortie du labyrinthe n'est pas encore implémenté.\n");
     return 1;
 }
 
-int show_is_perfect_right_hand(maze_t maze)
+int show_is_perfect_deep_inspector(maze_t maze)
 {
-    printf("Le visualisateur de l'algorithme de recherche de labyrinthes parfaits n'est pas encore implémenté.\n");
+    printf("Le visualisateur de la perfection du labyrinthe n'est pas encore implémenté.\n");
     return 1;
 }
 
-int show_shortest_exit_right_hand(maze_t maze)
+int show_best_exit_deep_seeker(maze_t maze)
 {
-    printf("Le visualisateur de l'algorithme de recherche du chemin le plus court pour sortir du labyrinthe n'est pas encore implémenté.\n");
+    printf("Le visualisateur du meilleur chemin pour sortir du labyrinthe n'est pas encore implémenté.\n");
     return 1;
 }
+
+int show_has_exit_breadth_seeker(maze_t maze)
+{
+    printf("Le visualisateur de la sortie du labyrinthe n'est pas encore implémenté.\n");
+    return 1;
+}
+
+int show_is_perfect_breadth_inspector(maze_t maze)
+{
+    printf("Le visualisateur de la perfection du labyrinthe n'est pas encore implémenté.\n");
+    return 1;
+}
+
+int show_best_exit_breadth_seeker(maze_t maze)
+{
+    printf("Le visualisateur du meilleur chemin pour sortir du labyrinthe n'est pas encore implémenté.\n");
+    return 1;
+}
+
+// --- Visualisation des chemins ---
 
 int show_the_way(const maze_t maze, const way *w)
 {

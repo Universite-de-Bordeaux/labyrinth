@@ -223,7 +223,7 @@ int print_maze(maze_t maze);
 int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, const SDL_Window *window, int *dw, int *dh);
 
 //désalloue la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre
-void destroy_print_maze(SDL_DisplayMode *display, const SDL_Renderer *renderer, const SDL_Window *window);
+void destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window);
 
 //désalloue la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre quand on appuie sur les touchent ECHAP, ENTRER, ou tente de fermer la fenetre
 void wait_and_destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window);
