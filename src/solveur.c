@@ -5,174 +5,176 @@
 
 // --- Solveur de labyrinthes ---
 
-//fonction auxiliaire de right_hand
-//renvoie true si on peut atteindre la sortie, false sinon
-//maze : le labyrinthe
-//visited : tableau de booléens pour savoir si on est déjà passé par une case
-//x : abscisse de la case actuelle
-//y : ordonnée de la case actuelle
-bool has_exit_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y)
-{
-    //condition d'arrêt : atteindre la sortie
-    if(x == maze.width - 1 && y == maze.height - 1)
-    {
-        return true;
-    }
 
-    //boucle : on part dans toutes les directions possibles et on regarde si on peut atteindre la sortie
-    set_true(visited, x, y);
-    if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y-1))
+bool exit_deep_seeker(const maze_t maze)
+{
+    const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
+    queue *q = create_queue(); //cette queue contiendra les coordonnées des cases à visiter
+    enqueue(0, 0, q); //on commence par l'entrée
+    int x, y;
+    while(!isempty_queue(q)) //on essaie tous les chemins possibles
     {
-        if(has_exit_right_hand_aux(maze, visited, x, y - 1))
+        dequeue(q, &x, &y);
+        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
         {
+            free_queue(q);
+            free_booltab(visited);
             return true;
         }
-    }
-    if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
-    {
-        if(has_exit_right_hand_aux(maze, visited, x, y + 1))
+        set_true(visited, x, y);
+        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //si on peut aller en haut
         {
-            return true;
+            enqueue(x, y - 1, q);
+        }
+        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas
+        {
+            enqueue(x, y + 1, q);
+        }
+        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche
+        {
+            enqueue(x - 1, y, q);
+        }
+        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite
+        {
+            enqueue(x + 1, y, q);
         }
     }
-    if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
-    {
-        if(has_exit_right_hand_aux(maze, visited, x - 1, y))
-        {
-            return true;
-        }
-    }
-    if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
-    {
-        if(has_exit_right_hand_aux(maze, visited, x + 1, y))
-        {
-            return true;
-        }
-    }
-    //condition d'arrêt : on ne peut plus avancer
+    free_booltab(visited);
+    free_queue(q);
     return false;
 }
 
-bool has_exit_right_hand(const maze_t maze)
+bool perfect_deep_inspector(const maze_t maze)
 {
-    const bool_tab visited = create_booltab(maze.width, maze.height);
-    const bool s = has_exit_right_hand_aux(maze, visited, 0, 0);
-    free_booltab(visited);
-    return s;
-}
-
-//fonction auxiliaire de is_perfect_right_hand
-//renvoie false si le labyrinth est évidemment non parfait, true sinon
-//maze : le labyrinthe
-//visited : tableau de booléens pour savoir si on est déjà passé par une case
-//x : abscisse de la case actuelle
-//y : ordonnée de la case actuelle
-//p_x : abscisse de la case précédente
-//p_y : ordonnée de la case précédente
-bool is_perfect_right_hand_aux(const maze_t maze, const bool_tab visited, const int x, const int y, const int p_x,const int p_y)
-{
-    set_true(visited, x, y);
-    if(!has_wall_up(maze, x, y) && (p_y != y - 1 || p_x != x))
+    const bool_tab visited = create_booltab(maze.width, maze.height); //on crée un tableau de booléens pour savoir si on est déjà passé par une case
+    queue *q = create_queue(); //cette queue contiendra les coordonnées des cases à visiter
+    enqueue(0, 0, q); //on commence par l'entrée
+    int x, y;
+    while(!isempty_queue(q)) //on doit visiter toutes les cases
     {
-        if(get_bool(visited, x, y - 1) || !is_perfect_right_hand_aux(maze, visited, x, y - 1, x, y))
+        dequeue(q, &x, &y);
+        if(get_bool(visited, x, y)) //si on est déjà passé par cette case, c'est qu'il y a un cycle
         {
+            free_queue(q);
+            free_booltab(visited);
             return false;
         }
-    }
-    if(!has_wall_down(maze, x, y) && (p_y != y + 1 || p_x != x))
-    {
-        if(get_bool(visited, x, y + 1) || !is_perfect_right_hand_aux(maze, visited, x, y + 1, x, y))
+        set_true(visited, x, y);
+        int nb_way_used = 0; //on compte le nombre de chemin adjacent utilisé, en théorie il doit être égal à 1 (notre père) ou 0 (la case de départ)
+        if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
-            return false;
-        }
-    }
-    if(!has_wall_left(maze, x, y) && (p_x != x - 1 || p_y != y))
-    {
-        if(get_bool(visited, x - 1, y) || !is_perfect_right_hand_aux(maze, visited, x - 1, y, x, y))
-        {
-            return false;
-        }
-    }
-    if(!has_wall_right(maze, x, y) && (p_x != x + 1 || p_y != y))
-    {
-        if(get_bool(visited, x + 1, y) || !is_perfect_right_hand_aux(maze, visited, x + 1, y, x, y))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool is_perfect_right_hand(const maze_t maze)
-{
-    const bool_tab visited = create_booltab(maze.width, maze.height);
-    if(!is_perfect_right_hand_aux(maze, visited, 0, 0, 0, 0))
-    {
-        free_booltab(visited);
-        return false;
-    }
-    for(int i = 0; i < maze.height; i++)
-    {
-        for(int j = 0; j < maze.width; j++)
-        {
-            if(!get_bool(visited, j, i))
+            if(!get_bool(visited, x, y - 1)) //on ne repasse pas par une case déjà visitée
             {
+                enqueue(x, y - 1, q);
+            }
+            else
+            {
+                nb_way_used++;
+            }
+        }
+        if(!has_wall_down(maze, x, y)) //si on peut aller en bas
+        {
+            if(!get_bool(visited, x, y + 1)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x, y + 1, q);
+            }
+            else
+            {
+                nb_way_used++;
+            }
+        }
+        if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
+        {
+            if(!get_bool(visited, x - 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x - 1, y, q);
+            }
+            else
+            {
+                nb_way_used++;
+            }
+        }
+        if(!has_wall_right(maze, x, y)) //si on peut aller à droite
+        {
+            if(!get_bool(visited, x + 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x + 1, y, q);
+            }
+            else
+            {
+                nb_way_used++;
+            }
+        }
+        if(nb_way_used > 1) //si on a plus d'un chemin adjacent utilisé, c'est qu'il y a un cycle
+        {
+            free_queue(q);
+            free_booltab(visited);
+            return false;
+        }
+        if(nb_way_used == 0 && (x != 0 || y != 0)) //si on est sur une case qui n'est pas la case de départ et qu'on a aucun chemin adjacent utilisé, c'est qu'il y a un problème
+        {
+            free_queue(q);
+            free_booltab(visited);
+            fprintf(stderr, "Erreur dans la fonction perfect_deep_inspector : la case (%d, %d) a été inspectée mais n'a aucun chemin parent.\n", x, y);
+            exit(EXIT_FAILURE);
+        }
+    }
+    for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
+    {
+        for(y = 0; y < maze.height; y++)
+        {
+            if(!get_bool(visited, x, y)) //si une case n'a pas été visitée, c'est que le labyrinthe n'est pas connexe
+            {
+                free_queue(q);
                 free_booltab(visited);
                 return false;
             }
         }
     }
+    free_queue(q);
     free_booltab(visited);
     return true;
 }
 
-//fonction auxiliaire de shortest_exit_right_hand
-//renvoie le chemin le plus court pour atteindre la sortie
-//maze : le labyrinthe
-//visited : tableau de booléens pour savoir si on est déjà passé par une case
-//x : abscisse de la case actuelle
-//y : ordonnée de la case actuelle
-//wayt : tableau de chemins
-void shortest_exit_right_hand_aux(const maze_t maze, const int x, const int y, const waytab wayt)
+way *best_exit_deep_seeker(const maze_t maze)
 {
-    if(x == maze.width - 1 && y == maze.height - 1)
+    //on va constituer un tableau de way pour chaque case, qui contiendra le chemin le plus court pour y arriver, en partant de l'entrée
+    //il nous permettra d'éviter les cycle (la taille du cycle serait plus grande) et de relier des fragments de chemin plutôt que de tout recalculer
+    const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
+    queue *q = create_queue(); //cette queue contiendra les coordonnées des cases à visiter
+    enqueue(0, 0, q); //on commence par l'entrée
+    int x, y;
+    while(!isempty_queue(q))
     {
-        return;
+        dequeue(q, &x, &y);
+        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie, on ne va pas plus loin
+        {
+            continue;
+        }
+        if(!has_wall_up(maze, x, y) && length_waytab(ways, x, y) + 1 < length_waytab(ways, x, y - 1)) //si on peut aller en haut et que le chemin est plus court
+        {
+            enqueue(x, y - 1, q); //on ajoute la case à celle à visiter
+            connected_way(ways, x, y - 1, x, y); //on crée un chemin entre la case actuelle et la case en haut
+        }
+        if(!has_wall_down(maze, x, y) && length_waytab(ways, x, y) + 1 < length_waytab(ways, x, y + 1)) //si on peut aller en bas et que le chemin est plus court
+        {
+            enqueue(x, y + 1, q); //on ajoute la case à celle à visiter
+            connected_way(ways, x, y + 1, x, y); //on crée un chemin entre la case actuelle et la case en bas
+        }
+        if(!has_wall_left(maze, x, y) && length_waytab(ways, x, y) + 1 < length_waytab(ways, x - 1, y)) //si on peut aller à gauche et que le chemin est plus court
+        {
+            enqueue(x - 1, y, q); //on ajoute la case à celle à visiter
+            connected_way(ways, x - 1, y, x, y); //on crée un chemin entre la case actuelle et la case à gauche
+        }
+        if(!has_wall_right(maze, x, y) && length_waytab(ways, x, y) + 1 < length_waytab(ways, x + 1, y)) //si on peut aller à droite et que le chemin est plus court
+        {
+            enqueue(x + 1, y, q); //on ajoute la case à celle à visiter
+            connected_way(ways, x + 1, y, x, y); //on crée un chemin entre la case actuelle et la case à droite
+        }
     }
-    const int l = length_waytab(wayt, x, y);
-    if(l > length_waytab(wayt, maze.width - 1, maze.height - 1))
-    {
-        return;
-    }
-    if(!has_wall_up(maze, x, y) && length_waytab(wayt, x, y - 1) > l + 1)
-    {
-        connected_way(wayt, x, y - 1, x, y);
-        shortest_exit_right_hand_aux(maze, x, y - 1, wayt);
-    }
-    if(!has_wall_down(maze, x, y) && length_waytab(wayt, x, y + 1) > l + 1)
-    {
-        connected_way(wayt, x, y + 1, x, y);
-        shortest_exit_right_hand_aux(maze, x, y + 1, wayt);
-    }
-    if(!has_wall_left(maze, x, y) && length_waytab(wayt, x - 1, y) > l + 1)
-    {
-        connected_way(wayt, x - 1, y, x, y);
-        shortest_exit_right_hand_aux(maze, x - 1, y, wayt);
-    }
-    if(!has_wall_right(maze, x, y) && length_waytab(wayt, x + 1, y) > l + 1)
-    {
-        connected_way(wayt, x + 1, y, x, y);
-        shortest_exit_right_hand_aux(maze, x + 1, y, wayt);
-    }
-}
-
-
-way *shortest_exit_right_hand(const maze_t maze)
-{
-    const waytab wayt = create_waytab(maze.width, maze.height);
-    shortest_exit_right_hand_aux(maze, 0, 0, wayt);
-    way *w = copy_way(get_way(wayt, maze.width - 1, maze.height - 1));
-    free_waytab(wayt);
+    way *w = copy_way(get_way(ways, maze.width - 1, maze.height - 1)); //on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
+    free_waytab(ways);
+    free_queue(q);
     return w;
 }
 
