@@ -342,45 +342,67 @@ bool is_empty(const way *w);
 // --- QUEUE ---
 
 // Crée une file vide.
+// Renvoie un pointeur vers la file.
+// Malloc utilisé, penser à free_queue pour libérer la mémoire.
 queue *create_queue(void);
 
 // Libère la mémoire allouée pour la file.
-void delete_queue(queue *);
+// q : adresse de la file.
+void free_queue(queue *q);
 
-// Renvoie le nombre d'éléments dans la file.
-int size_queue(const queue *);
+// Renvoie le nombre d'éléments (coordonées) dans la file.
+// q : adresse de la file.
+int size_queue(const queue *q);
 
 // Renvoie vrai si la file est vide, faux sinon.
-bool isempty_queue(const queue *);
+// q : adresse de la file.
+bool isempty_queue(const queue *q);
 
-// Ajoute une valeur dans la file, à gauche de la valeur la plus à gauche.
-void enqueue(int, int, queue *);
+// Ajoute une coordonnée à la fin de la file.
+// x : valeur x à ajouter.
+// y : valeur y à ajouter.
+// q : adresse de la file.
+void enqueue(int x, int y, queue *q);
 
-// Renvoie la valeur la plus à droite de la file et la retire.
-void dequeue(queue *, int *, int *);
+// Renvoie les coordonnées les plus à droite de la file.
+// En cas d'erreur, stoppe le programme.
+// q : adresse de la file.
+// x : adresse de la variable qui recevra la valeur x.
+// y : adresse de la variable qui recevra la valeur y.
+void dequeue(queue *q, int *x, int *y);
 
 // --- STACK ---
 
 // Crée une pile vide.
+// Renvoie un pointeur vers la pile.
+// Malloc utilisé, penser à free_stack pour libérer la mémoire.
 stack *create_stack(void);
 
 // Libère la mémoire allouée pour la pile.
-void delete_stack(stack *);
+// p : adresse de la pile.
+void free_stack(stack *p);
 
 // Renvoie vrai si la pile est vide, faux sinon.
-bool isempty_stack(const stack *);
+// p : adresse de la pile.
+bool isempty_stack(const stack *p);
 
-// Renvoie le nombre d'éléments dans la pile.
-int size_stack(const stack *);
+// Renvoie le nombre d'éléments (coordonnées) dans la pile.
+// p : adresse de la pile.
+int size_stack(const stack *p);
 
-// Renvoie la valeur au sommet de la pile et la retire. Si la pile est vide, la
-// fonction affiche un message sur la sortie erreur standard et termine le
-// programme. Si l'occupation du tableau tombe à 25% après le pop(), le tableau
-// est redimensionné par la fonction shrink_stack().
-void pop(stack *, int *, int *);
+// Renvoie les valeurs au sommet de la pile.
+// En cas d'erreur, stoppe le programme.
+// Si la pile est quasi-vide, la fonction shrink_stack() est appelée.
+// p : adresse de la pile.
+// x : adresse de la variable qui recevra la valeur x.
+// y : adresse de la variable qui recevra la valeur y.
+void pop(stack *p, int *x, int *y);
 
-// Ajoute une valeur au sommet de la pile. Si le tableau est plein, il est
-// redimensionné au préalable, par la fonction grow_stack.
-void push(int, int, stack *);
+// Ajoute une coordonnée au sommet de la pile.
+// Si la pile est pleine, la fonction double_stack() est appelée.
+// x : valeur x à ajouter.
+// y : valeur y à ajouter.
+// p : adresse de la pile.
+void push(int x, int y, stack *p);
 
 #endif //CASE_H

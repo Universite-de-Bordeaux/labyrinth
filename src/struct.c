@@ -510,81 +510,81 @@ static void shrink_queue(queue *p) {
 
 queue *create_queue(void) {
   int *array = malloc(sizeof(int));
-  queue *p = malloc(sizeof(queue));
-  if(p == NULL || array == NULL)
+  queue *q = malloc(sizeof(queue));
+  if(q == NULL || array == NULL)
   {
     fprintf(stderr, "Erreur malloc\n");
     exit(1);
   }
-  p -> size_array = 1;
-  p -> left = 0;
-  p -> right = 0;
-  p -> empty = true;
-  p -> array = array;
-  return p;
+  q -> size_array = 1;
+  q -> left = 0;
+  q -> right = 0;
+  q -> empty = true;
+  q -> array = array;
+  return q;
 }
 
-void delete_queue(queue *p) {
-  free(p -> array);
-  p -> array = NULL;
-  p -> size_array = 0;
-  p -> left = 0;
-  p -> right = 0;
-  p -> empty = true;
-  free(p);
+void free_queue(queue *q) {
+  free(q -> array);
+  q -> array = NULL;
+  q -> size_array = 0;
+  q -> left = 0;
+  q -> right = 0;
+  q -> empty = true;
+  free(q);
 }
 
-bool isempty_queue(const queue *p) {
-  return p -> empty;
+bool isempty_queue(const queue *q) {
+  return q -> empty;
 }
 
-int size_queue(const queue *p){
-  const int t = p -> right - p -> left;
+int size_queue(const queue *q){
+  const int t = q -> right - q -> left;
   if(t == 0)
   {
-    return isempty_queue(p) ? 0 : p -> size_array;
+    return isempty_queue(q) ? 0 : q -> size_array / 2;
   }
   if(t > 0)
   {
-    return t;
+    return t / 2;
   }
-  return -t;
+  return -t / 2;
 }
 
-void enqueue(const int val1, const int val2, queue *p)
+void enqueue(const int x, const int y, queue *q)
 {
-    if(p -> right == p -> left && !isempty_queue(p))
+    if(q -> right == q -> left && !isempty_queue(q))
     {
-        grow_queue(p);
+        grow_queue(q);
     }
-    p -> array[p -> right] = val1;
-    p -> right = (p -> right + 1) % p -> size_array;
-    p -> empty = false;
-    if(p -> right == p -> left)
+    q -> array[q -> right] = x;
+    q -> right = (q -> right + 1) % q -> size_array;
+    q -> empty = false;
+    if(q -> right == q -> left)
     {
-        grow_queue(p);
+        grow_queue(q);
     }
-    p -> array[p -> right] = val2;
-    p -> right = (p -> right + 1) % p -> size_array;
+    q -> array[q -> right] = y;
+    q -> right = (q -> right + 1) % q -> size_array;
 }
 
-void dequeue(queue *p, int *val1, int *val2) {
-    if(p -> empty)
+void dequeue(queue *q, int *x, int *y) {
+    if(q -> empty)
     {
         fprintf(stderr, "Error : try to dequeue an empty queue\n");
         exit(1);
     }
-    *val1 = p -> array[p -> left];
-    p -> left = (p -> left + 1) % p -> size_array;
-    if(size_queue(p) < p -> size_array / 4)
+    *x = q -> array[q -> left];
+    q -> left = (q -> left + 1) % q -> size_array;
+    if(size_queue(q) < q -> size_array / 4)
     {
-        shrink_queue(p);
+        shrink_queue(q);
     }
-    *val2 = p -> array[p -> left];
-    p -> left = (p -> left + 1) % p -> size_array;
-    if(p -> left == p -> right)
+    *y = q -> array[q -> left];
+    q -> left = (q -> left + 1) % q -> size_array;
+    if(q -> left == q -> right)
     {
-        p -> empty = true;
+        q -> empty = true;
     }
 }
 
@@ -638,7 +638,7 @@ stack *create_stack(void) {
   return p;
 }
 
-void delete_stack(stack *p) {
+void free_stack(stack *p) {
   free(p -> array);
   free(p);
 }
@@ -648,7 +648,7 @@ bool isempty_stack(const stack *p) {
 }
 
 int size_stack(const stack *p) {
-  return p -> size_stack;
+  return p -> size_stack / 2;
 }
 
 void pop(stack *p, int *val1, int *val2) {
@@ -842,8 +842,8 @@ int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, cons
     SDL_RenderDrawLine(m_renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
     SDL_RenderDrawLine(m_renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
 
-    renderer = m_renderer;
-    window = fenetre;
+    renderer = m_renderer;  // TODO : vérifier si l'information persiste
+    window = fenetre;       // TODO : vérifier si l'information persiste
     *dw = d_w;
     *dh = d_h;
     return 1;
