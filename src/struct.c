@@ -474,6 +474,16 @@ way *get_dad(const way *w)
     return w -> dad;
 }
 
+int get_x(const way *w)
+{
+    return w -> x;
+}
+
+int get_y(const way *w)
+{
+    return w -> y;
+}
+
 bool is_origin(const way *w)
 {
     return w -> x == 0 && w -> y == 0;

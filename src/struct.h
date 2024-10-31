@@ -344,6 +344,14 @@ bool is_empty(const way *w);
 //peut renvoyer NULL
 way *get_dad(const way *w);
 
+//renvoie la coordonnée x du chemin
+//w : le chemin
+int get_x(const way *w);
+
+//renvoie la coordonnée y du chemin
+//w : le chemin
+int get_y(const way *w);
+
 //renvoie true si le chemin est seulement relié à la case (0, 0), false sinon
 //w : le chemin
 bool is_origin(const way *w);
