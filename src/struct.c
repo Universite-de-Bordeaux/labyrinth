@@ -596,7 +596,7 @@ void dequeue(queue *q, int *x, int *y) {
 // ajouter une valeur.
 static void grow_stack(stack *p) {
     p -> size_array *= 2  ;
-    realloc(p -> array, sizeof(int) * p -> size_array);
+    p -> array = realloc(p -> array, sizeof(int) * p -> size_array);
     if(p -> array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
@@ -612,7 +612,7 @@ static void shrink_stack(stack *p) {
     if(p -> size_array < 2)
         return;
     p -> size_array /= 2;
-    realloc(p -> array, sizeof(int) * p -> size_array);
+    p -> array = realloc(p -> array, sizeof(int) * p -> size_array);
     if(p -> array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
