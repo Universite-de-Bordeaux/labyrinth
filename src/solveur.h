@@ -23,16 +23,16 @@ way *best_exit_deep_seeker(const maze_t maze);
 
 //renvoie true si le labyrinthe est solvable, false sinon
 //maze : le labyrinthe
-bool has_exit_breadth_seeker(maze_t maze); //TODO
+bool has_exit_breadth_seeker(maze_t maze); //TODO tester la fonction
 
 //renvoie true si le labyrinthe est parfait, false sinon
 //maze : le labyrinthe
-bool is_perfect_breadth_inspector(maze_t maze); //TODO
+bool is_perfect_breadth_inspector(maze_t maze); //TODO tester la fonction
 
 //renvoie le chemin le plus court pour sortir du labyrinthe
 //maze : le labyrinthe
 //renvoie un chemin vide si le labyrinthe n'est pas solvable
-way *best_exit_breadth_seeker(const maze_t maze); //TODO
+way *best_exit_breadth_seeker(const maze_t maze); //TODO corriger les bugs
 
 
 // --- visualisation ---
