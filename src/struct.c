@@ -469,6 +469,16 @@ bool is_empty(const way *w)
     return is_empty(w->dad);
 }
 
+way *get_dad(const way *w)
+{
+    return w -> dad;
+}
+
+bool is_origin(const way *w)
+{
+    return w -> x == 0 && w -> y == 0;
+}
+
 // --- QUEUE FUNCTIONS ---
 
 // Fonction auxiliaire de grow_queue

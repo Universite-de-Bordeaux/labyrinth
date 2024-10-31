@@ -339,6 +339,15 @@ void free_way(way *w);
 //w : le chemin
 bool is_empty(const way *w);
 
+//renvoie le père du chemin
+//w : le chemin
+//peut renvoyer NULL
+way *get_dad(const way *w);
+
+//renvoie true si le chemin est seulement relié à la case (0, 0), false sinon
+//w : le chemin
+bool is_origin(const way *w);
+
 // --- QUEUE ---
 
 // Crée une file vide.
