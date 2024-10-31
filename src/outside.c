@@ -106,13 +106,11 @@ void maze_to_file(const maze_t maze, const char *filename)
 //fonction auxiliaire pour way_from_file
 void way_to_file_aux(const way *w, FILE *file)
 {
-    if(w -> x == 0 && w -> y == 0)
+    if(!is_origin(w))
     {
-        fprintf(file, "%d %d\n", w -> x, w -> y);
-        return;
+        way_to_file_aux(get_dad(w), file);
     }
-    way_to_file_aux(w -> dad, file);
-    fprintf(file, "%d %d\n", w -> x, w -> y);
+    fprintf(file, "%d %d\n", get_x(w), get_y(w));
 }
 
 void way_to_file(const way* w, const char *filename)
