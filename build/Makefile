@@ -4,7 +4,7 @@ LDFLAGS = -lm
 SDLFLAGS = `sdl2-config --cflags --libs`
 
 all : ../main
-	@echo "All done"
+	@echo "compilation done"
 
 ../main : main.o struct.o outside.o mazemaker.o solveur.o test.o cmd.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(SDLFLAGS)
