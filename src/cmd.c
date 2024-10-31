@@ -4,7 +4,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include "mazemaker.h"
-#include "outside.h"#include "cmd.h"
+#include "outside.h"
+#include "cmd.h"
 #include "solveur.h"
 
 //convertit une chaine de caractère en entier de manière sécurisée
