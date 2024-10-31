@@ -790,7 +790,7 @@ int print_maze(maze_t const maze)
     return 1;
 }
 
-int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, const SDL_Window *window, int *dw, int *dh)
+int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **window, int *dw, int *dh)
 {
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) //initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
@@ -862,8 +862,11 @@ int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, cons
     SDL_RenderDrawLine(m_renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
     SDL_RenderDrawLine(m_renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
 
-    renderer = m_renderer;  // TODO : vérifier si l'information persiste
-    window = fenetre;       // TODO : vérifier si l'information persiste
+    SDL_Delay(displayMode.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(m_renderer); //on met à jour l'affichage
+
+    renderer = &m_renderer;
+    window = &fenetre;
     *dw = d_w;
     *dh = d_h;
     return 1;
