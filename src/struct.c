@@ -596,15 +596,15 @@ void dequeue(queue *q, int *x, int *y) {
     }
     *x = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
-    if(size_queue(q) < q -> size_array / 4)
-    {
-        shrink_queue(q);
-    }
     *y = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
     if(q -> left == q -> right)
     {
         q -> empty = true;
+    }
+    if(size_queue(q) < q -> size_array / 4)
+    {
+        shrink_queue(q);
     }
 }
 
@@ -671,14 +671,19 @@ int size_stack(const stack *p) {
   return p -> size_stack / 2;
 }
 
-void pop(stack *p, int *val1, int *val2) {
+void pop(stack *p, int *x, int *y) {
     if(p -> size_stack == 0)
     {
         fprintf(stderr, "Error : try to pop en empty pill\n");
         exit(1);
     }
-    *val1 = p -> array[p -> size_stack - 1];
-    *val2 = p -> array[p -> size_stack -2];
+    if(p -> size_stack == 1)
+    {
+        fprintf(stderr, "Error : the pill has only one element\n");
+        exit(1);
+    }
+    *x = p -> array[p -> size_stack - 1];
+    *y = p -> array[p -> size_stack -2];
     p -> size_stack -= 2;
     if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
     {
@@ -686,18 +691,17 @@ void pop(stack *p, int *val1, int *val2) {
     }
 }
 
-void push(const int val1, const int val2, stack *p) {
+void push(const int x, const int y, stack *p) {
     if(p -> size_stack == p -> size_array)
     {
         grow_stack(p);
     }
-    p -> array[p -> size_stack] = val1;
-    p -> size_stack++;
-    if(p -> size_stack == p -> size_array)
+    p -> array[p -> size_stack] = x;
+    if(++p -> size_stack == p -> size_array)
     {
         grow_stack(p);
     }
-    p -> array[p -> size_stack] = val2;
+    p -> array[p -> size_stack] = y;
     p -> size_stack++;
 }
 
@@ -720,7 +724,7 @@ int print_maze(maze_t const maze)
     }
 
     int d_h = displayMode.h/maze.height; int d_w = displayMode.w/maze.width; //on définie le ratio de la taille des cellules
-    d_h = d_h - 1 > d_w ? d_w : d_h - 1; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
+    d_h = d_h > d_w ? d_w : d_h; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
     d_w = d_h;
     if(d_w < 2) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
     {
@@ -816,26 +820,26 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
         d_h = 2;
     }
 
-    SDL_Window *fenetre = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
-    if(fenetre == NULL)
+    *window = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
+    if(*window == NULL)
     {
         fprintf(stderr, "Erreur de creation de la fenetre : %s\n", SDL_GetError());
         SDL_Quit();
         return -1;
     }
-    SDL_Renderer *m_renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
-    if(m_renderer == NULL)
+    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
+    if(*renderer == NULL)
     {
-        m_renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_SOFTWARE);
-        if(m_renderer == NULL)
+        *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_SOFTWARE);
+        if(*renderer == NULL)
         {
             fprintf(stderr, "Erreur de creation du renderer : %s\n", SDL_GetError());
-            SDL_DestroyWindow(fenetre);
+            SDL_DestroyWindow(*window);
             SDL_Quit();
             return -1;
         }
     }
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
+    SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
 
     for(int x = 0; x < maze.width; x++)
     {
@@ -843,30 +847,28 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
         {
             if(maze.cells[y][x].wall_down)
             {
-                SDL_RenderDrawLine(m_renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur en bas
+                SDL_RenderDrawLine(*renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur en bas
             }
             if(maze.cells[y][x].wall_right)
             {
-                SDL_RenderDrawLine(m_renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur à droite
+                SDL_RenderDrawLine(*renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur à droite
             }
         }
     }
-    SDL_RenderDrawLine(m_renderer, 0, 0, 0, maze.height * d_h); //on dessine les murs de la bordure gauche
-    SDL_RenderDrawLine(m_renderer, 0, 0, maze.width * d_w, 0); //on dessine les murs de la bordure haute
+    SDL_RenderDrawLine(*renderer, 0, 0, 0, maze.height * d_h); //on dessine les murs de la bordure gauche
+    SDL_RenderDrawLine(*renderer, 0, 0, maze.width * d_w, 0); //on dessine les murs de la bordure haute
 
-    SDL_SetRenderDrawColor(m_renderer, 0, 50, 255, 255); //on définit la couleur en bleu
-    SDL_RenderDrawLine(m_renderer, 0, 0, d_w, 0); //on dessine l'entrée
-    SDL_RenderDrawLine(m_renderer, 0, 0, 0, d_h); //on dessine l'entrée
+    SDL_SetRenderDrawColor(*renderer, 0, 50, 255, 255); //on définit la couleur en bleu
+    SDL_RenderDrawLine(*renderer, 0, 0, d_w, 0); //on dessine l'entrée
+    SDL_RenderDrawLine(*renderer, 0, 0, 0, d_h); //on dessine l'entrée
 
-    SDL_SetRenderDrawColor(m_renderer, 10, 235, 10, 255); //on définit la couleur en vert
-    SDL_RenderDrawLine(m_renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
-    SDL_RenderDrawLine(m_renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
+    SDL_SetRenderDrawColor(*renderer, 10, 235, 10, 255); //on définit la couleur en vert
+    SDL_RenderDrawLine(*renderer, maze.width * d_w - d_w, maze.height * d_h - 1, maze.width * d_w, maze.height * d_h - 1); //on dessine la sortie
+    SDL_RenderDrawLine(*renderer, maze.width * d_w - 1, maze.height * d_h - d_h, maze.width * d_w - 1, maze.height * d_h); //on dessine la sortie
 
     SDL_Delay(displayMode.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-    SDL_RenderPresent(m_renderer); //on met à jour l'affichage
+    SDL_RenderPresent(*renderer); //on met à jour l'affichage
 
-    renderer = &m_renderer;
-    window = &fenetre;
     *dw = d_w;
     *dh = d_h;
     return 1;
