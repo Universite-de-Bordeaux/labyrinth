@@ -6,7 +6,7 @@
 // --- Solveur en profondeur ---
 
 
-bool exit_deep_seeker(const maze_t maze)
+bool has_exit_deep_seeker(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     queue *q = create_queue(); //cette queue contiendra les coordonnées des cases à visiter
@@ -44,7 +44,7 @@ bool exit_deep_seeker(const maze_t maze)
     return false;
 }
 
-bool perfect_deep_inspector(const maze_t maze)
+bool is_perfect_deep_inspector(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height); //on crée un tableau de booléens pour savoir si on est déjà passé par une case
     queue *q = create_queue(); //cette queue contiendra les coordonnées des cases à visiter
