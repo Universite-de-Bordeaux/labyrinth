@@ -594,9 +594,9 @@ void dequeue(queue *q, int *x, int *y) {
         fprintf(stderr, "Error : try to dequeue an empty queue\n");
         exit(1);
     }
-    *x = q -> array[q -> left];
-    q -> left = (q -> left + 1) % q -> size_array;
     *y = q -> array[q -> left];
+    q -> left = (q -> left + 1) % q -> size_array;
+    *x = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
     if(q -> left == q -> right)
     {
@@ -682,8 +682,8 @@ void pop(stack *p, int *x, int *y) {
         fprintf(stderr, "Error : the pill has only one element\n");
         exit(1);
     }
-    *x = p -> array[p -> size_stack - 1];
-    *y = p -> array[p -> size_stack -2];
+    *y = p -> array[p -> size_stack - 1];
+    *x = p -> array[p -> size_stack -2];
     p -> size_stack -= 2;
     if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
     {
