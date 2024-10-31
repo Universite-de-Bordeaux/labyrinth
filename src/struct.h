@@ -39,19 +39,19 @@ struct waytab
     struct way **tab;
 };
 
-typedef struct {
+struct queue{
     int *array;     // Tableau des valeurs.
     int size_array; // Taille du tableau des valeurs.
     int left;       // Indice de la valeur à gauche de la file (si non-vide).
     int right;      // Indice qui suit celui de la valeur à droite de la fil (si elle est non-vide).
     bool empty;     // Booléen indiquant si la file est vide.
-} queue;
+};
 
-typedef struct {
+struct stack{
     int size_array; // Taille totale du tableau alloué en mémoire.
     int size_stack; // Nombre d'éléments dans la pile représentée.
     int *array;     // Tableau contenant les valeurs de la pile représentée.
-} stack;
+};
 
 // --- Typedef ---
 
@@ -88,6 +88,22 @@ typedef struct way way;
 //tab : tableau de tableau de chemins
 //malloc utilisés, penser à free_way_tab pour libérer la mémoire
 typedef struct waytab waytab;
+
+//Structure représentant une file
+//array : tableau des valeurs
+//size_array : taille du tableau
+//left : indice de la valeur à gauche de la file (si non-vide)
+//right : indice qui suit celui de la valeur à droite de la file (si elle est non-vide)
+//empty : booléen indiquant si la file est vide
+//malloc utilisés, penser à free_queue pour libérer la mémoire
+typedef struct queue queue;
+
+//Structure représentant une pile
+//size_array : taille totale du tableau alloué en mémoire
+//size_stack : nombre d'éléments dans la pile représentée
+//array : tableau contenant les valeurs de la pile représentée
+//malloc utilisés, penser à free_stack pour libérer la mémoire
+typedef struct stack stack;
 
 
 // --- Fonctions ---
