@@ -220,7 +220,7 @@ int print_maze(maze_t maze);
 //dh : la hauteur résultante de chaque cellule
 //les murs d'entré sont en bleu, les murs de sortie en vert
 //la taille de chaque cellules est automatiquement ajustée pour remplir la fenêtre
-int initialisde_print_maze(const maze_t maze, const SDL_Renderer *renderer, const SDL_Window *window, int *dw, int *dh);
+int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **window, int *dw, int *dh);
 
 //désalloue la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre
 void destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window);
