@@ -570,7 +570,7 @@ int size_queue(const queue *q){
   {
     return t;
   }
-  return -t;
+  return t + q -> size_array;
 }
 
 void enqueue(const int x, const int y, queue *q)
