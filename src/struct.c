@@ -495,17 +495,17 @@ bool is_origin(const way *w)
 // Double la taille du tableau utilisé dans la représentation.
 // Cette fonction sera utilisée lorsque le tableau est plein et qu'on veut y
 // ajouter une valeur.
-static void grow_queue(queue *p) {
-  int *new_array = malloc(sizeof(int) * p -> size_array * 2);
-  for(int i = 0; i < p -> size_array; i++)
-  {
-    new_array[i] = p -> array[(i + p -> left) % p -> size_array];
-  }
-  free(p -> array);
-  p -> array = new_array;
-  p -> left = 0;
-  p -> right = p -> size_array;
-  p -> size_array *= 2;
+static void grow_queue(queue *q) {
+    int *new_array = malloc(sizeof(int) * q -> size_array * 2);
+    for(int i = 0; i < q -> size_array; i++)
+    {
+        new_array[i] = q -> array[(i + q -> left) % q -> size_array];
+    }
+    free(q -> array);
+    q -> array = new_array;
+    q -> left = 0;
+    q -> right = q -> size_array;
+    q -> size_array *= 2;
 }
 
 // Fonction auxiliaire de dequeue
@@ -606,6 +606,38 @@ void dequeue(queue *q, int *x, int *y) {
     {
         shrink_queue(q);
     }
+}
+
+void print_queue(queue *q)
+{
+    queue *copy = create_queue();
+    int fusible = 1000;
+    int x, y;
+    while(!isempty_queue(q))
+    {
+        dequeue(q, &x, &y);
+        printf("(%d, %d)\n", x, y);
+        enqueue(x, y, copy);
+        fusible--;
+        if(fusible == 0)
+        {
+            printf("Fusible\n");
+            break;
+        }
+    }
+    fusible = 1000;
+    while(!isempty_queue(copy) && fusible > 0)
+    {
+        dequeue(copy, &x, &y);
+        enqueue(x, y, q);
+        fusible--;
+        if(fusible == 0)
+        {
+            printf("Fusible\n");
+            break;
+        }
+    }
+    free_queue(copy);
 }
 
 // --- STACK FUNCTIONS ---

@@ -404,6 +404,10 @@ void enqueue(int x, int y, queue *q);
 // y : adresse de la variable qui recevra la valeur y.
 void dequeue(queue *q, int *x, int *y);
 
+// Affiche les coordonnées de la file.
+// q : adresse de la file.
+void print_queue(queue *q);
+
 // --- STACK ---
 
 // Crée une pile vide.
