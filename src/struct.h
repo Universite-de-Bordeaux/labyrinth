@@ -383,7 +383,7 @@ queue *create_queue(void);
 // q : adresse de la file.
 void free_queue(queue *q);
 
-// Renvoie le nombre d'éléments (coordonées) dans la file.
+// Renvoie le nombre d'éléments (2 * coordonnées) dans la file.
 // q : adresse de la file.
 int size_queue(const queue *q);
 
@@ -406,7 +406,7 @@ void dequeue(queue *q, int *x, int *y);
 
 // Affiche les coordonnées de la file.
 // q : adresse de la file.
-void print_queue(queue *q);
+void print_queue(const queue *q);
 
 // --- STACK ---
 

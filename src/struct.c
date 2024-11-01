@@ -513,7 +513,7 @@ static void grow_queue(queue *q) {
 // Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
 // sa capacité.
 static void shrink_queue(queue *p) {
-  if(p -> size_array < 2)
+  if(p -> size_array < 3)
     return;
   int* new_array = malloc(sizeof(int) * p -> size_array / 2);
   int c = 0;
@@ -529,14 +529,14 @@ static void shrink_queue(queue *p) {
 }
 
 queue *create_queue(void) {
-  int *array = malloc(sizeof(int));
+  int *array = malloc(sizeof(int) * 2);
   queue *q = malloc(sizeof(queue));
   if(q == NULL || array == NULL)
   {
     fprintf(stderr, "Erreur malloc\n");
     exit(1);
   }
-  q -> size_array = 1;
+  q -> size_array = 2;
   q -> left = 0;
   q -> right = 0;
   q -> empty = true;
@@ -562,13 +562,13 @@ int size_queue(const queue *q){
   const int t = q -> right - q -> left;
   if(t == 0)
   {
-    return isempty_queue(q) ? 0 : q -> size_array / 2;
+    return isempty_queue(q) ? 0 : q -> size_array;
   }
   if(t > 0)
   {
-    return t / 2;
+    return t;
   }
-  return -t / 2;
+  return -t;
 }
 
 void enqueue(const int x, const int y, queue *q)
@@ -596,6 +596,11 @@ void dequeue(queue *q, int *x, int *y) {
     }
     *y = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
+    if(q -> left == q -> right)
+    {
+        fprintf(stderr, "Error : the queue has only one element\n");
+        exit(1);
+    }
     *x = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
     if(q -> left == q -> right)
@@ -608,36 +613,19 @@ void dequeue(queue *q, int *x, int *y) {
     }
 }
 
-void print_queue(queue *q)
+void print_queue(const queue *q)
 {
-    queue *copy = create_queue();
-    int fusible = 1000;
-    int x, y;
-    while(!isempty_queue(q))
+    const int s = size_queue(q);
+    printf("queue :\n");
+    if(q -> empty) //si la queue est vide
     {
-        dequeue(q, &x, &y);
-        printf("(%d, %d)\n", x, y);
-        enqueue(x, y, copy);
-        fusible--;
-        if(fusible == 0)
-        {
-            printf("Fusible\n");
-            break;
-        }
+        printf("empty queue\n");
+        return;
     }
-    fusible = 1000;
-    while(!isempty_queue(copy) && fusible > 0)
+    for(int i = 0; i < s; i = i + 2)
     {
-        dequeue(copy, &x, &y);
-        enqueue(x, y, q);
-        fusible--;
-        if(fusible == 0)
-        {
-            printf("Fusible\n");
-            break;
-        }
+        printf("x : %d y : %d\n", q -> array[(q -> left + i) % q -> size_array], q -> array[(q -> left + i + 1) % q -> size_array]);
     }
-    free_queue(copy);
 }
 
 // --- STACK FUNCTIONS ---
@@ -661,7 +649,7 @@ static void grow_stack(stack *p) {
 // Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
 // sa capacité.
 static void shrink_stack(stack *p) {
-    if(p -> size_array < 2)
+    if(p -> size_array < 3)
         return;
     p -> size_array /= 2;
     p -> array = realloc(p -> array, sizeof(int) * p -> size_array);
@@ -679,9 +667,9 @@ stack *create_stack(void) {
     fprintf(stderr, "Erreur maloc\n");
     exit(1);
   }
-  p -> size_array = 1;
+  p -> size_array = 2;
   p -> size_stack = 0;
-  p -> array = (int *)malloc(sizeof(int));
+  p -> array = (int *)malloc(sizeof(int) * p -> size_array);
   if(p -> array == NULL)
   {
     fprintf(stderr, "Erreur malloc\n");
