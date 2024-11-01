@@ -560,9 +560,88 @@ int show_best_exit_deep_seeker(maze_t maze)
     return 1;
 }
 
-int show_has_exit_breadth_seeker(maze_t maze)
+int show_has_exit_breadth_seeker(const maze_t maze)
 {
-    printf("Le visualisateur de la sortie du labyrinthe n'est pas encore implémenté.\n");
+    const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
+    queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
+    enqueue(0, 0, q); //on commence par l'entrée
+    int x, y;
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    int dw, dh;
+    initial_print_maze(maze, &renderer, &window, &dw, &dh);
+    SDL_SetWindowTitle(window, "exit deep seeker");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    if(renderer == NULL || window == NULL)
+    {
+        fprintf(stderr, "Erreur lors de l'initialisation de l'affichage du labyrinthe.\n");
+        return -1;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu
+    SDL_Event event = {0}; //on crée un event vide
+    int tour = 0;
+    while(!isempty_queue(q)) //on essaie tous les chemins possibles
+    {
+        SDL_WaitEventTimeout(&event, 10); //on enregistre les events entrants
+        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
+            (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)) //si l'utilisateur veut fermer la fenêtre
+        {
+            printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+            free_queue(q);
+            free_booltab(visited);
+            destroy_print_maze(renderer, window);
+            return 1;
+        }
+        dequeue(q, &x, &y);
+        if(tour == 0)
+            printf("etape %d, queue : ", tour);
+        tour++;
+        print_queue(q);
+        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
+            const SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetWindowTitle(window, "exit found !"); //on change le titre de la fenêtre
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
+            free_queue(q);
+            free_booltab(visited);
+            return 1;
+        }
+        if(get_bool(visited, x, y)) //si on est déjà passé par cette case, on ne la visite pas
+        {
+
+            continue;
+        }
+        set_true(visited, x, y);
+        SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
+        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //si on peut aller en haut
+        {
+            enqueue(x, y - 1, q);
+        }
+        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas
+        {
+            enqueue(x, y + 1, q);
+        }
+        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche
+        {
+            enqueue(x - 1, y, q);
+        }
+        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite
+        {
+            enqueue(x + 1, y, q);
+        }
+    }
+    SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
+    wait_and_destroy_print_maze(renderer, window);
+    free_queue(q);
+    free_booltab(visited);
     return 1;
 }
 
