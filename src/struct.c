@@ -596,14 +596,14 @@ void dequeue(queue *q, int *x, int *y) {
         fprintf(stderr, "Error : try to dequeue an empty queue\n");
         exit(1);
     }
-    *y = q -> array[q -> left];
+    *x = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
     if(q -> left == q -> right)
     {
         fprintf(stderr, "Error : the queue has only one element\n");
         exit(1);
     }
-    *x = q -> array[q -> left];
+    *y = q -> array[q -> left];
     q -> left = (q -> left + 1) % q -> size_array;
     if(q -> left == q -> right)
     {
