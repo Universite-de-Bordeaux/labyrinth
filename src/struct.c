@@ -517,16 +517,14 @@ static void shrink_queue(queue *p) {
         return;
     p -> size_array /= 2;
     int* new_array = malloc(sizeof(int) * p -> size_array);
-    int c = 0;
     const int t = size_queue(p);
     for(int i = 0; i < t; i++)
     {
         new_array[i] = p -> array[(p -> left + i) % p -> size_array];
-        c++;
     }
     free(p -> array);
     p -> left = 0;
-    p -> right = c;
+    p -> right = t;
     p -> array = new_array;
 }
 
