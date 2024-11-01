@@ -565,12 +565,13 @@ int show_has_exit_breadth_seeker(const maze_t maze)
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
+    set_true(visited, 0, 0); //on marque la case de départ comme visitée
     int x, y;
     SDL_Renderer *renderer = NULL;
     SDL_Window *window = NULL;
     int dw, dh;
     initial_print_maze(maze, &renderer, &window, &dw, &dh);
-    SDL_SetWindowTitle(window, "exit deep seeker");
+    SDL_SetWindowTitle(window, "exit breadth seeker");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
     if(renderer == NULL || window == NULL)
@@ -580,7 +581,6 @@ int show_has_exit_breadth_seeker(const maze_t maze)
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu
     SDL_Event event = {0}; //on crée un event vide
-    int tour = 0;
     while(!isempty_queue(q)) //on essaie tous les chemins possibles
     {
         SDL_WaitEventTimeout(&event, 10); //on enregistre les events entrants
@@ -594,10 +594,6 @@ int show_has_exit_breadth_seeker(const maze_t maze)
             return 1;
         }
         dequeue(q, &x, &y);
-        if(tour == 0)
-            printf("etape %d, queue : ", tour);
-        tour++;
-        print_queue(q);
         if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
         {
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
@@ -611,32 +607,30 @@ int show_has_exit_breadth_seeker(const maze_t maze)
             free_booltab(visited);
             return 1;
         }
-        if(get_bool(visited, x, y)) //si on est déjà passé par cette case, on ne la visite pas
-        {
-
-            continue;
-        }
-        set_true(visited, x, y);
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
         if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //si on peut aller en haut
         {
             enqueue(x, y - 1, q);
+            set_true(visited, x, y - 1); //on marque la case comme visitée por éviter de repasser par là
         }
         if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas
         {
             enqueue(x, y + 1, q);
+            set_true(visited, x, y + 1); //on marque la case comme visitée por éviter de repasser par là
         }
         if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche
         {
             enqueue(x - 1, y, q);
+            set_true(visited, x - 1, y); //on marque la case comme visitée por éviter de repasser par là
         }
         if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite
         {
             enqueue(x + 1, y, q);
+            set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
         }
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
     }
     SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
