@@ -526,6 +526,7 @@ static void shrink_queue(queue *p) {
   p -> left = 0;
   p -> right = c;
   p -> array = new_array;
+  p -> size_array /= 2;
 }
 
 queue *create_queue(void) {
