@@ -513,20 +513,21 @@ static void grow_queue(queue *q) {
 // Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
 // sa capacité.
 static void shrink_queue(queue *p) {
-  if(p -> size_array < 3)
-    return;
-  int* new_array = malloc(sizeof(int) * p -> size_array / 2);
-  int c = 0;
-  for(int i = 0; i < p -> size_array / 2; i++)
-  {
-    new_array[i] = p -> array[(p -> left + i) % p -> size_array];
-    c++;
-  }
-  free(p -> array);
-  p -> left = 0;
-  p -> right = c;
-  p -> array = new_array;
-  p -> size_array /= 2;
+    if(p -> size_array < 3)
+        return;
+    p -> size_array /= 2;
+    int* new_array = malloc(sizeof(int) * p -> size_array);
+    int c = 0;
+    const int t = size_queue(p);
+    for(int i = 0; i < t; i++)
+    {
+        new_array[i] = p -> array[(p -> left + i) % p -> size_array];
+        c++;
+    }
+    free(p -> array);
+    p -> left = 0;
+    p -> right = c;
+    p -> array = new_array;
 }
 
 queue *create_queue(void) {
