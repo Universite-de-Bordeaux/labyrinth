@@ -59,7 +59,7 @@ int show_best_exit_deep_seeker(maze_t maze); //TODO
 //affiche le labyrinthe et la progression du solveur
 //renvoie -1 en cas d'erreur, 1 sinon
 //maze : le labyrinthe
-int show_has_exit_breadth_seeker(maze_t maze); //TODO
+int show_has_exit_breadth_seeker(maze_t maze);
 
 //fonction de visualisation
 //affiche le labyrinthe et la progression du solveur
@@ -78,5 +78,5 @@ int show_best_exit_breadth_seeker(maze_t maze); //TODO
 //maze : le labyrinthe
 //w : le chemin
 //ne gère pas les cas d'erreur, ni les murs
-int show_the_way(const maze_t maze, const way *w); //TODO
+int show_the_way(const maze_t maze, const way *w); //TODO : tester la fonction
 #endif //SOLVEUR_H
