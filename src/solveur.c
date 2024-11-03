@@ -583,7 +583,7 @@ int show_has_exit_breadth_seeker(const maze_t maze)
     SDL_Event event = {0}; //on crée un event vide
     while(!isempty_queue(q)) //on essaie tous les chemins possibles
     {
-        SDL_WaitEventTimeout(&event, 10); //on enregistre les events entrants
+        SDL_WaitEventTimeout(&event, 1); //on enregistre les events entrants
         if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
             (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)) //si l'utilisateur veut fermer la fenêtre
         {
@@ -593,7 +593,21 @@ int show_has_exit_breadth_seeker(const maze_t maze)
             destroy_print_maze(renderer, window);
             return 1;
         }
+        if(x == 0 && y == 2)
+        {
+            printf("Crash zone detected\n");
+            print_queue(q);
+            printf("left : %d, right : %d, size : %d, size_max : %d\n", q->left, q->right, size_queue(q), q -> size_array);
+            printf("dequeue\n");
+        }
         dequeue(q, &x, &y);
+        if(x == 5 && y == 3)
+        {
+            printf("Dequeued : %d, %d\n", x, y);
+            print_queue(q);
+            printf("left : %d, right : %d, size : %d, size_max : %d\n", q->left, q->right, size_queue(q), q -> size_array);
+            printf("Fin crash zone\n");
+        }
         if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
         {
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
