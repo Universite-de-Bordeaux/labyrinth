@@ -514,10 +514,12 @@ static void grow_queue(queue *q) {
 // sa capacité.
 static void shrink_queue(queue *p) {
     if(p -> size_array < 3)
+    {
         return;
+    }
+    const int t = size_queue(p);
     p -> size_array /= 2;
     int* new_array = malloc(sizeof(int) * p -> size_array);
-    const int t = size_queue(p);
     for(int i = 0; i < t; i++)
     {
         new_array[i] = p -> array[(p -> left + i) % p -> size_array];
@@ -559,16 +561,16 @@ bool isempty_queue(const queue *q) {
 }
 
 int size_queue(const queue *q){
-  const int t = q -> right - q -> left;
-  if(t == 0)
-  {
-    return isempty_queue(q) ? 0 : q -> size_array;
-  }
-  if(t > 0)
-  {
-    return t;
-  }
-  return t + q -> size_array;
+    const int t = q -> right - q -> left;
+    if(t == 0)
+    {
+        return isempty_queue(q) ? 0 : q -> size_array;
+    }
+    if(t > 0)
+    {
+        return t;
+    }
+    return t + q -> size_array;
 }
 
 void enqueue(const int x, const int y, queue *q)
