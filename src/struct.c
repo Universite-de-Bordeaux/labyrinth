@@ -517,11 +517,8 @@ static void shrink_queue(queue *p) {
     {
         return;
     }
-    printf("start shrink\n");
-    printf("old left : %d, old right : %d, old size : %d, old size_max : %d\n", p -> left, p -> right, size_queue(p), p -> size_array);
     const int t = size_queue(p);
-    p -> size_array /= 2;
-    int* new_array = malloc(sizeof(int) * p -> size_array);
+    int* new_array = malloc(sizeof(int) * p -> size_array / 2);
     for(int i = 0; i < t; i++)
     {
         new_array[i] = p -> array[(p -> left + i) % p -> size_array];
@@ -529,9 +526,8 @@ static void shrink_queue(queue *p) {
     free(p -> array);
     p -> left = 0;
     p -> right = t;
+    p -> size_array /= 2;
     p -> array = new_array;
-    printf("new left : %d, new right : %d, new size : %d, new size_max : %d\n", p -> left, p -> right, size_queue(p), p -> size_array);
-    printf("end shrink\n");
 }
 
 queue *create_queue(void) {
