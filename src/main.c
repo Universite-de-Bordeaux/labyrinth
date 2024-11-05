@@ -8,7 +8,7 @@
 
 int main(const int argc, char *argv[]) {
     srand(time(NULL));
-    const maze_t maze = hunt_kill_maze(200, 3);
+    const maze_t maze = hunt_kill_maze(200, 5);
     for(int i = 0; i < 100; i++)
     {
         for(int j = 0; j < 100; j++)
