@@ -356,6 +356,7 @@ int show_has_exit_deep_seeker(const maze_t maze)
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
+    set_true(visited, 0, 0); //on marque la case de départ comme visitée
     int x, y;
     SDL_Renderer *renderer = NULL;
     SDL_Window *window = NULL;
@@ -373,7 +374,7 @@ int show_has_exit_deep_seeker(const maze_t maze)
     SDL_Event event = {0}; //on crée un event vide
     while(!isempty_stack(s)) //on essaie tous les chemins possibles
     {
-        SDL_WaitEventTimeout(&event, 10); //on enregistre les events entrants
+        SDL_WaitEventTimeout(&event, 1); //on enregistre les events entrants
         if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
             (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)) //si l'utilisateur veut fermer la fenêtre
         {
@@ -397,32 +398,46 @@ int show_has_exit_deep_seeker(const maze_t maze)
             free_booltab(visited);
             return 1;
         }
-        if(get_bool(visited, x, y)) //si on est déjà passé par cette case, on ne la visite pas
-        {
-
-            continue;
-        }
-        set_true(visited, x, y);
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
+        if(!has_wall_up(maze, x, y)) //si on peut aller en haut
+        {
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
+            if(!get_bool(visited, x, y - 1)) //on ne repasse pas par une case déjà visitée
+            {
+                push(x, y - 1, s);
+                set_true(visited, x, y - 1); //on marque la case comme visitée por éviter de repasser par
+            }
+        }
+        if(!has_wall_down(maze, x, y)) //si on peut aller en bas
+        {
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
+            if(!get_bool(visited, x, y + 1)) //on ne repasse pas par une case déjà visitée
+            {
+                push(x, y + 1, s);
+                set_true(visited, x, y + 1); //on marque la case comme visitée por éviter de repasser par là
+            }
+        }
+        if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
+        {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
+            if(!get_bool(visited, x - 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                push(x - 1, y, s);
+                set_true(visited, x - 1, y); //on marque la case comme visitée por éviter de repasser par là
+            }
+        }
+        if(!has_wall_right(maze, x, y)) //si on peut aller à droite
+        {
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
+            if(!get_bool(visited, x + 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                push(x + 1, y, s);
+                set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
+            }
+        }
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
-        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //si on peut aller en haut
-        {
-            push(x, y - 1, s);
-        }
-        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas
-        {
-            push(x, y + 1, s);
-        }
-        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche
-        {
-            push(x - 1, y, s);
-        }
-        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite
-        {
-            push(x + 1, y, s);
-        }
     }
     SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
@@ -467,11 +482,10 @@ int show_is_perfect_deep_inspector(const maze_t maze)
         set_true(visited, x, y);
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
         int nb_way_used = 0; //on compte le nombre de chemin adjacent utilisé, en théorie il doit être égal à 1 (notre père) ou 0 (la case de départ)
         if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
             if(get_bool(visited, x, y - 1)) //si on est déjà passé par cette case
             {
                 nb_way_used++;
@@ -483,6 +497,7 @@ int show_is_perfect_deep_inspector(const maze_t maze)
         }
         if(!has_wall_down(maze, x, y)) //si on peut aller en bas
         {
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
             if(get_bool(visited, x, y + 1)) //si on est déjà passé par cette case
             {
                 nb_way_used++;
@@ -494,6 +509,7 @@ int show_is_perfect_deep_inspector(const maze_t maze)
         }
         if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
         {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
             if(get_bool(visited, x - 1, y)) //si on est déjà passé par cette case
             {
                 nb_way_used++;
@@ -505,6 +521,7 @@ int show_is_perfect_deep_inspector(const maze_t maze)
         }
         if(!has_wall_right(maze, x, y)) //si on peut aller à droite
         {
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
             if(get_bool(visited, x + 1, y)) //si on est déjà passé par cette case
             {
                 nb_way_used++;
@@ -527,6 +544,8 @@ int show_is_perfect_deep_inspector(const maze_t maze)
             free_booltab(visited);
             return 1;
         }
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
     }
     for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
     {
@@ -609,25 +628,41 @@ int show_has_exit_breadth_seeker(const maze_t maze)
         }
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //si on peut aller en haut
+        if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
-            enqueue(x, y - 1, q);
-            set_true(visited, x, y - 1); //on marque la case comme visitée por éviter de repasser par là
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
+            if(!get_bool(visited, x, y - 1)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x, y - 1, q);
+                set_true(visited, x, y - 1); //on marque la case comme visitée por éviter de repasser par
+            }
         }
-        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas
+        if(!has_wall_down(maze, x, y)) //si on peut aller en bas
         {
-            enqueue(x, y + 1, q);
-            set_true(visited, x, y + 1); //on marque la case comme visitée por éviter de repasser par là
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
+            if(!get_bool(visited, x, y + 1)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x, y + 1, q);
+                set_true(visited, x, y + 1); //on marque la case comme visitée por éviter de repasser par là
+            }
         }
-        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche
+        if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
         {
-            enqueue(x - 1, y, q);
-            set_true(visited, x - 1, y); //on marque la case comme visitée por éviter de repasser par là
+            SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
+            if(!get_bool(visited, x - 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x - 1, y, q);
+                set_true(visited, x - 1, y); //on marque la case comme visitée por éviter de repasser par là
+            }
         }
-        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite
+        if(!has_wall_right(maze, x, y)) //si on peut aller à droite
         {
-            enqueue(x + 1, y, q);
-            set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
+            if(!get_bool(visited, x + 1, y)) //on ne repasse pas par une case déjà visitée
+            {
+                enqueue(x + 1, y, q);
+                set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
+            }
         }
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
@@ -641,7 +676,150 @@ int show_has_exit_breadth_seeker(const maze_t maze)
 
 int show_is_perfect_breadth_inspector(maze_t maze)
 {
-    printf("Le visualisateur de la perfection du labyrinthe n'est pas encore implémenté.\n");
+    const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pou repérer les cycles et la connexité
+    queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
+    enqueue(0, 0, q); //on commence par l'entrée
+    int x, y;
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    int dw, dh;
+    initial_print_maze(maze, &renderer, &window, &dw, &dh);
+    SDL_SetWindowTitle(window, "perfection breath inspector");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    if(renderer == NULL || window == NULL)
+    {
+        fprintf(stderr, "Erreur lors de l'initialisation de l'affichage du labyrinthe.\n");
+        return -1;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu
+    SDL_Event event = {0}; //on crée un event vide
+    while(!isempty_queue(q)) //on essaie tous les chemins possibles
+    {
+        SDL_WaitEventTimeout(&event, 10); //on enregistre les events entrants
+        if(event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE || \
+            (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)) //si l'utilisateur veut fermer la fenêtre
+        {
+            printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+            free_queue(q);
+            free_booltab(visited);
+            destroy_print_maze(renderer, window);
+            return 1;
+        }
+        dequeue(q, &x, &y);
+        set_true(visited, x, y);
+        SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+        SDL_RenderFillRect(renderer, &rect);
+        int nb_way_used = 0; //on compte le nombre de chemin adjacent utilisé, en théorie il doit être égal à 1 (notre père) ou 0 (la case de départ)
+        if(!has_wall_up(maze, x, y)) //si on peut aller en haut
+        {
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
+            if(get_bool(visited, x, y - 1)) //si on est déjà passé par cette case
+            {
+                nb_way_used++;
+            }
+            else
+            {
+                enqueue(x, y - 1, q);
+            }
+        }
+        if(!has_wall_down(maze, x, y)) //si on peut aller en bas
+        {
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
+            if(get_bool(visited, x, y + 1)) //si on est déjà passé par cette case
+            {
+                nb_way_used++;
+            }
+            else
+            {
+                enqueue(x, y + 1, q);
+            }
+        }
+        if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
+        {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
+            if(get_bool(visited, x - 1, y)) //si on est déjà passé par cette case
+            {
+                nb_way_used++;
+            }
+            else
+            {
+                enqueue(x - 1, y, q);
+            }
+        }
+        if(!has_wall_right(maze, x, y)) //si on peut aller à droite
+        {
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
+            if(get_bool(visited, x + 1, y)) //si on est déjà passé par cette case
+            {
+                nb_way_used++;
+            }
+            else
+            {
+                enqueue(x + 1, y, q);
+            }
+        }
+        if(nb_way_used > 1) //si on a trop de chemin adjacent utilisé, c'est qu'il y a un cycle
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge
+            const SDL_Rect rec = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+            SDL_RenderFillRect(renderer, &rec);
+            SDL_SetWindowTitle(window, "cycle found !"); //on change le titre de la fenêtre
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
+            free_queue(q);
+            free_booltab(visited);
+            return 1;
+        }
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
+    }
+    bool connected = true;
+    for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
+    {
+        for(y = 0; y < maze.height; y++)
+        {
+            if(!get_bool(visited, x, y)) //si une case n'a pas été visitée, c'est que le labyrinthe n'est pas connexe
+            {
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge
+                const SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+                if(!has_wall_down(maze, x, y))
+                {
+                    SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
+                }
+                if(!has_wall_up(maze, x, y))
+                {
+                    SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
+                }
+                if(!has_wall_left(maze, x, y))
+                {
+                    SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
+                }
+                if(!has_wall_right(maze, x, y))
+                {
+                    SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
+                }
+                SDL_RenderFillRect(renderer, &rect);
+                connected = false;
+            }
+        }
+    }
+    if(!connected)
+    {
+
+        SDL_SetWindowTitle(window, "not connected !"); //on change le titre de la fenêtre
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
+        free_queue(q);
+        free_booltab(visited);
+        return 1;
+    }
+    SDL_SetWindowTitle(window, "perfect maze !"); //on change le titre de la fenêtre
+    wait_and_destroy_print_maze(renderer, window);
+    free_queue(q);
+    free_booltab(visited);
     return 1;
 }
 
