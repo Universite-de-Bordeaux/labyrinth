@@ -749,13 +749,14 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
     //le -40 est pour les 40 pixels du haut de mon écran qui sont occupés par la barre de titre et empêche l'affichage, Vincent
     d_h = d_h - 1 > d_w ? d_w : d_h - 1; //on prend le plus petit ratio pour que le labyrinthe tienne dans l'écran
     d_w = d_h;
-    if(d_w < 2) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
+    if(d_w < 3) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
     {
         fprintf(stderr, "Warning : la taille des cellules est trop petite pour être affichée correctement, l'affichage va dépasser de l'écran\n");
-        d_w = 2;
-        d_h = 2;
+        d_w = 3;
+        d_h = 3;
     }
 
+    // ReSharper disable once CppDFANullDereference
     *window = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); //creation d'une fenetre
     if(*window == NULL)
     {
@@ -763,6 +764,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
         SDL_Quit();
         return -1;
     }
+    // ReSharper disable once CppDFANullDereference
     *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     if(*renderer == NULL)
     {
@@ -805,6 +807,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
     SDL_Delay(displayMode.refresh_rate); //pause pour laisser aux données le temps de s'afficher
     SDL_RenderPresent(*renderer); //on met à jour l'affichage
 
+    // ReSharper disable twice CppDFANullDereference
     *dw = d_w;
     *dh = d_h;
     return 1;
