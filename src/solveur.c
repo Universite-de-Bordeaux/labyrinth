@@ -864,7 +864,7 @@ int show_best_exit_breadth_seeker(const maze_t maze)
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
             SDL_SetWindowTitle(window, "best exit found !"); //on change le titre de la fenêtre
             const way *w = get_way(ways, x, y);
-            while(!is_origin(w))
+            while(w != NULL)
             {
                 SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
                 SDL_RenderFillRect(renderer, &rec);
@@ -888,26 +888,6 @@ int show_best_exit_breadth_seeker(const maze_t maze)
                 SDL_RenderPresent(renderer);
                 w = get_dad(w);
             }
-            const SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
-            SDL_RenderFillRect(renderer, &rec);
-            if(!has_wall_down(maze, get_x(w), get_y(w)))
-            {
-                SDL_RenderDrawLine(renderer, get_x(w) * dw + 1, (get_y(w) + 1) * dh - 1, (get_x(w) + 1) * dw - 2, (get_y(w) + 1) * dh - 1); //on dessine une ligne vers le bas
-            }
-            if(!has_wall_up(maze, get_x(w), get_y(w)))
-            {
-                SDL_RenderDrawLine(renderer, get_x(w) * dw + 1, get_y(w) * dh, (get_x(w) + 1) * dw - 2, get_y(w) * dh); //on dessine une ligne vers le haut
-            }
-            if(!has_wall_left(maze, get_x(w), get_y(w)))
-            {
-                SDL_RenderDrawLine(renderer, get_x(w) * dw, get_y(w) * dh + 1, get_x(w) * dw, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la gauche
-            }
-            if(!has_wall_right(maze, get_x(w), get_y(w)))
-            {
-                SDL_RenderDrawLine(renderer, (get_x(w) + 1) * dw - 1, get_y(w) * dh + 1, (get_x(w) + 1) * dw - 1, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la droite
-            }
-            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-            SDL_RenderPresent(renderer);
             wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
             free_queue(q);
             free_waytab(ways);
@@ -976,7 +956,7 @@ int show_the_way(const maze_t maze, const way *w)
         return -1;
     }
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu
-    while(!is_origin(w))
+    while(w != NULL)
     {
         SDL_Rect rect = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
