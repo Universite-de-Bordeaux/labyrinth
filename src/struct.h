@@ -368,7 +368,7 @@ int get_x(const way *w);
 //w : le chemin
 int get_y(const way *w);
 
-//renvoie true si le chemin part de la case (0, 0), false sinon
+//renvoie true si le chemin est le départ (0, 0), false sinon
 //w : le chemin
 bool is_origin(const way *w);
 
