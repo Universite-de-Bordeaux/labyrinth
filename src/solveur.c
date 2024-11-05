@@ -318,35 +318,38 @@ way *best_exit_breadth_seeker(const maze_t maze)
     while(!isempty_queue(q))
     {
         dequeue(q, &x, &y);
-        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie, on ne va pas plus loin
+        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
         {
-            continue;
+            way *w = copy_way(get_way(ways, maze.width - 1, maze.height - 1)); //on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
+            free_waytab(ways);
+            free_queue(q);
+            return w;
         }
-        if(!has_wall_up(maze, x, y) && is_empty(get_way(ways, x, y))) //si on peut aller en haut et que le chemin est plus court
+        int l = length_waytab(ways, x, y);
+        if(!has_wall_up(maze, x, y) && l < length_waytab(ways, x, y - 1)) //si on peut aller en haut et que le chemin est plus court
         {
             enqueue(x, y - 1, q); //on ajoute la case à celle à visiter
             connected_way(ways, x, y - 1, x, y); //on crée un chemin entre la case actuelle et la case en haut
         }
-        if(!has_wall_down(maze, x, y) && is_empty(get_way(ways, x, y))) //si on peut aller en bas et que le chemin est plus court
+        if(!has_wall_down(maze, x, y) && l < length_waytab(ways, x, y + 1)) //si on peut aller en bas et que le chemin est plus court
         {
             enqueue(x, y + 1, q); //on ajoute la case à celle à visiter
             connected_way(ways, x, y + 1, x, y); //on crée un chemin entre la case actuelle et la case en bas
         }
-        if(!has_wall_left(maze, x, y) && is_empty(get_way(ways, x, y))) //si on peut aller à gauche et que le chemin est plus court
+        if(!has_wall_left(maze, x, y) && l < length_waytab(ways, x - 1, y)) //si on peut aller à gauche et que le chemin est plus court
         {
             enqueue(x - 1, y, q); //on ajoute la case à celle à visiter
             connected_way(ways, x - 1, y, x, y); //on crée un chemin entre la case actuelle et la case à gauche
         }
-        if(!has_wall_right(maze, x, y) && is_empty(get_way(ways, x, y))) //si on peut aller à droite et que le chemin est plus court
+        if(!has_wall_right(maze, x, y) && l < length_waytab(ways, x + 1, y)) //si on peut aller à droite et que le chemin est plus court
         {
             enqueue(x + 1, y, q); //on ajoute la case à celle à visiter
             connected_way(ways, x + 1, y, x, y); //on crée un chemin entre la case actuelle et la case à droite
         }
     }
-    way *w = copy_way(get_way(ways, maze.width - 1, maze.height - 1)); //on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
     free_waytab(ways);
     free_queue(q);
-    return w;
+    return create_way(); //si on n'a pas trouvé de chemin, on renvoie un chemin vide
 }
 
 // --- Visualisation des algorithmes de résolution de labyrinthes ---
@@ -885,7 +888,7 @@ int show_best_exit_breadth_seeker(const maze_t maze)
                 SDL_RenderPresent(renderer);
                 w = get_dad(w);
             }
-            SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+            const SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
             SDL_RenderFillRect(renderer, &rec);
             if(!has_wall_down(maze, get_x(w), get_y(w)))
             {
