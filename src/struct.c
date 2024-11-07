@@ -764,6 +764,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
         SDL_Quit();
         return -1;
     }
+
     // ReSharper disable once CppDFANullDereference
     *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED); //creation d'un renderer
     if(*renderer == NULL)
@@ -777,6 +778,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
             return -1;
         }
     }
+
     SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255); //on définit la couleur de fond en blanc
 
     for(int x = 0; x < maze.width; x++)
@@ -834,16 +836,16 @@ void wait_and_destroy_print_maze(SDL_Renderer *renderer, SDL_Window *window)
 
 int print_maze(const maze_t maze)
 {
-    SDL_Renderer **renderer = NULL;
-    SDL_Window **window = NULL;
-    int *dw = 0;
-    int *dh = 0;
-    if(initial_print_maze(maze, renderer, window, dw, dh) == -1)
+    SDL_Renderer *renderer = 0;
+    SDL_Window *window = 0;
+    int dw = 0;
+    int dh = 0;
+    if(initial_print_maze(maze, &renderer, &window, &dw, &dh) == -1)
     {
         // ReSharper disable twice CppDFANullDereference
-        destroy_print_maze(*renderer, *window);
+        destroy_print_maze(renderer, window);
         return -1;
     }
-    wait_and_destroy_print_maze(*renderer, *window);
+    wait_and_destroy_print_maze(renderer, window);
     return 1;
 }
