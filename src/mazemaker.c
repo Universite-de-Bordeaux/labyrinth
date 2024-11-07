@@ -538,6 +538,178 @@ maze_t by_path_maze(const int width, const int height){
    return maze;
 }
 
+maze_t star_maze(const int width, const int height)
+{
+    const maze_t maze = create_wall_maze(width, height);
+    const bool_tab annexe = create_booltab(width, height); //tableau de booléens pour savoir si une case a été traitée
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    int dh, dw, r, d;
+    initial_print_maze(maze, &renderer, &window, &dw, &dh);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    int t = width * height; //nombre de cases à traiter
+    //on commence par crréer des chemins (en forme d'étoiles)
+    while(t > 0)
+    {
+        r = rand() % t;
+        d = r;
+        for(int i = 0; i <= r; i++)
+        {
+            while(get_bool(annexe, d % width, d / width))
+            {
+                d++; //on saute les case déjà traitées
+            }
+        }
+        const int x = d % width;
+        const int y = d / width;
+        set_true(annexe, x, y);
+        t--;
+        //on ouvre les murs
+        if(y > 0 && !get_bool(annexe, x, y - 1))
+        {
+            unwall_up(maze, x, y);
+            set_true(annexe, x, y - 1);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
+        }
+        if(y < height - 1 && !get_bool(annexe, x, y + 1))
+        {
+            unwall_down(maze, x, y);
+            set_true(annexe, x, y + 1);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
+        }
+        if(x > 0 && !get_bool(annexe, x - 1, y))
+        {
+            unwall_left(maze, x, y);
+            set_true(annexe, x - 1, y);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
+        }
+        if(x < width - 1 && !get_bool(annexe, x + 1, y))
+        {
+            unwall_right(maze, x, y);
+            set_true(annexe, x + 1, y);
+            t--;
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
+        }
+        SDL_Delay(100);
+        SDL_RenderPresent(renderer);
+    }
+    t = width * height;
+    //on crée des boucles
+    while(t > 0)
+    {
+        r = rand() % t;
+        d = r;
+        for(int i = 0; i <= r; i++)
+        {
+            while(!get_bool(annexe, d % width, d / width))
+            {
+                d++; //on saute les case déjà traitées
+            }
+        }
+        const int x = d % width;
+        const int y = d / width;
+        set_false(annexe, x, y);
+        t--;
+        //on casse les murs pour créer des boucles
+        if(y > 0 && get_bool(annexe, x, y - 1))
+        {
+            unwall_up(maze, x, y);
+            set_false(annexe, x, y - 1);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
+        }
+        if(y < height - 1 && get_bool(annexe, x, y + 1))
+        {
+            unwall_down(maze, x, y);
+            set_false(annexe, x, y + 1);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
+        }
+        if(x > 0 && get_bool(annexe, x - 1, y))
+        {
+            unwall_left(maze, x, y);
+            set_false(annexe, x - 1, y);
+            t--;
+            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
+        }
+        if(x < width - 1 && get_bool(annexe, x + 1, y))
+        {
+            unwall_right(maze, x, y);
+            set_false(annexe, x + 1, y);
+            t--;
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
+        }
+        SDL_Delay(100);
+        SDL_RenderPresent(renderer);
+    }
+    d = 0;
+    //on connecte le tout
+    set_true(annexe, 0, 0); //on marque la case de départ
+    while(d != width * height)
+    {
+        const int x = d % width;
+        const int y = d / width;
+        if(get_bool(annexe, x, y)) //si la case est déjà connexe
+        {
+            d++;
+            continue;
+        }
+        //on regarde si la case est relié à une case connexe
+        if(!has_wall_down(maze, x, y) && get_bool(annexe, x, y))
+        {
+            set_true(annexe, x, y);
+        }
+        else if(!has_wall_right(maze, x, y) && get_bool(annexe, x, y))
+        {
+            set_true(annexe, x, y);
+        }
+        else if(!has_wall_up(maze, x, y) && get_bool(annexe, x, y))
+        {
+            set_true(annexe, x, y);
+        }
+        else if(!has_wall_left(maze, x, y) && get_bool(annexe, x, y))
+        {
+            set_true(annexe, x, y);
+        }
+        //on regarde si la case peut être reliée à une case connexe
+        else if(y > 0 && get_bool(annexe, x, y - 1))
+        {
+            unwall_down(maze, x, y);
+            set_true(annexe, x, y);
+            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
+        }
+        else if(y < height - 1 && get_bool(annexe, x, y + 1))
+        {
+            unwall_up(maze, x, y);
+            set_true(annexe, x, y);
+            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
+        }
+        else if(x > 0 && get_bool(annexe, x - 1, y))
+        {
+            unwall_right(maze, x, y);
+            set_true(annexe, x, y);
+            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
+        }
+        else if(x < width - 1 && get_bool(annexe, x + 1, y))
+        {
+            unwall_left(maze, x, y);
+            set_true(annexe, x, y);
+            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
+        }
+        SDL_Delay(100);
+        SDL_RenderPresent(renderer);
+        d++;
+    }
+    free_booltab(annexe);
+    SDL_Delay(100);
+    SDL_RenderPresent(renderer);
+    wait_and_destroy_print_maze(renderer, window);
+    return maze;
+}
+
 maze_t r_maze(const int width, const int height)
 {
     srand(time(NULL));

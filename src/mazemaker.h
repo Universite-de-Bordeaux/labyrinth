@@ -38,6 +38,11 @@ maze_t hunt_kill_maze(const int width, const int height);
 //height : hauteur du labyrinthe
 maze_t by_path_maze(int width, int height);
 
+//crée un labyrinth de taille width x height
+//width : largeur du labyrinthe
+//height : hauteur du labyrinthe
+maze_t star_maze(const int width, const int height);
+
 //Crée un labyrinthe à l'aide d'une méthode existante chosie aléatoirement
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
