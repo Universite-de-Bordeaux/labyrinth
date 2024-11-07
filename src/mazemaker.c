@@ -1,10 +1,8 @@
 #include "mazemaker.h"
+#include <assert.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#define NB_MAZE_GENERATOR 6
-#define NB_PERFECT_MAZE_GENERATOR 5
-#define NB_IMPERFECT_MAZE_GENERATOR 1
 
 maze_t line_maze(const int width, const int height)
 {
@@ -538,26 +536,95 @@ maze_t by_path_maze(const int width, const int height){
    return maze;
 }
 
-maze_t star_maze(const int width, const int height)
+//fonction auxiliaire
+//met à jour le tableau de connexité depuis la case (0, 0)
+//retourne True si toutes les cases sont connexe, false sinon
+//maze : labyrinthe
+//is_connexe : tableau de connexité
+//dx, dy : coordonnées de la case à traiter
+//renderer : renderer pour l'affichage, TODO : à supprimer
+bool static set_connexion(const maze_t maze, const bool_tab is_connexe, const int dx, const int dy, SDL_Renderer *renderer)
+{
+    const bool_tab visited = create_booltab(maze.width, maze.height); //tableau de booléens pour savoir si une case a été traitée
+    stack *s = create_stack(); //cette pile contiendra les coordonnées des cases visitées
+    queue *q = create_queue(); //cette file contiendra les coordonnées des cases pour lesquelles on doit vérifier la connexité
+    push(dx, dy, s); //on commence par la case (0, 0)
+    int x, y;
+    bool connexion = false; //pour savoir si notre sous-graphe est lié à la case (0, 0)
+    while(!isempty_stack(s))
+    {
+        pop(s, &x, &y);
+        enqueue(x, y, q);
+        set_true(visited, x, y);
+        assert(x < maze.width); //TODO : à supprimer
+        if(get_bool(is_connexe, x, y))
+        {
+            connexion = true;
+        }
+        if(y < maze.height - 1 && !has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //TODO ; supprimer la condition x < maze.width (incluse dans le has_wall_down)
+        {
+            push(x, y + 1, s);
+        }
+        if(x < maze.width - 1 && !has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //TODO ; supprimer la condition y < maze.height (incluse dans le has_wall_right)
+        {
+            push(x + 1, y, s);
+        }
+        if(y > 0 && !has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1)) //TODO ; supprimer la condition x >= 0 (incluse dans le has_wall_up)
+        {
+            push(x, y - 1, s);
+        }
+        if(x > 0 && !has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //TODO ; supprimer la condition y >= 0 (incluse dans le has_wall_left)
+        {
+            push(x - 1, y, s);
+        }
+    }
+    if(!connexion) //si notre sous-graphe n'est pas lié à la case (0, 0), c'est qu'il n'est pas connexe
+    {
+        free_stack(s);
+        free_booltab(visited);
+        free_queue(q);
+        return false;
+    }
+    int c = 0; //compteur de cases visitées
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    while(!isempty_queue(q))
+    {
+        dequeue(q, &x, &y);
+        set_true(is_connexe, x, y); //on marque la case comme connexe
+        SDL_Rect rect = {x * 20, y * 20, 20, 20};
+        SDL_RenderFillRect(renderer, &rect);
+        c++;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_Delay(1000);
+    SDL_RenderPresent(renderer);
+    free_stack(s);
+    free_booltab(visited);
+    free_queue(q);
+    return c == maze.width * maze.height; //on retourne true si toutes les cases ont été visitées
+}
+
+maze_t cross_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height); //tableau de booléens pour savoir si une case a été traitée
     SDL_Renderer *renderer = NULL;
     SDL_Window *window = NULL;
-    int dh, dw, r, d;
+    int dh, dw, d;
     initial_print_maze(maze, &renderer, &window, &dw, &dh);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     int t = width * height; //nombre de cases à traiter
     //on commence par crréer des chemins (en forme d'étoiles)
     while(t > 0)
     {
-        r = rand() % t;
+        const int r = rand() % t;
         d = r;
         for(int i = 0; i <= r; i++)
         {
             while(get_bool(annexe, d % width, d / width))
             {
                 d++; //on saute les case déjà traitées
+                assert(d % width < width); //TODO : à supprimer
             }
         }
         const int x = d % width;
@@ -586,6 +653,7 @@ maze_t star_maze(const int width, const int height)
             t--;
             SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
         }
+        assert(x < width); //TODO : à supprimer
         if(x < width - 1 && !get_bool(annexe, x + 1, y))
         {
             unwall_right(maze, x, y);
@@ -596,178 +664,76 @@ maze_t star_maze(const int width, const int height)
         SDL_Delay(100);
         SDL_RenderPresent(renderer);
     }
-    t = width * height;
-    //on crée des boucles
-    while(t > 0)
+    for(int i = 0; i < maze.width; i++)
     {
-        r = rand() % t;
-        d = r;
-        for(int i = 0; i <= r; i++)
+        for(int j = 0; j < maze.height; j++)
         {
-            while(!get_bool(annexe, d % width, d / width))
+            set_false(annexe, i, j);
+        }
+    }
+    //on va connexter les cases non connexes
+    int x = rand() % width;
+    int y = rand() % height;
+    set_true(annexe, x, y); //on marque la case comme celle de départ
+    bool b = set_connexion(maze, annexe, x, y, renderer);
+    while(!b) //tant que toutes les cases ne sont pas connexes
+    {
+        d = rand() % (width * height);
+        int fusible = width * height; //sécurité pendant l'implémentation
+        assert(d % width < width); //TODO : à supprimer
+        while(get_bool(annexe, d % width, d / width) && fusible > 0)
+        {
+            fusible--;
+            d++;
+            assert(d % width < width); //TODO : à supprimer
+        }
+        x = d % width;
+        y = d / width;
+        char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+        //chercher une cellule visitée adjacente à notre cellule non visitée
+        char c = '\0';
+        int size = 4;
+        while(c == '\0' && size > 0)
+        {
+            const int r = rand() % size;
+            c = dir[r];
+            if (c == 'R' && x + 1 < width && get_bool(annexe, x + 1, y))
             {
-                d++; //on saute les case déjà traitées
+                unwall_right(maze, x, y);
+                SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
+                b = set_connexion(maze, annexe, x, y, renderer);
+            }
+            else if(c == 'L' && x > 0 && get_bool(annexe, x - 1, y))
+            {
+                unwall_left(maze, x, y);
+                SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
+                b = set_connexion(maze, annexe, x, y, renderer);
+            }
+            else if(c == 'D' && y + 1 < height && get_bool(annexe, x, y + 1))
+            {
+                unwall_down(maze, x, y);
+                SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
+                b = set_connexion(maze, annexe, x, y, renderer);
+            }
+            else if(c == 'U' && y > 0 && get_bool(annexe, x, y - 1))
+            {
+                unwall_up(maze, x, y);
+                SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
+                b = set_connexion(maze, annexe, x, y, renderer);
+            }
+            else
+            {
+                for (int i = r; i < size; i++){
+                    dir[i] = dir[i+1];
+                }
+                size--;
+                c = '\0';
             }
         }
-        const int x = d % width;
-        const int y = d / width;
-        set_false(annexe, x, y);
-        t--;
-        //on casse les murs pour créer des boucles
-        if(y > 0 && get_bool(annexe, x, y - 1))
-        {
-            unwall_up(maze, x, y);
-            set_false(annexe, x, y - 1);
-            t--;
-            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
-        }
-        if(y < height - 1 && get_bool(annexe, x, y + 1))
-        {
-            unwall_down(maze, x, y);
-            set_false(annexe, x, y + 1);
-            t--;
-            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
-        }
-        if(x > 0 && get_bool(annexe, x - 1, y))
-        {
-            unwall_left(maze, x, y);
-            set_false(annexe, x - 1, y);
-            t--;
-            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
-        }
-        if(x < width - 1 && get_bool(annexe, x + 1, y))
-        {
-            unwall_right(maze, x, y);
-            set_false(annexe, x + 1, y);
-            t--;
-            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
-        }
-        SDL_Delay(100);
-        SDL_RenderPresent(renderer);
-    }
-    d = 0;
-    //on connecte le tout
-    set_true(annexe, 0, 0); //on marque la case de départ
-    while(d != width * height)
-    {
-        const int x = d % width;
-        const int y = d / width;
-        if(get_bool(annexe, x, y)) //si la case est déjà connexe
-        {
-            d++;
-            continue;
-        }
-        //on regarde si la case est relié à une case connexe
-        if(!has_wall_down(maze, x, y) && get_bool(annexe, x, y))
-        {
-            set_true(annexe, x, y);
-        }
-        else if(!has_wall_right(maze, x, y) && get_bool(annexe, x, y))
-        {
-            set_true(annexe, x, y);
-        }
-        else if(!has_wall_up(maze, x, y) && get_bool(annexe, x, y))
-        {
-            set_true(annexe, x, y);
-        }
-        else if(!has_wall_left(maze, x, y) && get_bool(annexe, x, y))
-        {
-            set_true(annexe, x, y);
-        }
-        //on regarde si la case peut être reliée à une case connexe
-        else if(y > 0 && get_bool(annexe, x, y - 1))
-        {
-            unwall_down(maze, x, y);
-            set_true(annexe, x, y);
-            SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
-        }
-        else if(y < height - 1 && get_bool(annexe, x, y + 1))
-        {
-            unwall_up(maze, x, y);
-            set_true(annexe, x, y);
-            SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
-        }
-        else if(x > 0 && get_bool(annexe, x - 1, y))
-        {
-            unwall_right(maze, x, y);
-            set_true(annexe, x, y);
-            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
-        }
-        else if(x < width - 1 && get_bool(annexe, x + 1, y))
-        {
-            unwall_left(maze, x, y);
-            set_true(annexe, x, y);
-            SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
-        }
-        SDL_Delay(100);
-        SDL_RenderPresent(renderer);
-        d++;
     }
     free_booltab(annexe);
     SDL_Delay(100);
     SDL_RenderPresent(renderer);
     wait_and_destroy_print_maze(renderer, window);
     return maze;
-}
-
-maze_t r_maze(const int width, const int height)
-{
-    srand(time(NULL));
-    const int choice = rand() % NB_MAZE_GENERATOR;
-    if(choice == 0)
-    {
-        return line_maze(width, height);
-    }
-    else if(choice == 1)
-    {
-        return column_maze(width, height);
-    }
-    else if(choice == 2)
-    {
-        return imperfect_one_way_maze(width, height);
-    }
-    else if(choice == 3)
-    {
-        return perfect_one_way_maze(width, height);
-    }
-    else if(choice == 4)
-    {
-        return by_path_maze(width, height);
-    }
-    else
-    {
-        return hunt_kill_maze(width, height);
-    }
-}
-
-maze_t rperfect_maze(const int width, const int height)
-{
-    const int choice = rand() % NB_PERFECT_MAZE_GENERATOR;
-    if(choice == 0)
-    {
-        return line_maze(width, height);
-    }
-    else if(choice == 1)
-    {
-        return column_maze(width, height);
-    }
-    else if(choice == 2)
-    {
-        return perfect_one_way_maze(width, height);
-    }
-    else if(choice == 3)
-    {
-        return by_path_maze(width, height);
-    }
-    return hunt_kill_maze(width, height);
-}
-
-maze_t rimperfect_maze(const int width, const int height)
-{
-    const int choice = rand() % NB_IMPERFECT_MAZE_GENERATOR;
-    if(choice == 0)
-    {
-        return imperfect_one_way_maze(width, height);
-    }
-    return create_basic_maze(width, height);
 }
