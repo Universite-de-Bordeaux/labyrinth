@@ -36,7 +36,7 @@ int evaluate_mazemaker(func_ptr f, int x, int y);
 //exponentiel en temps
 #define EVALUATE_MAZEMAKERN(générateur, name, x, y) \
     do { \
-        const int t = evaluate_mazemaker(f, x, y); \
+        const int t = evaluate_mazemaker(générateur, x, y); \
         if(t == 2) \
         { \
             printf("%s semble créer des labyrinthes parfaits\n", name); \
