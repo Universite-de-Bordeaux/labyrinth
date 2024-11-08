@@ -341,29 +341,14 @@ maze_t hunt_kill_maze(const int width, const int height)
 
 //Fonction Auxilliaire de lab_by_path
 //fonctions de directions
-bool lbp_can_move_left(maze_t *maze, int x, int  y, bool_tab tab_visited){
-    if (x-1>=0 && !get_bool(tab_visited, x-1, y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
-            return true;
-    return false;
-}
 
-bool lbp_can_move_right(maze_t *maze, int x, int y, bool_tab tab_visited){
-    if (x+1<maze->width && !get_bool(tab_visited, x+1, y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
-        return true;
-    return false;
-}
+#define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, x - 1, y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
 
-bool lbp_can_move_up(maze_t *maze, int x, int y, bool_tab tab_visited){
-    if (y-1 >=0 && !get_bool(tab_visited, x, y-1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
-            return true;
-    return false;
-}
+#define CAN_MOVE_RIGHT (*x + 1 < maze->width && !get_bool(tab_visited, x + 1, y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
 
-bool lbp_can_move_down(maze_t *maze, int x, int y, bool_tab tab_visited){
-    if (y+1<maze->height && !get_bool(tab_visited, x, y+1)) // si nous ne somme pas sur le bord bas  et que la case n'est pas visitée
-        return true;
-    return false;
-}
+# define CAN_MOVE_UP (*y > 0 && !get_bool(tab_visited, x, y-1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+
+# define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, x, y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
 
 //Fonction Auxilliaire de lab_by_path
 //fonction qui applique une direction
@@ -377,25 +362,25 @@ bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
             choice ++;
         switch (choice){
             case 0:
-                if (lbp_can_move_left(maze, *x, *y, tab_visited)){
+                if (CAN_MOVE_LEFT){
                     (*x)--;
                     has_moved = true;
                 }
                 break;
             case 1:
-                if (lbp_can_move_right(maze, *x, *y, tab_visited)){
+                if (CAN_MOVE_RIGHT){
                     (*x)++;
                     has_moved = true;
                 }
                 break;
             case 2:
-                if (lbp_can_move_up(maze, *x, *y, tab_visited)){
+                if (CAN_MOVE_UP){
                     (*y)--;
                     has_moved = true;
                 }
                 break;
             case 3:
-                if (lbp_can_move_down(maze, *x, *y, tab_visited)){
+                if(CAN_MOVE_DOWN){
                     (*y)++;
                     has_moved = true;
                 }
