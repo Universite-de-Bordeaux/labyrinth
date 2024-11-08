@@ -31,7 +31,7 @@ void print_cmd_help(char* namefile)
 {
     printf("\nUsage %s: \n", namefile);
     printf("\nTo make a maze : \n");
-    printf("\t-g <type> <nb> <nb> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
+    printf("\t-g <type> <nb> <nb> : generate maze (type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
     printf("\t-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
     printf("\t-r <filename> : read maze from file\n");
 
@@ -274,11 +274,18 @@ void cmd(char *argv[], const int argc)
         }
         else if(!strcmp(generator, "lm"))
         {
-            maze = line_maze(width, height);
+            if(rand() % 2 == 0)
+            {
+                maze = line_maze(width, height);
+            }
+            else
+            {
+                maze = column_maze(width, height);
+            }
         }
         else if(!strcmp(generator, "cm"))
         {
-            maze = column_maze(width, height);
+            maze = cross_maze(width, height);
         }
         else
         {
