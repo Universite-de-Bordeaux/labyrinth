@@ -342,13 +342,13 @@ maze_t hunt_kill_maze(const int width, const int height)
 //Fonction Auxilliaire de lab_by_path
 //fonctions de directions
 
-#define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, x - 1, y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
+#define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, *x - 1, *y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
 
-#define CAN_MOVE_RIGHT (*x + 1 < maze->width && !get_bool(tab_visited, x + 1, y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
+#define CAN_MOVE_RIGHT (*x + 1 < maze->width && !get_bool(tab_visited, *x + 1, *y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
 
-# define CAN_MOVE_UP (*y > 0 && !get_bool(tab_visited, x, y-1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+# define CAN_MOVE_UP (*y > 0 && !get_bool(tab_visited, *x, *y - 1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
 
-# define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, x, y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
+# define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
 
 //Fonction Auxilliaire de lab_by_path
 //fonction qui applique une direction
@@ -541,7 +541,7 @@ bool static set_connexion(const maze_t maze, const bool_tab is_connexe, const in
         pop(s, &x, &y);
         enqueue(x, y, q);
         set_true(visited, x, y);
-        assert(x < maze.width); //TODO : à supprimer
+        assert(y < maze.width); //TODO : à supprimer
         if(get_bool(is_connexe, x, y))
         {
             connexion = true;
@@ -606,10 +606,11 @@ maze_t cross_maze(const int width, const int height)
         d = r;
         for(int i = 0; i <= r; i++)
         {
+            assert(d / width < height); //TODO : à supprimer
             while(get_bool(annexe, d % width, d / width))
             {
                 d++; //on saute les case déjà traitées
-                assert(d % width < width); //TODO : à supprimer
+                assert(d / width < width); //TODO : à supprimer
             }
         }
         const int x = d % width;
@@ -624,6 +625,7 @@ maze_t cross_maze(const int width, const int height)
             t--;
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh - 1, (x + 1) * dw - 2, y * dh - 1);
         }
+        assert(y < height); //TODO : à supprimer
         if(y < height - 1 && !get_bool(annexe, x, y + 1))
         {
             unwall_down(maze, x, y);
@@ -638,7 +640,6 @@ maze_t cross_maze(const int width, const int height)
             t--;
             SDL_RenderDrawLine(renderer, x * dw - 1, y * dh + 1, x * dw - 1, (y + 1) * dh - 2);
         }
-        assert(x < width); //TODO : à supprimer
         if(x < width - 1 && !get_bool(annexe, x + 1, y))
         {
             unwall_right(maze, x, y);
@@ -665,12 +666,12 @@ maze_t cross_maze(const int width, const int height)
     {
         d = rand() % (width * height);
         int fusible = width * height; //sécurité pendant l'implémentation
-        assert(d % width < width); //TODO : à supprimer
+        assert(d / width < width); //TODO : à supprimer
         while(get_bool(annexe, d % width, d / width) && fusible > 0)
         {
             fusible--;
             d++;
-            assert(d % width < width); //TODO : à supprimer
+            assert(d / width < width); //TODO : à supprimer
         }
         x = d % width;
         y = d / width;
