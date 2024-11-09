@@ -43,4 +43,9 @@ maze_t by_path_maze(int width, int height);
 //height : hauteur du labyrinthe
 maze_t cross_maze(const int width, const int height);
 
+//"trou" le labyrinth pour créer des cycles
+//maze : le labyrinthe
+//prop : probabilité de destruction d'un mur par case, en pourcentage
+void tear(maze_t maze, unsigned int prop);
+
 #endif //MAZEMAKER_H

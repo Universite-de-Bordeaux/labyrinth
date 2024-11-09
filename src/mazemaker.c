@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-
 #include "outside.h"
 
 //fonction auxiliaire
@@ -780,4 +779,46 @@ maze_t cross_maze(const int width, const int height)
     }
     free_booltab(annexe);
     return maze;
+}
+
+void tear(const maze_t maze, const unsigned int prop)
+{
+    if(prop == 0)
+    {
+        return;
+    }
+    if(prop > 100)
+    {
+        fprintf(stderr, "Erreur: la probabilité de déchirure doit être comprise entre 0 et 100, soumis : %d\n", prop);
+        printf("exit de tear sans intervention\n");
+        return;
+    }
+    for(int i = 0; i < maze.width; i++)
+    {
+        for(int j = 0; j < maze.height; j++)
+        {
+            const bool tear = rand() % 100 < prop;
+            const bool wd = has_wall_down(maze, i, j) && j < maze.height - 1;
+            const bool wr = has_wall_right(maze, i, j) && i < maze.width - 1;
+            if(tear && wd && wr)
+            {
+                if(rand() % 2 == 0)
+                {
+                    unwall_down(maze, i, j);
+                }
+                else
+                {
+                    unwall_right(maze, i, j);
+                }
+            }
+            else if(tear && wd)
+            {
+                unwall_down(maze, i, j);
+            }
+            else if(tear && wr)
+            {
+                unwall_right(maze, i, j);
+            }
+        }
+    }
 }
