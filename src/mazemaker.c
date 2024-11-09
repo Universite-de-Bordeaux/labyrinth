@@ -6,6 +6,67 @@
 
 #include "outside.h"
 
+//fonction auxiliaire
+//met à jour le tableau de connexité en ajoutant les cases connexes à la case (dx, dy) et (0, 0) simultanément
+//retourne le nombre de cases connexes ajoutées
+//maze : labyrinthe
+//is_connexe : tableau de connexité
+//dx, dy : coordonnées de la case à traiter
+int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int dx, const int dy)
+{
+    const bool_tab visited = create_booltab(maze.width, maze.height); //tableau de booléens pour savoir si une case a été traitée
+    stack *s = create_stack(); //cette pile contiendra les coordonnées des cases visitées
+    queue *q = create_queue(); //cette file contiendra les coordonnées des cases pour lesquelles on doit vérifier la connexité
+    push(dx, dy, s);
+    int x, y;
+    bool connexion = false; //pour savoir si notre sous-graphe est lié à la case (0, 0)
+    while(!isempty_stack(s))
+    {
+        pop(s, &x, &y);
+        set_true(visited, x, y);
+        if(get_bool(is_connexe, x, y))
+        {
+            connexion = true;
+            continue; //on ne traite pas les cases déjà connexes
+        }
+        enqueue(x, y, q);
+        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
+        {
+            push(x, y + 1, s);
+        }
+        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
+        {
+            push(x + 1, y, s);
+        }
+        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
+        {
+            push(x, y - 1, s);
+        }
+        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
+        {
+            push(x - 1, y, s);
+        }
+    }
+    if(!connexion) //si notre sous-graphe n'est pas lié à la case (0, 0), c'est qu'il n'est pas connexe
+    {
+        free_stack(s);
+        free_booltab(visited);
+        free_queue(q);
+        return 0; //on n'a rien modifié
+    }
+    int c = 0; //compteur de cases visitées
+    while(!isempty_queue(q))
+    {
+        dequeue(q, &x, &y);
+        set_true(is_connexe, x, y); //on marque la case comme connexe
+        c++;
+    }
+    free_stack(s);
+    free_booltab(visited);
+    free_queue(q);
+    return c; //on retourne le nombre de cases visitées
+}
+
 maze_t line_maze(const int width, const int height)
 {
     const time_t t = time(NULL);
@@ -47,24 +108,22 @@ maze_t column_maze(const int width, const int height)
 maze_t imperfect_one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
-    const bool_tab visited = create_booltab(width, height);
+    const bool_tab annexe = create_booltab(width, height);
     const time_t t = time(NULL);
     srand(t);
-    int c = 0;
-    int x = 0;
-    int y = 0;
+    int r = 0, x = 0, y = 0;
     while(!(x == width - 1 && y == height - 1))
     {
-        if(c % 2 == 0)
+        if(r % 2 == 0)
         {
             const int next_x = (rand() % (width - x)) + x;
             for (int i = x; i < next_x; i++)
             {
                 unwall_right(maze, i, y);
-                set_true(visited, i, y);
+                set_true(annexe, i, y);
             }
             x = next_x;
-            c++;
+            r++;
         }
         else
         {
@@ -72,17 +131,17 @@ maze_t imperfect_one_way_maze(const int width, const int height)
             for (int i = y; i < next_y; i++)
             {
                 unwall_down(maze, x, i);
-                set_true(visited, x, i);
+                set_true(annexe, x, i);
             }
             y = next_y;
-            c++;
+            r++;
         }
     }
     for(int i = 0; i < width; i++)
     {
         for(int j = 0; j < height; j++)
         {
-            if(!get_bool(visited, i, j))
+            if(!get_bool(annexe, i, j))
             {
                 const int direction = rand() % 4;
                 if(direction == 0 && i > 0)
@@ -104,7 +163,98 @@ maze_t imperfect_one_way_maze(const int width, const int height)
             }
         }
     }
-    free_booltab(visited);
+    for(int i = 0; i < maze.width; i++)
+    {
+        for(int j = 0; j < maze.height; j++)
+        {
+            set_false(annexe, i, j);
+        }
+    }
+    //on va connexter les cases
+    x = rand() % width;
+    y = rand() % height;
+    set_true(annexe, x, y); //on marque la case comme celle de départ
+    int tmp = width * height - 1; //nombre de cases à traiter
+    if(!has_wall_down(maze, x, y))
+    {
+        tmp -= set_connexion(maze, annexe, x, y + 1); //on marque la case adjacente comme connexe
+    }
+    if(!has_wall_up(maze, x, y))
+    {
+        tmp -= set_connexion(maze, annexe, x, y - 1); //on marque la case adjacente comme connexe
+    }
+    if(!has_wall_left(maze, x, y))
+    {
+        tmp -= set_connexion(maze, annexe, x - 1, y); //on marque la case adjacente comme connexe
+    }
+    if(!has_wall_right(maze, x, y))
+    {
+        tmp -= set_connexion(maze, annexe, x + 1, y); //on marque la case adjacente comme connexe
+    }
+    while(tmp > 0) //tant que toutes les cases ne sont pas connexes
+    {
+        int d = rand() % tmp;
+        int temp = d;
+        for(int i = 0; i <= temp; i++)
+        {
+            if(get_bool(annexe, d % width, d / width))
+            {
+                d++; //on saute les case déjà traitées
+                temp++;
+            }
+            if(d == width * height) //si on dépasse la taille du labyrinthe
+            {
+                d = 0; //on cycle
+            }
+            if(i == width * height + 1) //si on a fait un tour complet sans trouver de case non visitée
+            {
+                fprintf(stderr, "Erreur dans la fonction cross_maze : boucle infinie\n");
+                free_booltab(annexe);
+                free_maze(maze);
+                exit(EXIT_FAILURE);
+            }
+        }
+        x = d % width;
+        y = d / width;
+        char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+        //chercher une cellule visitée adjacente à notre cellule non visitée
+        char c = '\0';
+        int size = 4;
+        while(c == '\0' && size > 0)
+        {
+            const int rd = rand() % size;
+            c = dir[rd];
+            if (c == 'R' && x + 1 < width && get_bool(annexe, x + 1, y))
+            {
+                unwall_right(maze, x, y); //on ouvre le mur pour relier les deux cases
+                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+            }
+            else if(c == 'L' && x > 0 && get_bool(annexe, x - 1, y))
+            {
+                unwall_left(maze, x, y); //on ouvre le mur pour relier les deux cases
+                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+            }
+            else if(c == 'D' && y + 1 < height && get_bool(annexe, x, y + 1))
+            {
+                unwall_down(maze, x, y); //on ouvre le mur pour relier les deux cases
+                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+            }
+            else if(c == 'U' && y > 0 && get_bool(annexe, x, y - 1))
+            {
+                unwall_up(maze, x, y); //on ouvre le mur pour relier les deux cases
+                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+            }
+            else //si la direction n'est pas bonne, on la supprime
+            {
+                for (int i = rd; i < size; i++){
+                    dir[i] = dir[i+1]; //on décale les éléments du tableau
+                }
+                size--; //on réduit la taille du tableau
+                c = '\0'; //on réinitialise la direction
+            }
+        }
+    }
+    free_booltab(annexe);
     return maze;
 }
 
@@ -523,68 +673,6 @@ maze_t by_path_maze(const int width, const int height){
    return maze;
 }
 
-//fonction auxiliaire
-//met à jour le tableau de connexité en ajoutant les cases connexes à la case (dx, dy) et (0, 0) simultanément
-//retourne le nombre de cases connexes ajoutées
-//maze : labyrinthe
-//is_connexe : tableau de connexité
-//dx, dy : coordonnées de la case à traiter
-int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int dx, const int dy)
-{
-    const bool_tab visited = create_booltab(maze.width, maze.height); //tableau de booléens pour savoir si une case a été traitée
-    stack *s = create_stack(); //cette pile contiendra les coordonnées des cases visitées
-    queue *q = create_queue(); //cette file contiendra les coordonnées des cases pour lesquelles on doit vérifier la connexité
-    set_true(visited, dx, dy);//la case actuelle est connexe, en théorie la nouvelle connexité vient d'un de ses voisins
-    push(dx, dy, s);
-    int x, y;
-    bool connexion = false; //pour savoir si notre sous-graphe est lié à la case (0, 0)
-    while(!isempty_stack(s))
-    {
-        pop(s, &x, &y);
-        set_true(visited, x, y);
-        if(get_bool(is_connexe, x, y))
-        {
-            connexion = true;
-            continue; //on ne traite pas les cases déjà connexes
-        }
-        enqueue(x, y, q);
-        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
-        {
-            push(x, y + 1, s);
-        }
-        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
-        {
-            push(x + 1, y, s);
-        }
-        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
-        {
-            push(x, y - 1, s);
-        }
-        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
-        {
-            push(x - 1, y, s);
-        }
-    }
-    if(!connexion) //si notre sous-graphe n'est pas lié à la case (0, 0), c'est qu'il n'est pas connexe
-    {
-        free_stack(s);
-        free_booltab(visited);
-        free_queue(q);
-        return 0; //on n'a rien modifié
-    }
-    int c = 0; //compteur de cases visitées
-    while(!isempty_queue(q))
-    {
-        dequeue(q, &x, &y);
-        set_true(is_connexe, x, y); //on marque la case comme connexe
-        c++;
-    }
-    free_stack(s);
-    free_booltab(visited);
-    free_queue(q);
-    return c; //on retourne le nombre de cases visitées
-}
-
 maze_t cross_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
@@ -660,8 +748,6 @@ maze_t cross_maze(const int width, const int height)
     {
         t -= set_connexion(maze, annexe, x + 1, y); //on marque la case adjacente comme connexe
     }
-    const int dx = x, dy = y;
-    maze_to_file(maze, "cross_maze.txt");
     while(t > 0) //tant que toutes les cases ne sont pas connexes
     {
         d = rand() % t;
@@ -726,27 +812,5 @@ maze_t cross_maze(const int width, const int height)
         }
     }
     free_booltab(annexe);
-    return maze;
-    SDL_Renderer *renderer;
-    SDL_Window *window;
-    SDL_Renderer *renderer2;
-    SDL_Window *window2;
-    const maze_t maze2 = maze_from_file("cross_maze.txt");
-    int dw, dh;
-    initial_print_maze(maze2, &renderer2, &window2, &dw, &dh);
-    initial_print_maze(maze, &renderer, &window, &dw, &dh);
-    const SDL_Rect rect = {dx * dw + 1, dy * dh + 1, dw - 2, dh - 2};
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetRenderDrawColor(renderer2, 0, 0, 255, 255);
-    SDL_RenderFillRect(renderer2, &rect);
-    SDL_DisplayMode DM;
-    SDL_GetCurrentDisplayMode(0, &DM);
-    SDL_Delay(DM.refresh_rate);
-    SDL_RenderPresent(renderer);
-    SDL_RenderPresent(renderer2);
-    wait_and_destroy_print_maze(renderer, window);
-    destroy_print_maze(renderer2, window2);
-    free_maze(maze2);
     return maze;
 }
