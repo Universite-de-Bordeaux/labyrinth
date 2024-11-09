@@ -163,97 +163,6 @@ maze_t imperfect_one_way_maze(const int width, const int height)
             }
         }
     }
-    for(int i = 0; i < maze.width; i++)
-    {
-        for(int j = 0; j < maze.height; j++)
-        {
-            set_false(annexe, i, j);
-        }
-    }
-    //on va connexter les cases
-    x = rand() % width;
-    y = rand() % height;
-    set_true(annexe, x, y); //on marque la case comme celle de départ
-    int tmp = width * height - 1; //nombre de cases à traiter
-    if(!has_wall_down(maze, x, y))
-    {
-        tmp -= set_connexion(maze, annexe, x, y + 1); //on marque la case adjacente comme connexe
-    }
-    if(!has_wall_up(maze, x, y))
-    {
-        tmp -= set_connexion(maze, annexe, x, y - 1); //on marque la case adjacente comme connexe
-    }
-    if(!has_wall_left(maze, x, y))
-    {
-        tmp -= set_connexion(maze, annexe, x - 1, y); //on marque la case adjacente comme connexe
-    }
-    if(!has_wall_right(maze, x, y))
-    {
-        tmp -= set_connexion(maze, annexe, x + 1, y); //on marque la case adjacente comme connexe
-    }
-    while(tmp > 0) //tant que toutes les cases ne sont pas connexes
-    {
-        int d = rand() % tmp;
-        int temp = d;
-        for(int i = 0; i <= temp; i++)
-        {
-            if(get_bool(annexe, d % width, d / width))
-            {
-                d++; //on saute les case déjà traitées
-                temp++;
-            }
-            if(d == width * height) //si on dépasse la taille du labyrinthe
-            {
-                d = 0; //on cycle
-            }
-            if(i == width * height + 1) //si on a fait un tour complet sans trouver de case non visitée
-            {
-                fprintf(stderr, "Erreur dans la fonction cross_maze : boucle infinie\n");
-                free_booltab(annexe);
-                free_maze(maze);
-                exit(EXIT_FAILURE);
-            }
-        }
-        x = d % width;
-        y = d / width;
-        char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-        //chercher une cellule visitée adjacente à notre cellule non visitée
-        char c = '\0';
-        int size = 4;
-        while(c == '\0' && size > 0)
-        {
-            const int rd = rand() % size;
-            c = dir[rd];
-            if (c == 'R' && x + 1 < width && get_bool(annexe, x + 1, y))
-            {
-                unwall_right(maze, x, y); //on ouvre le mur pour relier les deux cases
-                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
-            }
-            else if(c == 'L' && x > 0 && get_bool(annexe, x - 1, y))
-            {
-                unwall_left(maze, x, y); //on ouvre le mur pour relier les deux cases
-                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
-            }
-            else if(c == 'D' && y + 1 < height && get_bool(annexe, x, y + 1))
-            {
-                unwall_down(maze, x, y); //on ouvre le mur pour relier les deux cases
-                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
-            }
-            else if(c == 'U' && y > 0 && get_bool(annexe, x, y - 1))
-            {
-                unwall_up(maze, x, y); //on ouvre le mur pour relier les deux cases
-                tmp -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
-            }
-            else //si la direction n'est pas bonne, on la supprime
-            {
-                for (int i = rd; i < size; i++){
-                    dir[i] = dir[i+1]; //on décale les éléments du tableau
-                }
-                size--; //on réduit la taille du tableau
-                c = '\0'; //on réinitialise la direction
-            }
-        }
-    }
     free_booltab(annexe);
     return maze;
 }
@@ -394,42 +303,44 @@ maze_t hunt_kill_maze(const int width, const int height)
     {
         //tant que toutes les cellules n'ont pas été visitées
         //BOUCLE KILL
-        //détruire un mur aléatoire tant que toutes les cellules voisines n'ont pas été visitées
+        //détruire un mur aléatoire tant que toutes les cellules voisines n'ont pas été visitées pour créer un long couloir/chemin
         int size = 4;
         char c = '\0';
-        while(size > 0){
+        while(size > 0){ //tant qu'il reste des directions possibles
             char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
             size = 4;
-            c = '\0';
-            while(c == '\0' && size > 0)
+            while(size > 0) //tant qu'il reste des directions possibles et qu'on n'en a pas tiré de valide
             {
                 const int r = rand() % size;
                 c = dir[r];
-                if (c == 'R' && x + 1 < width && !get_bool(visited, x + 1, y))
-                {
-                    unwall_right(maze, x, y);
-                    x++;
-                }
-                else if(c == 'L' && x > 0 && !get_bool(visited, x - 1, y))
-                {
-                    unwall_left(maze, x, y);
-                    x--;
-                }
-                else if(c == 'D' && y + 1 < height && !get_bool(visited, x, y + 1))
-                {
-                    unwall_down(maze, x, y);
-                    y++;
-                }
-                else if(c == 'U' && y > 0 && !get_bool(visited, x, y - 1))
-                {
-                    unwall_up(maze, x, y);
-                    y--;
-                }
-                else
+                if (c == 'R' && x + 1 < width && !get_bool(visited, x + 1, y)) //si on a tiré la direction droite et qu'on peut y aller
+                    {
+                        unwall_right(maze, x, y); //on détruit le mur
+                        x++; //on se déplace
+                        break;
+                    }
+                if(c == 'L' && x > 0 && !get_bool(visited, x - 1, y)) //si on a tiré la direction gauche et qu'on peut y aller
+                    {
+                        unwall_left(maze, x, y); //on détruit le mur
+                        x--; //on se déplace
+                        break;
+                    }
+                if(c == 'D' && y + 1 < height && !get_bool(visited, x, y + 1)) //si on a tiré la direction bas et qu'on peut y aller
+                    {
+                        unwall_down(maze, x, y); //on détruit le mur
+                        y++; //on se déplace
+                        break;
+                    }
+                if(y > 0 && !get_bool(visited, x, y - 1)) //il ne reste plus que la direction haut, on regarde si on peut y aller
+                    {
+                        unwall_up(maze, x, y); //on détruit le mur
+                        y--; //on se déplace
+                        break;
+                    }
+                //sinon on supprime la direction prise du tableau
                 {
                     for (int i = r; i < size - 1; i++){
                         dir[i] = dir[i+1];
-                        c = '\0';
                     }
                     size--;
                 }
@@ -439,52 +350,58 @@ maze_t hunt_kill_maze(const int width, const int height)
 
         //sinon on cherche une cellule non visitée adjacente à une cellule visitée
         //BOUCLE HUNT
-        if(!finding_hunt(width, height, visited, px, py)){
+        if(!finding_hunt(width, height, visited, px, py))
+        {
             end = 1;
         }
-        else{
-            char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
+        else
+        {
+            char dir[4] = {0}; //tableau des directions possibles
+            size = 0;
+            if(x + 1 < width && get_bool(visited, x + 1, y)){
+                dir[size] = 'R';
+                size++;
+            }
+            if(y + 1 < height && get_bool(visited, x, y + 1)){
+                dir[size] = 'D';
+                size++;
+            }
+            if(x > 0 && get_bool(visited, x - 1, y)){
+                dir[size] = 'L';
+                size++;
+            }
+            if(y > 0 && get_bool(visited, x, y - 1)){
+                dir[size] = 'U';
+                size++;
+            }
             //chercher une cellule visitée adjacente à notre cellule non visitée
-            c = '\0';
-            size = 4;
-            while(c == '\0')
-            {
-                const int r = rand() % size;
-                c = dir[r];
-                if (c == 'R' && x + 1 < width && get_bool(visited, x + 1, y))
+                c = dir[rand() % size];
+                if (c == 'R')
                 {
                     unwall_right(maze, x, y);
                 }
-                else if(c == 'L' && x > 0 && get_bool(visited, x - 1, y))
+                else if(c == 'L')
                 {
                     unwall_left(maze, x, y);
                 }
-                else if(c == 'D' && y + 1 < height && get_bool(visited, x, y + 1))
+                else if(c == 'D')
                 {
                     unwall_down(maze, x, y);
                 }
-                else if(c == 'U' && y > 0 && get_bool(visited, x, y - 1))
+                else if(c == 'U')
                 {
                     unwall_up(maze, x, y);
                 }
                 else
                 {
-                    for (int i = r; i < size; i++){
-                        dir[i] = dir[i+1];
-                    }
-                    size--;
-                    c = '\0';
-                    if(size == 0){
                         fprintf(stderr, "Erreur: direction hunt invalide\n");
                         printf("x : %d, y : %d\n", x, y);
                         free_booltab(visited);
                         free_maze(maze);
                         exit(EXIT_FAILURE);
-                    }
                 }
             }
             set_true(visited, x, y);
-        }
     }
     free_booltab(visited);
     return maze;
@@ -682,12 +599,18 @@ maze_t cross_maze(const int width, const int height)
     //on commence par crréer des chemins (en forme d'étoiles)
     while(t > 0)
     {
-        d = rand() % t;
-        for(int i = 0; i <= d; i++)
+        int r = rand() % t;
+        d = r;
+        for(int i = 0; i <= r; i++)
         {
             if(get_bool(annexe, d % width, d / width))
             {
                 d++; //on saute les case déjà traitées
+                r++;
+            }
+            if(d == width * height) //si on dépasse la taille du labyrinthe
+            {
+                d = 0; //on cycle
             }
         }
         const int x = d % width;
@@ -695,25 +618,25 @@ maze_t cross_maze(const int width, const int height)
         set_true(annexe, x, y);
         t--;
         //on ouvre les murs
-        if(y > 0 && !get_bool(annexe, x, y - 1))
+        if(y > 0 && !get_bool(annexe, x, y - 1)) //si la case adjacente n'a pas été traitée
         {
             unwall_up(maze, x, y);
             set_true(annexe, x, y - 1);
             t--;
         }
-        if(y < height - 1 && !get_bool(annexe, x, y + 1))
+        if(y < height - 1 && !get_bool(annexe, x, y + 1)) //si la case adjacente n'a pas été traitée
         {
             unwall_down(maze, x, y);
             set_true(annexe, x, y + 1);
             t--;
         }
-        if(x > 0 && !get_bool(annexe, x - 1, y))
+        if(x > 0 && !get_bool(annexe, x - 1, y)) //si la case adjacente n'a pas été traitée
         {
             unwall_left(maze, x, y);
             set_true(annexe, x - 1, y);
             t--;
         }
-        if(x < width - 1 && !get_bool(annexe, x + 1, y))
+        if(x < width - 1 && !get_bool(annexe, x + 1, y)) //si la case adjacente n'a pas été traitée
         {
             unwall_right(maze, x, y);
             set_true(annexe, x + 1, y);
@@ -724,7 +647,7 @@ maze_t cross_maze(const int width, const int height)
     {
         for(int j = 0; j < maze.height; j++)
         {
-            set_false(annexe, i, j);
+            set_false(annexe, i, j); //on réinitialise le tableau
         }
     }
     //on va connexter les cases non connexes
@@ -763,53 +686,97 @@ maze_t cross_maze(const int width, const int height)
             {
                 d = 0;
             }
-            if(i == width * height + 1) //si on a fait un tour complet sans trouver de case non visitée
-            {
-                fprintf(stderr, "Erreur dans la fonction cross_maze : boucle infinie\n");
-                free_booltab(annexe);
-                free_maze(maze);
-                exit(EXIT_FAILURE);
-            }
         }
         x = d % width;
         y = d / width;
-        char dir[4] = {'R', 'D', 'L', 'U'}; //tableau des directions possibles
-        //chercher une cellule visitée adjacente à notre cellule non visitée
-        char c = '\0';
-        int size = 4;
-        while(c == '\0' && size > 0)
+        //on regarde les directions possibles
+        int size = 0;
+        bool dir[3] = {false, false, false}; //tableau des directions possibles (la 4eme est assuré par les 3 autres et le size)
+        if(x > 0 && get_bool(annexe, x - 1, y)) //si la case adjacente est connexe
         {
-            const int rd = rand() % size;
-            c = dir[rd];
-            if (c == 'R' && x + 1 < width && get_bool(annexe, x + 1, y))
+            size++;
+            dir[0] = true;
+        }
+        if(x < width - 1 && get_bool(annexe, x + 1, y)) //si la case adjacente est connexe
+        {
+            size++;
+            dir[1] = true;
+        }
+        if(y > 0 && get_bool(annexe, x, y - 1)) //si la case adjacente est connexe
+        {
+            size++;
+            dir[2] = true;
+        }
+        if(y < height - 1 && get_bool(annexe, x, y + 1)) //si la case adjacente est connexe
+        {
+            size++;
+        }
+        if(size == 0) //si la case n'est pas adjacente à une case visitée
+        {
+            continue; //on passe à la case suivante
+        }
+        const int r = rand() % size;
+        if(r == 0) //la première direction peut être n'importe laquelle
+        {
+            if(dir[0]) //on regarde si la direction est possible
             {
-                unwall_right(maze, x, y); //on ouvre le mur pour relier les deux cases
-                t -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+                unwall_left(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
             }
-            else if(c == 'L' && x > 0 && get_bool(annexe, x - 1, y))
+            else if(dir[1]) //on regarde si la direction est possible
             {
-                unwall_left(maze, x, y); //on ouvre le mur pour relier les deux cases
-                t -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+                unwall_right(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
             }
-            else if(c == 'D' && y + 1 < height && get_bool(annexe, x, y + 1))
+            else if(dir[2]) //on regarde si la direction est possible
             {
-                unwall_down(maze, x, y); //on ouvre le mur pour relier les deux cases
-                t -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
+                unwall_up(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
             }
-            else if(c == 'U' && y > 0 && get_bool(annexe, x, y - 1))
+            else //la quatrième direction est la seule restante
             {
-                unwall_up(maze, x, y); //on ouvre le mur pour relier les deux cases
-                t -= set_connexion(maze, annexe, x, y); //on marque et compte les cases connexes
-            }
-            else //si la direction n'est pas bonne, on la supprime
-            {
-                for (int i = rd; i < size; i++){
-                    dir[i] = dir[i+1]; //on décale les éléments du tableau
-                }
-                size--; //on réduit la taille du tableau
-                c = '\0'; //on réinitialise la direction
+                unwall_down(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
             }
         }
+        else if(r == 1) //la deuxième direction ne peut pas être la 0 (qui est toujours première)
+        {
+            if(dir[1]) //on regarde si la direction est possible
+            {
+                unwall_right(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
+            }
+            else if(dir[2]) //on regarde si la direction est possible
+            {
+                unwall_up(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
+            }
+            else //la quatrième direction est la seule restante
+            {
+                unwall_down(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
+            }
+        }
+        else if(r == 2) //la troisième direction ne peut pas être la 0 ou la 1
+        {
+            if(dir[2]) //on regarde si la direction est possible
+            {
+                unwall_up(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
+            }
+            else //la quatrième direction est la seule restante
+            {
+                unwall_down(maze, x, y);
+                t -= set_connexion(maze, annexe, x, y);
+            }
+        }
+        else //la quatrième direction est la seule restante
+        {
+            unwall_down(maze, x, y);
+            t -= set_connexion(maze, annexe, x, y);
+        }
+
+
     }
     free_booltab(annexe);
     return maze;
