@@ -24,7 +24,7 @@ bool do_made_perfect_maze(const func_ptr f, const int x, const int y);
 
 //Fonction permettant d'évaluer un générateur de labyrinthe
 //f : pointeur de fonction de génération de labyrinthe
-//retourne 0 si le générateur est incorrect, 1 si le générateur semble créer des labyrinthes solvables, 2 si le générateur semble créer des labyrinthes parfaits
+//retourne 0 si le générateur est incorrect, 1 si le générateur semble créer des labyrinthes solvables, 2 si le générateur semble créer des labyrinthes connexe et 3 si le générateur semble créer des labyrinthes parfaits
 //risque de faux positifs
 //exponentiel en temps
 int evaluate_mazemaker(func_ptr f, int x, int y);
@@ -37,9 +37,13 @@ int evaluate_mazemaker(func_ptr f, int x, int y);
 #define EVALUATE_MAZEMAKERN(générateur, name, x, y) \
     do { \
         const int t = evaluate_mazemaker(générateur, x, y); \
-        if(t == 2) \
+        if(t == 3) \
         { \
             printf("%s semble créer des labyrinthes parfaits\n", name); \
+        } \
+        else if(t == 2) \
+        { \
+            printf("%s semble créer des labyrinthes connexes\n", name); \
         } \
         else if(t == 1) \
         { \
