@@ -28,8 +28,8 @@ struct way
 {
     int x;
     int y;
-    struct way *dad;
     unsigned int length;
+    struct way *dad;
 };
 
 struct waytab
@@ -40,10 +40,10 @@ struct waytab
 };
 
 struct queue{
-    int *array;     // Tableau des valeurs.
     int size_array; // Taille du tableau des valeurs.
     int left;       // Indice de la valeur à gauche de la file (si non-vide).
     int right;      // Indice qui suit celui de la valeur à droite de la fil (si elle est non-vide).
+    int *array;     // Tableau des valeurs.
     bool empty;     // Booléen indiquant si la file est vide.
 };
 
