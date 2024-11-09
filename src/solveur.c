@@ -609,24 +609,45 @@ int show_is_connexe_deep_inspector(const maze_t maze)
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
     }
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge
+    bool is_connected = true;
     for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
     {
         for(y = 0; y < maze.height; y++)
         {
             if(!get_bool(visited, x, y)) //si une case n'a pas été visitée, c'est que le labyrinthe n'est pas connexe
             {
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge
                 const SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
                 SDL_RenderFillRect(renderer, &rect);
-                SDL_SetWindowTitle(window, "not connected !"); //on change le titre de la fenêtre
-                SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-                SDL_RenderPresent(renderer);
-                wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
-                free_stack(s);
-                free_booltab(visited);
-                return 1;
+                if(!has_wall_down(maze, x, y)) //si on peut aller en bas
+                {
+                    SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
+                }
+                if(!has_wall_right(maze, x, y)) //si on peut aller à droite
+                {
+                    SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
+                }
+                if(!has_wall_up(maze, x, y)) //si on peut aller en haut
+                {
+                    SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
+                }
+                if(!has_wall_left(maze, x, y)) //si on peut aller à gauche
+                {
+                    SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
+                }
+                is_connected = false;
             }
         }
+    }
+    if(!is_connected)
+    {
+        SDL_SetWindowTitle(window, "not connected !"); //on change le titre de la fenêtre
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
+        free_stack(s);
+        free_booltab(visited);
+        return 1;
     }
     SDL_SetWindowTitle(window, "Maze connected !"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
