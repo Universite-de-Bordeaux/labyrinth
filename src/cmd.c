@@ -37,10 +37,10 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo make a way : \n");
     printf("\t-rw <filename> : read way from file\n");
-    printf("You can also use the solve command with parameter 3 or 6 to generate a way\n");
+    printf("You can also use the solve command with parameter 4 or 8 to generate a way\n");
 
     printf("\nTo solve a maze : (a maze must be initiated)\n");
-    printf("\t-slv <nb> : solve 1 : is perfect (deep inspector), 2 : has exit (deep seeker), 3 : shortest exit (deep seeker)(and save way), 4 : is perfect (breadth inspector), 5 : has exit (breadth seeker), 6 : shortest exit (breadth seeker)(and save way)\n");
+    printf("\t-slv <nb> : solve 1 : is perfect (deep inspector), 2: is connected (deep inspector), 3 : has exit (deep seeker), 4 : shortest exit (deep seeker)(and save way), 5 : is perfect (breadth inspector), 6 : is connected (breadth inspector), 7 : has exit (breadth seeker), 8 : shortest exit (breadth seeker)(and save way)\n");
 
 
     printf("\nTo write: \n");
@@ -49,7 +49,7 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo show (a maze must be initiated) : \n");
     printf("\t-sh : show maze\n");
-    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect (deep inspector), 2 : has exit (deep seeker), 3 : shortest exit (deep seeker), 4 : is perfect (breadth inspector), 5 : has exit (breadth seeker), 6 : shortest exit (breadth seeker)\n");
+    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect (deep inspector), 2 : is connected (deep inspector), 3 : has exit (deep seeker), 4 : shortest exit (deep seeker), 5 : is perfect (breadth inspector), 6 : is connected (breadth inspector), 7 : has exit (breadth seeker), 8 : shortest exit (breadth seeker)\n");
     printf("\t-shw : show way (a way must be initiated)\n");
 
     printf("\n\t-h : help\n");
@@ -71,10 +71,10 @@ void cmd(char *argv[], const int argc)
     }
     //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cm
     //-r <filename> -> read maze
-    //-slv <nb> -> solve (if maze) 1 : is perfect, 2 : has exit, 3 : shortest exit (and save way)
+    //-slv <nb> -> solve (if maze) 1 : is perfect, 2 : is connected, 3 : has exit, 4 : shortest exit (+0 : deep inspector, +4 : breadth inspector)
     //-w <filename> -> write maze in file (if maze)
     //-sh -> show maze
-    //-sh <nb> -> show (if maze) 1 : is perfect, 2 : has exit, 3 : shortest exit
+    //-sh <nb> -> show (if maze) 1 : is perfect, 2 : is connected, 3 : has exit, 4 : shortest exit (+0 : deep inspector, +4 : breadth inspector)
     //-ww <filename> -> write way in file (if way)
     //-rw <filename> -> read way in file (if way)
     //-shw -> show way (if way & maze)
@@ -335,6 +335,18 @@ void cmd(char *argv[], const int argc)
         else if(solve_type == 2)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            if(is_connexe_deep_inspector(maze))
+            {
+                printf("The maze is connected\n");
+            }
+            else
+            {
+                printf("The maze is not connected\n");
+            }
+        }
+        else if(solve_type == 3)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
             if(has_exit_deep_seeker(maze))
             {
                 printf("The maze has an exit\n");
@@ -344,7 +356,7 @@ void cmd(char *argv[], const int argc)
                 printf("The maze has no exit\n");
             }
         }
-        else if(solve_type == 3)
+        else if(solve_type == 4)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             w = best_exit_deep_seeker(maze);
@@ -358,7 +370,7 @@ void cmd(char *argv[], const int argc)
                 printf("way found and saved\n");
             }
         }
-        else if(solve_type == 4)
+        else if(solve_type == 5)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             if(is_perfect_breadth_inspector(maze))
@@ -370,7 +382,19 @@ void cmd(char *argv[], const int argc)
                 printf("The maze is not perfect\n");
             }
         }
-        else if(solve_type == 5)
+        else if(solve_type == 6)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            if(is_connexe_breadth_inspector(maze))
+            {
+                printf("The maze is connected\n");
+            }
+            else
+            {
+                printf("The maze is not connected\n");
+            }
+        }
+        else if(solve_type == 7)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             if(has_exit_breadth_seeker(maze))
@@ -382,7 +406,7 @@ void cmd(char *argv[], const int argc)
                 printf("The maze has no exit\n");
             }
         }
-        else if(solve_type == 6)
+        else if(solve_type == 8)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             w = best_exit_breadth_seeker(maze);
@@ -420,7 +444,12 @@ void cmd(char *argv[], const int argc)
             fprintf(stderr, "Error : -sh <nb> : no maze to show\n");
             return;
         }
-        if(type_show == 1)
+        if(type_show == 0)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            print_maze(maze);
+        }
+        else if(type_show == 1)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             show_is_perfect_deep_inspector(maze);
@@ -428,29 +457,34 @@ void cmd(char *argv[], const int argc)
         else if(type_show == 2)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_has_exit_deep_seeker(maze);
+            show_is_connexe_deep_inspector(maze);
         }
         else if(type_show == 3)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_best_exit_deep_seeker(maze);
-        }
-        else if(type_show == 0)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            print_maze(maze);
+            show_has_exit_deep_seeker(maze);
         }
         else if(type_show == 4)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_is_perfect_breadth_inspector(maze);
+            show_best_exit_deep_seeker(maze);
         }
         else if(type_show == 5)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            show_has_exit_breadth_seeker(maze);
+            show_is_perfect_breadth_inspector(maze);
         }
         else if(type_show == 6)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            show_is_connexe_breadth_inspector(maze);
+        }
+        else if(type_show == 7)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            show_has_exit_breadth_seeker(maze);
+        }
+        else if(type_show == 8)
         {
             // ReSharper disable once CppLocalVariableMightNotBeInitialized
             show_best_exit_breadth_seeker(maze);
