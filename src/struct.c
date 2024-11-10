@@ -462,10 +462,6 @@ bool is_empty(const way *w)
     {
         return w -> x != 0 || w -> y != 0; //un chemin est vide s'il n'est pas relié à la case (0, 0)
     }
-    if(w->length == L_TP)
-    {
-        return false;
-    }
     return is_empty(w->dad);
 }
 
