@@ -372,6 +372,10 @@ int get_y(const way *w);
 //w : le chemin
 bool is_origin(const way *w);
 
+//met à jour la longueur du chemin
+//w : le chemin
+void fix_size(way* w);
+
 // --- QUEUE ---
 
 // Crée une file vide.

@@ -485,6 +485,17 @@ bool is_origin(const way *w)
     return w -> x == 0 && w -> y == 0;
 }
 
+void fix_size(way* w)
+{
+    if(w -> dad != NULL)
+    {
+        fix_size(w -> dad);
+        w -> length = w -> dad -> length + 1;
+        return;
+    }
+    w -> length = w -> x == 0 && w -> y == 0 ? 0 : L_TP;
+}
+
 // --- QUEUE FUNCTIONS ---
 
 // Fonction auxiliaire de grow_queue
