@@ -400,8 +400,10 @@ way *best_exit_breadth_seeker(const maze_t maze)
     //on va constituer un tableau de way pour chaque case, qui contiendra le chemin le plus court pour y arriver, en partant de l'entrée
     //il nous permettra de savoir facilement si on est déjà passé par une case car un chemin en largeur est toujours plus court qu'un autre
     const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
+    const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
+    set_true(visited, 0, 0);
     int x, y;
     while(!isempty_queue(q))
     {
@@ -413,30 +415,34 @@ way *best_exit_breadth_seeker(const maze_t maze)
             free_queue(q);
             return w;
         }
-        int l = length_waytab(ways, x, y);
-        if(!has_wall_up(maze, x, y) && l < length_waytab(ways, x, y - 1)) //si on peut aller en haut et que le chemin est plus court
+        if(!has_wall_up(maze, x, y) && !get_bool(visited, x, y -1)) //si on peut aller en haut et que le chemin est plus court
         {
             enqueue(x, y - 1, q); //on ajoute la case à celle à visiter
             connected_way(ways, x, y - 1, x, y); //on crée un chemin entre la case actuelle et la case en haut
+            set_true(visited, x, y - 1);
         }
-        if(!has_wall_down(maze, x, y) && l < length_waytab(ways, x, y + 1)) //si on peut aller en bas et que le chemin est plus court
+        if(!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1)) //si on peut aller en bas et que le chemin est plus court
         {
             enqueue(x, y + 1, q); //on ajoute la case à celle à visiter
             connected_way(ways, x, y + 1, x, y); //on crée un chemin entre la case actuelle et la case en bas
+            set_true(visited, x, y + 1);
         }
-        if(!has_wall_left(maze, x, y) && l < length_waytab(ways, x - 1, y)) //si on peut aller à gauche et que le chemin est plus court
+        if(!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y)) //si on peut aller à gauche et que le chemin est plus court
         {
             enqueue(x - 1, y, q); //on ajoute la case à celle à visiter
             connected_way(ways, x - 1, y, x, y); //on crée un chemin entre la case actuelle et la case à gauche
+            set_true(visited, x - 1, y);
         }
-        if(!has_wall_right(maze, x, y) && l < length_waytab(ways, x + 1, y)) //si on peut aller à droite et que le chemin est plus court
+        if(!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y)) //si on peut aller à droite et que le chemin est plus court
         {
             enqueue(x + 1, y, q); //on ajoute la case à celle à visiter
             connected_way(ways, x + 1, y, x, y); //on crée un chemin entre la case actuelle et la case à droite
+            set_true(visited, x + 1, y);
         }
     }
     free_waytab(ways);
     free_queue(q);
+    free_booltab(visited);
     return create_way(); //si on n'a pas trouvé de chemin, on renvoie un chemin vide
 }
 
@@ -573,7 +579,6 @@ int show_is_connexe_deep_inspector(const maze_t maze)
         set_true(visited, x, y);
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        int nb_way_used = 0; //on compte le nombre de chemin adjacent utilisé, en théorie il doit être égal à 1 (notre père) ou 0 (la case de départ)
         if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
@@ -785,7 +790,7 @@ int show_is_perfect_deep_inspector(const maze_t maze)
 
 int show_best_exit_deep_seeker(const maze_t maze)
 {
-    const bool_tab dead_end = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les impasses pour éviter de recalculer des chemins inutiles
+    const bool_tab dead_end = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les chemins à sens unique pour éviter de recalculer des chemins inutiles
     const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le meilleur chemin pour sortir du labyrinthe
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
@@ -804,6 +809,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
         return -1;
     }
     SDL_Event event = {0}; //on crée un event vide
+    int xe = maze.width - 1, ye = maze.height - 1; //les coordonnées de la sortie utile (pour éviter de recalculer la partie déjà trouvée)
     while(!isempty_stack(s)) //on essaie tous les chemins possibles
     {
         SDL_WaitEventTimeout(&event, 1); //on enregistre les events entrants
@@ -818,51 +824,18 @@ int show_best_exit_deep_seeker(const maze_t maze)
         }
         pop(s, &x, &y);
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on crée un rectangle dans la case actuelle
-        if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie
-        {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
-            SDL_RenderFillRect(renderer, &rect);
-            SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255); //on dessine le meilleur chemin actuel
-            color[0] = (color[0] + 10) % 256; //on change la couleur
-            color[1] = (color[1] + 20) % 256; //on change la couleur
-            color[2] = (color[2] + 50) % 256; //on change la couleur
-            const way *w = get_way(ways, x, y); //on récupère le chemin pour arriver à la sortie
-            while(w != NULL)
-            {
-                SDL_Rect rec = {w->x * dw + 1, w->y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
-                SDL_RenderFillRect(renderer, &rec);
-                if(!has_wall_down(maze, get_x(w), get_y(w))) //si on peut aller en bas
-                {
-                    SDL_RenderDrawLine(renderer, w->x * dw + 1, (w->y + 1) * dh - 1, (w->x + 1) * dw - 2, (w->y + 1) * dh - 1); //on dessine une ligne vers le bas
-                }
-                if(!has_wall_up(maze, get_x(w), get_y(w))) //si on peut aller en haut
-                {
-                    SDL_RenderDrawLine(renderer, w->x * dw + 1, w->y * dh, (w->x + 1) * dw - 2, w->y * dh); //on dessine une ligne vers le haut
-                }
-                if(!has_wall_left(maze, get_x(w), get_y(w))) //si on peut aller à gauche
-                {
-                    SDL_RenderDrawLine(renderer, w->x * dw, w->y * dh + 1, w->x * dw, (w->y + 1) * dh - 2); //on dessine une ligne vers la gauche
-                }
-                if(!has_wall_right(maze, get_x(w), get_y(w))) //si on peut aller à droite
-                {
-                    SDL_RenderDrawLine(renderer, (w->x + 1) * dw - 1, w->y * dh + 1, (w->x + 1) * dw - 1, (w->y + 1) * dh - 2); //on dessine une ligne vers la droite
-                }
-                w = get_dad(w); //on passe à la case suivante
-            }
-            continue; //on ne va pas plus loin
-        }
         SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255); //on dessine la case actuelle
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
         const int l = length_waytab(ways, x, y) + 1;
-        int c = 0; //on compte le nombre de chemin adjacent accessible, s'il n'y en a qu'un (notre père), nous sommes dans une impasse
+        int nb_way = 0;
         if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
             if(!get_bool(dead_end , x, y - 1)) //si on n'est pas dans une impasse
             {
-                c++; //on a trouvé un chemin accessible
+                nb_way++;
                 if(l < length_waytab(ways, x, y - 1)) //si on a trouvé un chemin utile plus court
                 {
                     push(x, y - 1, s);
@@ -875,7 +848,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
             SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1); //on dessine une ligne vers le bas
             if(!get_bool(dead_end, x, y + 1)) //si on n'est pas dans une impasse
             {
-                c++; //on a trouvé un chemin accessible
+                nb_way++;
                 if(l < length_waytab(ways, x, y + 1)) //si on a trouvé un chemin utile plus court
                 {
                     push(x, y + 1, s);
@@ -888,7 +861,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
             SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2); //on dessine une ligne vers la gauche
             if(!get_bool(dead_end, x - 1, y)) //si on n'est pas dans une impasse
             {
-                c++; //on a trouvé un chemin accessible
+                nb_way++;
                 if(l < length_waytab(ways, x - 1, y)) //si on a trouvé un chemin utile plus court
                 {
                     push(x - 1, y, s);
@@ -901,7 +874,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
             SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2); //on dessine une ligne vers la droite
             if(!get_bool(dead_end, x + 1, y)) //si on n'est pas dans une impasse
             {
-                c++; //on a trouvé un chemin accessible
+                nb_way++;
                 if(l < length_waytab(ways, x + 1, y)) //si le chemin est plus court
                 {
                     push(x + 1, y, s);
@@ -911,50 +884,99 @@ int show_best_exit_deep_seeker(const maze_t maze)
         }
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
-        if(c != 1)
+        const bool is_dead_end = nb_way == 1; //si on est dans une impasse
+        if(is_dead_end) //si on est dans une impasse
+        {
+            set_true(dead_end, x, y); //on marque la case comme une impasse
+        }
+        if(!is_dead_end)
         {
             SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu les cases utiles
         }
-        else
+        else // si on est dans une impasse
         {
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge les impasses
-            if(!get_bool(dead_end, x, y))
-            {
-                set_true(dead_end, x, y); //on marque la case comme une impasse
-                if(!has_wall_down(maze, x, y) && !get_bool(dead_end, x, y + 1)) //si on peut aller en bas
-                {
-                    push(x, y + 1, s);
-                }
-                else if(!has_wall_up(maze, x, y) && !get_bool(dead_end, x, y - 1)) //si on peut aller en haut
-                {
-                    push(x, y - 1, s);
-                }
-                else if(!has_wall_left(maze, x, y) && !get_bool(dead_end, x - 1, y)) //si on peut aller à gauche
-                {
-                    push(x - 1, y, s);
-                }
-                else if(!has_wall_right(maze, x, y) && !get_bool(dead_end, x + 1, y)) //si on peut aller à droite
-                {
-                    push(x + 1, y, s);
-                }
-            }
+            SDL_SetRenderDrawColor(renderer, 120, 120, 120, 255); //on dessine en gris les couloirs uniques
         }
         SDL_RenderFillRect(renderer, &rect);
         if(!has_wall_down(maze, x, y))
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, (y + 1) * dh - 1, (x + 1) * dw - 2, (y + 1) * dh - 1);
+            if(is_dead_end && !get_bool(dead_end, x, y + 1))
+            {
+                push(x, y + 1, s); //on continue dans le couloir unique
+                if(x == xe && y == ye)
+                {
+                    ye = y + 1; //on met à jour la sortie
+                }
+            }
         }
         if(!has_wall_up(maze, x, y))
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh);
+            if(is_dead_end && !get_bool(dead_end, x, y - 1))
+            {
+                push(x, y - 1, s); //on continue dans le couloir unique
+                if(x == xe && y == ye)
+                {
+                    ye = y - 1; //on met à jour la sortie
+                }
+            }
         }
         if(!has_wall_left(maze, x, y))
         {
             SDL_RenderDrawLine(renderer, x * dw, y * dh + 1, x * dw, (y + 1) * dh - 2);
+            if(is_dead_end && !get_bool(dead_end, x - 1, y))
+            {
+                push(x - 1, y, s); //on continue dans le couloir unique
+                if(x == xe && y == ye)
+                {
+                    xe = x - 1; //on met à jour la sortie
+                }
+            }
         }
         if(!has_wall_right(maze, x, y))
         {
             SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh + 1, (x + 1) * dw - 1, (y + 1) * dh - 2);
+            if(is_dead_end && !get_bool(dead_end, x + 1, y))
+            {
+                push(x + 1, y, s); //on continue dans le couloir unique
+                if(x == xe && y == ye)
+                {
+                    xe = x + 1; //on met à jour la sortie
+                }
+            }
+        }
+        if(x == xe && y == ye) //si on est à la sortie
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255); //on dessine le meilleur chemin actuel
+            color[0] = (color[0] + 17) % 256; //on change la couleur
+            color[1] = (color[1] + 28) % 256; //on change la couleur
+            color[2] = (color[2] + 41) % 256; //on change la couleur
+            const way *w = get_way(ways, maze.width - 1, maze.height - 1); //on récupère le chemin pour arriver à la sortie
+            while(w != NULL)
+            {
+                SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
+                SDL_RenderFillRect(renderer, &rec);
+                if(!has_wall_down(maze, get_x(w), get_y(w))) //si on peut aller en bas
+                {
+                    SDL_RenderDrawLine(renderer, get_x(w) * dw + 1, (get_y(w) + 1) * dh - 1, (get_x(w) + 1) * dw - 2, (get_y(w) + 1) * dh - 1); //on dessine une ligne vers le bas
+                }
+                if(!has_wall_up(maze, get_x(w), get_y(w))) //si on peut aller en haut
+                {
+                    SDL_RenderDrawLine(renderer, get_x(w) * dw + 1, get_y(w) * dh, (get_x(w) + 1) * dw - 2, get_y(w) * dh); //on dessine une ligne vers le haut
+                }
+                if(!has_wall_left(maze, get_x(w), get_y(w))) //si on peut aller à gauche
+                {
+                    SDL_RenderDrawLine(renderer, get_x(w) * dw, get_y(w) * dh + 1, get_x(w) * dw, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la gauche
+                }
+                if(!has_wall_right(maze, get_x(w), get_y(w))) //si on peut aller à droite
+                {
+                    SDL_RenderDrawLine(renderer, (get_x(w) + 1) * dw - 1, get_y(w) * dh + 1, (get_x(w) + 1) * dw - 1, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la droite
+                }
+                w = get_dad(w); //on passe à la case suivante
+            }
         }
         SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
         SDL_RenderPresent(renderer);
