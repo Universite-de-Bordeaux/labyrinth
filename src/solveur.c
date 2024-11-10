@@ -791,6 +791,8 @@ int show_is_perfect_deep_inspector(const maze_t maze)
 int show_best_exit_deep_seeker(const maze_t maze)
 {
     const bool_tab dead_end = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les chemins à sens unique pour éviter de recalculer des chemins inutiles
+    const bool_tab old_way = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les chemins déjà parcourus pour éviter de recalculer des chemins inutiles
+    set_true(old_way, maze.width - 1, maze.height - 1); //on marque la sortie comme déjà visitée
     const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le meilleur chemin pour sortir du labyrinthe
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
@@ -823,6 +825,11 @@ int show_best_exit_deep_seeker(const maze_t maze)
             return 1;
         }
         pop(s, &x, &y);
+        if(get_bool(dead_end, x, y))
+        {
+            continue;
+        }
+        bool change_end = false; //si on a trouvé un chemin plus court
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on crée un rectangle dans la case actuelle
         SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255); //on dessine la case actuelle
         SDL_RenderFillRect(renderer, &rect);
@@ -838,7 +845,14 @@ int show_best_exit_deep_seeker(const maze_t maze)
                 nb_way++;
                 if(l < length_waytab(ways, x, y - 1)) //si on a trouvé un chemin utile plus court
                 {
-                    push(x, y - 1, s);
+                    if(!get_bool(old_way, x, y - 1)) //si on n'est pas déjà passé par cette case
+                    {
+                        push(x, y - 1, s);
+                    }
+                    else
+                    {
+                        change_end = true; //on a trouvé un meilleur chemin
+                    }
                     connected_way(ways, x, y - 1, x, y); //on met à jour le chemin
                 }
             }
@@ -851,7 +865,14 @@ int show_best_exit_deep_seeker(const maze_t maze)
                 nb_way++;
                 if(l < length_waytab(ways, x, y + 1)) //si on a trouvé un chemin utile plus court
                 {
-                    push(x, y + 1, s);
+                    if(!get_bool(old_way, x, y + 1)) //si on n'est pas déjà passé par cette case
+                    {
+                        push(x, y + 1, s);
+                    }
+                    else
+                    {
+                        change_end = true; //on a trouvé un meilleur chemin
+                    }
                     connected_way(ways, x, y + 1, x, y); //on met à jour le chemin
                 }
             }
@@ -864,7 +885,14 @@ int show_best_exit_deep_seeker(const maze_t maze)
                 nb_way++;
                 if(l < length_waytab(ways, x - 1, y)) //si on a trouvé un chemin utile plus court
                 {
-                    push(x - 1, y, s);
+                    if(!get_bool(old_way, x - 1, y)) //si on n'est pas déjà passé par cette case
+                    {
+                        push(x - 1, y, s);
+                    }
+                    else
+                    {
+                        change_end = true; //on a trouvé un meilleur chemin
+                    }
                     connected_way(ways, x - 1, y, x, y); //on met à jour le chemin
                 }
             }
@@ -877,7 +905,14 @@ int show_best_exit_deep_seeker(const maze_t maze)
                 nb_way++;
                 if(l < length_waytab(ways, x + 1, y)) //si le chemin est plus court
                 {
-                    push(x + 1, y, s);
+                    if(!get_bool(old_way, x + 1, y)) //si on n'est pas déjà passé par cette case
+                    {
+                        push(x + 1, y, s);
+                    }
+                    else
+                    {
+                        change_end = true; //on a trouvé un meilleur chemin
+                    }
                     connected_way(ways, x + 1, y, x, y); //on met à jour le chemin
                 }
             }
@@ -904,10 +939,6 @@ int show_best_exit_deep_seeker(const maze_t maze)
             if(is_dead_end && !get_bool(dead_end, x, y + 1))
             {
                 push(x, y + 1, s); //on continue dans le couloir unique
-                if(x == xe && y == ye)
-                {
-                    ye = y + 1; //on met à jour la sortie
-                }
             }
         }
         if(!has_wall_up(maze, x, y))
@@ -916,10 +947,6 @@ int show_best_exit_deep_seeker(const maze_t maze)
             if(is_dead_end && !get_bool(dead_end, x, y - 1))
             {
                 push(x, y - 1, s); //on continue dans le couloir unique
-                if(x == xe && y == ye)
-                {
-                    ye = y - 1; //on met à jour la sortie
-                }
             }
         }
         if(!has_wall_left(maze, x, y))
@@ -928,10 +955,6 @@ int show_best_exit_deep_seeker(const maze_t maze)
             if(is_dead_end && !get_bool(dead_end, x - 1, y))
             {
                 push(x - 1, y, s); //on continue dans le couloir unique
-                if(x == xe && y == ye)
-                {
-                    xe = x - 1; //on met à jour la sortie
-                }
             }
         }
         if(!has_wall_right(maze, x, y))
@@ -940,14 +963,17 @@ int show_best_exit_deep_seeker(const maze_t maze)
             if(is_dead_end && !get_bool(dead_end, x + 1, y))
             {
                 push(x + 1, y, s); //on continue dans le couloir unique
-                if(x == xe && y == ye)
-                {
-                    xe = x + 1; //on met à jour la sortie
-                }
             }
         }
-        if(x == xe && y == ye) //si on est à la sortie
+        if(change_end) //si on est à la sortie
         {
+            for(int i = 0; i < maze.width; i++)
+            {
+                for(int j = 0; j < maze.height; j++)
+                {
+                    set_false(old_way, i, j); //on remet à zéro les chemins déjà parcourus
+                }
+            }
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255); //on dessine le meilleur chemin actuel
@@ -955,8 +981,10 @@ int show_best_exit_deep_seeker(const maze_t maze)
             color[1] = (color[1] + 28) % 256; //on change la couleur
             color[2] = (color[2] + 41) % 256; //on change la couleur
             const way *w = get_way(ways, maze.width - 1, maze.height - 1); //on récupère le chemin pour arriver à la sortie
+            fix_size(way);
             while(w != NULL)
             {
+                set_true(old_way, get_x(w), get_y(w)); //on marque le chemin comme déjà parcouru
                 SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
                 SDL_RenderFillRect(renderer, &rec);
                 if(!has_wall_down(maze, get_x(w), get_y(w))) //si on peut aller en bas
