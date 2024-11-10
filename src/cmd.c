@@ -34,6 +34,8 @@ void print_cmd_help(char* namefile)
     printf("\t-g <type> <nb> <nb> : generate maze (type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
     printf("\t-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
     printf("\t-r <filename> : read maze from file\n");
+    printf("\t-t <nb> : (if maze) tear the maze by removing nb%% of the walls\n");
+    printf("\t-t : (if maze) tear the maze by removing 4%% of the walls\n");
 
     printf("\nTo make a way : \n");
     printf("\t-rw <filename> : read way from file\n");
@@ -41,7 +43,6 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo solve a maze : (a maze must be initiated)\n");
     printf("\t-slv <nb> : solve 1 : is perfect (deep inspector), 2: is connected (deep inspector), 3 : has exit (deep seeker), 4 : shortest exit (deep seeker)(and save way), 5 : is perfect (breadth inspector), 6 : is connected (breadth inspector), 7 : has exit (breadth seeker), 8 : shortest exit (breadth seeker)(and save way)\n");
-
 
     printf("\nTo write: \n");
     printf("\t-w <filename> : write maze in file (if maze)\n");
@@ -79,13 +80,16 @@ void cmd(char *argv[], const int argc)
     //-rw <filename> -> read way in file (if way)
     //-shw -> show way (if way & maze)
     //-h -> help (only if no other command)
+    //-t <nb> -> tear the maze by removing nb% of the walls (if maze)
 
     //initialisation des variables
     bool generate = false;                  // -g
     char *generator = '\0';                 // <type>
-    bool is_size = false;                   // internal
     int width = 0;                          // <nb>
     int height = 0;                         // <nb>
+
+    bool must_tear = false;                 // -t
+    int tear_prop = 4;                      // <nb>
 
     bool read = false;                      // -r
     const char *filename = '\0';            // <filename>
@@ -136,7 +140,6 @@ void cmd(char *argv[], const int argc)
             {
                 if(i < argc - 2 && safe_atoi(argv[i+2], &height))
                 {
-                    is_size = true;
                     i += 2;
                 }
                 else
@@ -147,7 +150,8 @@ void cmd(char *argv[], const int argc)
             }
             else
             {
-                is_size = false;
+                width = 10;
+                height = 10;
             }
         }
         else if(!strcmp(argv[i], "-r"))
@@ -162,6 +166,18 @@ void cmd(char *argv[], const int argc)
             {
                 fprintf(stderr, "Error : -r <filename> : <filename> must be specified\n");
                 return;
+            }
+        }
+        else if(!strcmp(argv[i], "-t"))
+        {
+            must_tear = true;
+            if(i < argc - 1 && safe_atoi(argv[i+1], &tear_prop))
+            {
+                i++;
+            }
+            else
+            {
+                tear_prop = 4;
             }
         }
         else if(!strcmp(argv[i], "-slv"))
@@ -251,11 +267,6 @@ void cmd(char *argv[], const int argc)
     //traitements des arguments
     if(generate)
     {
-        if(!is_size)
-        {
-            width = 10;
-            height = 10;
-        }
         if(!strcmp(generator, "powm"))
         {
             maze = perfect_one_way_maze(width, height);
@@ -295,7 +306,6 @@ void cmd(char *argv[], const int argc)
         is_maze = true;
         printf("Maze generated\n");
     }
-
     if(read)
     {
         if(is_maze)
@@ -306,6 +316,20 @@ void cmd(char *argv[], const int argc)
         maze = maze_from_file(filename);
         is_maze = true;
         printf("Maze extract from %s\n", filename);
+    }
+    if(must_tear)
+    {
+        if(is_maze)
+        {
+            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            tear(maze, tear_prop);
+            printf("Maze teared\n");
+        }
+        else
+        {
+            fprintf(stderr, "Error : -t <nb> : no maze to tear\n");
+            return;
+        }
     }
     if(read_way)
     {
