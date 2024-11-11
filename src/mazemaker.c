@@ -642,6 +642,7 @@ maze_t cross_maze(const int width, const int height)
             t--;
         }
     }
+    print_maze(maze);
     for(int i = 0; i < maze.width; i++)
     {
         for(int j = 0; j < maze.height; j++)
