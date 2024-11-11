@@ -27,8 +27,8 @@ Les différents types d'analyse seront abrégés comme ceci :
 - <span style="color:red">he</span> : has exit
 - <span style="color:red">she</span> : shortest exit (enregistre en mémoire le chemin de sortie le plus court)
 
-Il est impossible de traiter plusieurs labyrinthes ou chemins simultanément.
-Seule la dernière occurernce de chaque argument est prise en compte.
+Il est impossible de traiter plusieurs labyrinthes ou chemins simultanément.  
+Seule la dernière occurernce de chaque argument est prise en compte.  
 Tout argument est inconnu est ignoré.
 ### Afficher l'aide en cmd
 Afficher l'aide
@@ -36,19 +36,19 @@ Afficher l'aide
 
 ### Générer un labyrinthe
 
-Générer un labyrinthe :
+Générer un labyrinthe :  
 <span style="color:green">-g</span> <span style="color:red">type</span>
 
-On peut préciser les dimensions "nb1" x "nb2" :
+On peut préciser les dimensions "nb1" x "nb2" :  
 <span style="color:green">-g</span> <span style="color:red">type</span> <span style="color:blue">nb1</span> <span style="color:blue">nb2</span>
 
 
-<span style="color:red">type</span> : est un générateur de labyrinthe parmis ceux de cette liste [<span style="color:red">owm</span>, <span style="color:red">cbm</span>, <span style="color:red">hkm</span>, <span style="color:red">bpm</span>, <span style="color:red">sm</span>, <span style="color:red">cm</span>]
-<span style="color:blue">nb1</span>, <span style="color:blue">nb2</span> : un couple de valeurs strictement positives, la valeur par défaut, ou en cas d'erreur, est 10 10
+<span style="color:red">type</span> : générateur de labyrinthe parmis ceux de cette liste [<span style="color:red">owm</span>, <span style="color:red">cbm</span>, <span style="color:red">hkm</span>, <span style="color:red">bpm</span>, <span style="color:red">sm</span>, <span style="color:red">cm</span>]  
+<span style="color:blue">nb1</span>, <span style="color:blue">nb2</span> : couple de valeurs strictement positives, la valeur par défaut, ou en cas d'erreur, est 10 10
 
 ### Lire un labyrinthe à partir d'un fichier
 
-Extraire un labyrinthe depuis un fichier :
+Extraire un labyrinthe depuis un fichier :  
 <span style="color:green">-r</span> <span style="color:blue">filename
 filename</span> : le nom du fichier
 
@@ -56,51 +56,51 @@ filename</span> : le nom du fichier
 
 #### Créer des cycles
 
-Supprimer une partie des murs du labyrinthe :
+Supprimer une partie des murs du labyrinthe :  
 <span style="color:green">-t</span>
 
-On peut préciser la proportion de murs éliminés en pourcentage "percent" :
+On peut préciser la proportion de murs éliminés en pourcentage "percent" :  
 <span style="color:green">-t</span> <span style="color:blue">percent</span>
 
 <span style="color:blue">percent</span> : valeur strictement positive, la valeur par défaut, ou en cas d'erreur, est 4
 
 #### Lire un chemin à partir d'un fichier
 
-Extraire un chemin depuis un fichier :
+Extraire un chemin depuis un fichier :  
 <span style="color:green">-rw</span> <span style="color:blue">filename</span>
 
 <span style="color:blue">filename</span> : le nom du fichier
 
 #### Analyse
 
-Analyser un labyrinthe :
+Analyser un labyrinthe :  
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
-<span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]
+<span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
 <span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breath</span>]
 
 ### Ecrire dans un fichier
 
-Ecrire un labyrinthe dans un fichier :
+Ecrire un labyrinthe dans un fichier :  
 <span style="color:green">-w</span> <span style="color:blue">filename</span>
 
 <span style="color:blue">filename</span> : le nom du fichier
 
-Ecrire un chemin dans un fichier :
+Ecrire un chemin dans un fichier :  
 <span style="color:green">-ww</span> <span style="color:blue">filename</span>
 
 <span style="color:blue">filename</span> : le nom du fichier
 
 #### Affichage
 
-Afficher un labyrinthe :
+Afficher un labyrinthe :  
 <span style="color:green">-sh</span>
 
 
-Afficher le déroulement d'une analyse (sans en renvoyer le résultat) :
-<span style="color:red">inspection</span> <span style="color:red">solver</span> <span style="color:green">-sh</span>
+Afficher le déroulement d'une analyse (sans en renvoyer le résultat) :  
+<span style="color:green">-sh</span> <span style="color:red">inspection</span> <span style="color:red">solver</span> 
 
-<span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]
+<span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
 <span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breath</span>]
 
 
