@@ -546,9 +546,6 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab t
 }
 
 maze_t by_path_maze(const int width, const int height){
-    //const time_t t = time(NULL); //Création de la graine du random
-    const time_t t = 50; // Création du graine fixe (pour les tests)
-    srand(t);
     const bool_tab tab_visited = create_booltab(width, height);
     maze_t maze = create_basic_maze(width, height);
 
