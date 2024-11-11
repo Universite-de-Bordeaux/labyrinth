@@ -14,34 +14,32 @@ Utiliser cette commande pour télécharger et installer les dépendances
 ## Utilisation
 
 Les différents noms de labyrinthes sont abrégés comme ceci :
-- owm : one way maze
-- cbm : comb maze
-- hkm : hunt and kill maze
-- bpm : by path maze
-- sm : straight maze (column maze or line maze)
-- cm : cross maze
+- <span style="color:red">owm</span> : one way maze
+- <span style="color:red">cbm</span> : comb maze
+- <span style="color:red">hkm</span> : hunt and kill maze
+- <span style="color:red">bpm</span> : by path maze
+- <span style="color:red">sm</span> : straight maze (column maze or line maze)
+- <span style="color:red">cm</span> : cross maze
 
 Les différents types d'analyse seront abrégés comme ceci :
-- isp : is perfect (est parfait)
-- isc : is connected (est connexe)
-- he : has exit (possède une sortie)
-- she : shortest exit (enregistre en mémoire le chemin de sortie le plus court)
+- <span style="color:red">isp</span> : is perfect
+- <span style="color:red">isc</span> : is connected
+- <span style="color:red">he</span> : has exit
+- <span style="color:red">she</span> : shortest exit (enregistre en mémoire le chemin de sortie le plus court)
 
-Il est impossible de traiter plusieurs labyrinthes ou chemins simultanément.
-Si un argument apparaît plusieurs fois, seul le dernier est utilisé
-If an argument occures multiple times, the last one will be taken
-Si un argument est inconnu, il est ignoré
-If an argument is unknown, it will be ignored
+Il est impossible de traiter plusieurs labyrinthes ou chemins simultanément.  
+Seule la dernière occurernce de chaque argument est prise en compte.   
+Tout argument est inconnu est ignoré.  
 ### Afficher l'aide en cmd
-Afficher l'aide
--h : help
+Afficher l'aide  
+<span style="color:green">-h</span> : help
 
 ### Générer un labyrinthe
 
-Générer un labyrinthe :
--g <type>
+Générer un labyrinthe :  
+<span style="color:green">-g</span> <span style="color:red">type</span>
 
-On peut préciser les dimensions "nb1" x "nb2" :
+On peut préciser les dimensions "nb1" x "nb2" :  
 -g <type> <nb1> <nb2>
 
 type : est un générateur de labyrinthe parmis ceux de cette liste [owm, cbm, hkm, bpm, sm, cm]
