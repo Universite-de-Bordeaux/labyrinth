@@ -294,11 +294,11 @@ maze_t hunt_kill_maze(const int width, const int height)
     //cette cellule est visitée
     set_true(visited, x, y);
 
-    int end = 0;
+    bool run = true;
     int *px = &x;
     int *py = &y;
 
-    while(end == 0)
+    while(run)
     {
         //tant que toutes les cellules n'ont pas été visitées
         //BOUCLE KILL
@@ -351,7 +351,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         //BOUCLE HUNT
         if(!finding_hunt(width, height, visited, px, py))
         {
-            end = 1;
+            run = false;
         }
         else
         {
