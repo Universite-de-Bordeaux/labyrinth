@@ -811,7 +811,6 @@ int show_best_exit_deep_seeker(const maze_t maze)
         return -1;
     }
     SDL_Event event = {0}; //on crée un event vide
-    int xe = maze.width - 1, ye = maze.height - 1; //les coordonnées de la sortie utile (pour éviter de recalculer la partie déjà trouvée)
     while(!isempty_stack(s)) //on essaie tous les chemins possibles
     {
         SDL_WaitEventTimeout(&event, 1); //on enregistre les events entrants
