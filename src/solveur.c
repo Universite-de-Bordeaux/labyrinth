@@ -980,8 +980,8 @@ int show_best_exit_deep_seeker(const maze_t maze)
             color[0] = (color[0] + 17) % 256; //on change la couleur
             color[1] = (color[1] + 28) % 256; //on change la couleur
             color[2] = (color[2] + 41) % 256; //on change la couleur
-            const way *w = get_way(ways, maze.width - 1, maze.height - 1); //on récupère le chemin pour arriver à la sortie
-            fix_size(way);
+            way *w = get_way(ways, maze.width - 1, maze.height - 1); //on récupère le chemin pour arriver à la sortie
+            fix_size(w);
             while(w != NULL)
             {
                 set_true(old_way, get_x(w), get_y(w)); //on marque le chemin comme déjà parcouru
