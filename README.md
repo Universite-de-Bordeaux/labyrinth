@@ -113,17 +113,22 @@ Afficher un chemin :
 Générer un labyrinthe et l'enregistrer dans un fichier
 -g cm -w temp
 
+
 Récupérer le labyrinthe avant de l'afficher
 -r temp -sh
+
 
 Afficher l'analyse du labyrinthe
 -r temp -sh isp deep
 
+
 Sans passer par un fichier temporaire
 -g cm -w temp -sh isp deep
 
+
 Enregistrer un labyrinthe et écrire le chemin le plus court pour le résoudre et les enregistrer dans des fichiers
 -g bpm -w temp -ww temp_c -slv she breath
+
 
 Afficher le chemin dans le labyrinthe enregistré
 -r temp -rw temp_c -shw
