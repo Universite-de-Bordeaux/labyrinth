@@ -104,7 +104,7 @@ maze_t column_maze(const int width, const int height)
     return maze;
 }
 
-maze_t imperfect_one_way_maze(const int width, const int height)
+maze_t one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height);
@@ -166,7 +166,7 @@ maze_t imperfect_one_way_maze(const int width, const int height)
     return maze;
 }
 
-maze_t perfect_one_way_maze(const int width, const int height)
+maze_t comb_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab visited = create_booltab(width, height);
@@ -316,28 +316,31 @@ maze_t hunt_kill_maze(const int width, const int height)
             if(run) break;
             for(int j = 0; j < width; j++)
             {
-                if(run) break;
                 if(!get_bool(visited, j, i))
                 {
                     if(j + 1 < width && get_bool(visited, j + 1, i)){
                         x = j;
                         y = i;
                         run = true;
+                        break;
                     }
-                    else if(i + 1 < height && get_bool(visited, j, i + 1)){
+                    if(i + 1 < height && get_bool(visited, j, i + 1)){
                         x = j;
                         y = i;
                         run = true;
+                        break;
                     }
-                    else if(j > 1 && get_bool(visited, j - 1, i)){
+                    if(j > 1 && get_bool(visited, j - 1, i)){
                         x = j;
                         y = i;
                         run = true;
+                        break;
                     }
-                    else if(i > 1 && get_bool(visited, j, i - 1)){
+                    if(i > 1 && get_bool(visited, j, i - 1)){
                         x = j;
                         y = i;
                         run = true;
+                        break;
                     }
                 }
             }
@@ -627,7 +630,6 @@ maze_t cross_maze(const int width, const int height)
             t--;
         }
     }
-    print_maze(maze);
     for(int i = 0; i < maze.width; i++)
     {
         for(int j = 0; j < maze.height; j++)

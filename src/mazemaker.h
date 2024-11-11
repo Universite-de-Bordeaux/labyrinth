@@ -19,13 +19,13 @@ maze_t column_maze(const int width, const int height);
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 //seuls le chemins de sortie possèdent des embranchements
-maze_t imperfect_one_way_maze(const int width, const int height);
+maze_t one_way_maze(const int width, const int height);
 
 //Crée un labyrinthe parfait de taille width x height
 //width : largeur du labyrinthe
 //height : hauteur du labyrinthe
 //tous les embranchements vont seulement vers la droite ou le bas
-maze_t perfect_one_way_maze(const int width, const int height);
+maze_t comb_maze(const int width, const int height);
 
 //Crée un labyrinthe parfait de taille width x height
 //width : largeur du labyrinthe
