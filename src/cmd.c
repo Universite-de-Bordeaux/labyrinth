@@ -50,13 +50,15 @@ void print_cmd_help(char* namefile)
 
     printf("\nTo show (a maze must be initilazed) : \n");
     printf("\t-sh : show maze\n");
-    printf("\t-sh <inspection> <solveur> : show 0 : show maze, \n1 : is perfect (deep inspector), \n2 : is connected (deep inspector), \n3 : has exit (deep seeker), \n4 : shortest exit (deep seeker), \n5 : is perfect (breadth inspector), \n6 : is connected (breadth inspector), \n7 : has exit (breadth seeker), \n8 : shortest exit (breadth seeker)\n\n");
+    printf("\t-sh <inspection> <solveur> : show if the maze (inspection) isp, isc, he, she with the (solver)\n");
     printf("\t-shw : show way (a way must be initiated)\n");
 
     printf("\n\t-h : help\n");
     printf("\nArguments order doesn't matter, but only one maze and one way are allowed\n");
     printf("If an argument occures multiple times, the last one will be taken\n");
     printf("If an argument is unknown, it will be ignored\n");
+
+    printf("See the README for more informations\n");
 }
 
 void cmd(char *argv[], const int argc)
