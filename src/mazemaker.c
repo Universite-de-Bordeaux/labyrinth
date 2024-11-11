@@ -418,43 +418,42 @@ maze_t hunt_kill_maze(const int width, const int height)
 bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
     bool tab_dir[4] = {}; // créatrion du tableau de possibilité de direction
     int impossible_dir = 0; // compteur de direction en moins
-    bool has_moved = false;
-    while (impossible_dir <4){ // tant qu'il nous reste des directions
-        int choice = rand() %(4-impossible_dir); // choix d'une direction
+    while (impossible_dir < 4){ // tant qu'il nous reste des directions
+        int choice = rand() % (4 - impossible_dir); // choix d'une direction
         while (tab_dir[choice]) // si notre direction n'est pas possible, on passe à la suivante
             choice ++;
         switch (choice){
             case 0:
                 if (CAN_MOVE_LEFT){
                     (*x)--;
-                    has_moved = true;
+                    set_true(tab_visited, *x, *y);
+                    return true;
                 }
                 break;
             case 1:
                 if (CAN_MOVE_RIGHT){
                     (*x)++;
-                    has_moved = true;
+                    set_true(tab_visited, *x, *y);
+                    return true;
                 }
                 break;
             case 2:
                 if (CAN_MOVE_UP){
                     (*y)--;
-                    has_moved = true;
+                    set_true(tab_visited, *x, *y);
+                    return true;
                 }
                 break;
             case 3:
                 if(CAN_MOVE_DOWN){
                     (*y)++;
-                    has_moved = true;
+                    set_true(tab_visited, *x, *y);
+                    return true;
                 }
                 break;
             default:
                 fprintf(stderr, "Problem in the switch case in lbp_path_move");
                 exit(EXIT_FAILURE);
-        }
-        if (has_moved){
-            set_true(tab_visited, *x, *y);
-            return true;
         }
         tab_dir[choice] = true;
         impossible_dir++;
