@@ -357,7 +357,7 @@ void cmd(char *argv[], const int argc)
         {
             maze = by_path_maze(width, height);
         }
-        else if(!strcmp(generator, "lm"))
+        else if(!strcmp(generator, "sm"))
         {
             if(rand() % 2 == 0)
             {
