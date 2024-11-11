@@ -139,14 +139,18 @@ way* way_from_file(const char *filename)
         exit(1);
     }
     int x = 0, y = 0;
+    fscanf(file, "%d %d", &x, &y);
     way *w = create_way();
-    way *current = w;
-    while(fscanf(file, "%d %d", &x, &y) != EOF)
+    w -> x = x;
+    w -> y = y;
+    while(!feof(file))
     {
-        current -> x = x;
-        current -> y = y;
-        current -> dad = create_way();
-        current = current -> dad;
+        way *next = create_way();
+        new_dad(next, w);
+        w = next;
+        w -> x = x;
+        w -> y = y;
+        fscanf(file, "%d %d", &x, &y);
     }
     fclose(file);
     return w;
