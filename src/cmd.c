@@ -32,7 +32,7 @@ void print_cmd_help(char* namefile)
     printf("\nUsage %s: \n", namefile);
     printf("\nTo make a maze : \n");
     printf("\t-g <type> <nb> <nb> : generate maze (type) powm, iowm, hkm, bpm, lm, cm (if nb) width, height\n");
-    printf("\t-g <type> : generate maze (if type) powm, iowm, hkm, bpm, lm, cm of size 10x10\n");
+    printf("\t-g <type> : generate maze (if type) owm, lbm, hkm, bpm, lm, cm of size 10x10\n");
     printf("\t-r <filename> : read maze from file\n");
     printf("\t-t <nb> : (if maze) tear the maze by removing nb%% of the walls\n");
     printf("\t-t : (if maze) tear the maze by removing 4%% of the walls\n");
@@ -41,16 +41,16 @@ void print_cmd_help(char* namefile)
     printf("\t-rw <filename> : read way from file\n");
     printf("You can also use the solve command with parameter 4 or 8 to generate a way\n");
 
-    printf("\nTo solve a maze : (a maze must be initiated)\n");
-    printf("\t-slv <nb> : solve 1 : is perfect (deep inspector), 2: is connected (deep inspector), 3 : has exit (deep seeker), 4 : shortest exit (deep seeker)(and save way), 5 : is perfect (breadth inspector), 6 : is connected (breadth inspector), 7 : has exit (breadth seeker), 8 : shortest exit (breadth seeker)(and save way)\n");
+    printf("\n\tTo analyse a maze : (a maze must be initilazed)\n");
+    printf("\t-slv <inspection> <solver> : said if the maze (inspection) isp, isc, he, she with the (solver) \n");
 
     printf("\nTo write: \n");
     printf("\t-w <filename> : write maze in file (if maze)\n");
     printf("\t-ww <filename> : write way in file (if way)\n");
 
-    printf("\nTo show (a maze must be initiated) : \n");
+    printf("\nTo show (a maze must be initilazed) : \n");
     printf("\t-sh : show maze\n");
-    printf("\t-sh <nb> : show 0 : show maze, 1 : is perfect (deep inspector), 2 : is connected (deep inspector), 3 : has exit (deep seeker), 4 : shortest exit (deep seeker), 5 : is perfect (breadth inspector), 6 : is connected (breadth inspector), 7 : has exit (breadth seeker), 8 : shortest exit (breadth seeker)\n");
+    printf("\t-sh <inspection> <solveur> : show 0 : show maze, \n1 : is perfect (deep inspector), \n2 : is connected (deep inspector), \n3 : has exit (deep seeker), \n4 : shortest exit (deep seeker), \n5 : is perfect (breadth inspector), \n6 : is connected (breadth inspector), \n7 : has exit (breadth seeker), \n8 : shortest exit (breadth seeker)\n\n");
     printf("\t-shw : show way (a way must be initiated)\n");
 
     printf("\n\t-h : help\n");
@@ -72,10 +72,10 @@ void cmd(char *argv[], const int argc)
     }
     //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cm
     //-r <filename> -> read maze
-    //-slv <nb> -> solve (if maze) 1 : is perfect, 2 : is connected, 3 : has exit, 4 : shortest exit (+0 : deep inspector, +4 : breadth inspector)
+    //-slv <inspection> <solver> : said if the maze (inspection) isp, isc, he, she with the (solver)
     //-w <filename> -> write maze in file (if maze)
     //-sh -> show maze
-    //-sh <nb> -> show (if maze) 1 : is perfect, 2 : is connected, 3 : has exit, 4 : shortest exit (+0 : deep inspector, +4 : breadth inspector)
+    //-sh <inspection> <solveur> : show ifthe maze (inspection) isp, isc, he, she with the (solver)
     //-ww <filename> -> write way in file (if way)
     //-rw <filename> -> read way in file (if way)
     //-shw -> show way (if way & maze)
@@ -132,7 +132,7 @@ void cmd(char *argv[], const int argc)
             }
             else
             {
-                fprintf(stderr, "Error : -g <type> : <type> must be specified\n type : powm, iowm, hkm, bpm, lm, cm\n");
+                fprintf(stderr, "Error : -g <type> : <type> must be specified\n type : owm, cm, hkm, bpm, lm, cm\n");
                 return;
             }
 
@@ -144,12 +144,14 @@ void cmd(char *argv[], const int argc)
                 }
                 else
                 {
-                    fprintf(stderr, "Error : -g <type> <nb> <nb2> : <nb2> hasn't been found or is not an integer\n");
-                    return;
+                    fprintf(stderr, "Error : -g <type> <nb1> <nb2> : <nb2> hasn't been found or is not an integer\n");
+                    printf("Default height applied\n");
+                    height = 10;
                 }
             }
             else
             {
+                printf("Default dimension applied\n");
                 width = 10;
                 height = 10;
             }
@@ -178,18 +180,53 @@ void cmd(char *argv[], const int argc)
             else
             {
                 tear_prop = 4;
+                printf("Default probability applied\n");
             }
         }
         else if(!strcmp(argv[i], "-slv"))
         {
             solve = true;
-            if(i < argc - 1 && safe_atoi(argv[i+1], &solve_type))
+            if(i < argc - 2)
             {
-                i++;
+                if(!strcmp(argv[i+1], "isp"))
+                {
+                    solve_type = 1;
+                }
+                else if(!strcmp(argv[i+1], "isc"))
+                {
+                    solve_type = 2;
+                }
+                else if(!strcmp(argv[i+1], "he"))
+                {
+                    solve_type = 3;
+                }
+                else if(!strcmp(argv[i+1], "she"))
+                {
+                    solve_type = 4;
+                }
+                else
+                {
+                    fprintf(stderr, "Error: -slv <inspection> <solveur> : <inspection> must be specified as isp, isc, he or she\n");
+                    return;
+                }
+                if(!strcmp(argv[i+2], "deep"))
+                {
+                    i += 2;
+                }
+                else if(!strcmp(argv[i+2], "breath"))
+                {
+                    solve_type += 4;
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error: -slv <inspection> <solveur> : <solveur> must be specified as deep or breath\n");
+                    return;
+                }
             }
             else
             {
-                fprintf(stderr, "Error: -slv <nb> : <nb> must be specified as an integer\n");
+                fprintf(stderr, "Error: -slv <inspection> <solveur> : <inspection> and <solveur> must be specified\n");
                 return;
             }
         }
@@ -210,11 +247,48 @@ void cmd(char *argv[], const int argc)
         else if(!strcmp(argv[i], "-sh"))
         {
             show = true;
-            if(i < argc - 1 && safe_atoi(argv[i+1], &type_show))
+            if(i < argc - 2)
             {
-                i++;
+                if(!strcmp(argv[i+1], "isp"))
+                {
+                    type_show = 1;
+                }
+                else if(!strcmp(argv[i+1], "isc"))
+                {
+                    type_show = 2;
+                }
+                else if(!strcmp(argv[i+1], "he"))
+                {
+                    type_show = 3;
+                }
+                else if(!strcmp(argv[i+1], "she"))
+                {
+                    type_show = 4;
+                }
+                else
+                {
+                    fprintf(stderr, "Error: -sh <inspection> <solveur> : <inspection> must be specified as isp, isc, he or she\n");
+                    return;
+                }
+                if(!strcmp(argv[i+2], "deep"))
+                {
+                    i += 2;
+                }
+                else if(!strcmp(argv[i+2], "breath"))
+                {
+                    type_show += 4;
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error: -sh <inspection> <solveur> : <solveur> must be specified as deep or breath\n");
+                    return;
+                }
             }
-            // -sh admet un argument par defaut
+            else
+            {
+                type_show = 0;
+            }
         }
         else if(!strcmp(argv[i], "-ww"))
         {
@@ -267,13 +341,13 @@ void cmd(char *argv[], const int argc)
     //traitements des arguments
     if(generate)
     {
-        if(!strcmp(generator, "powm"))
+        if(!strcmp(generator, "cbm"))
         {
-            maze = perfect_one_way_maze(width, height);
+            maze = comb_maze(width, height);
         }
-        else if(!strcmp(generator, "iowm"))
+        else if(!strcmp(generator, "own"))
         {
-            maze = imperfect_one_way_maze(width, height);
+            maze = one_way_maze(width, height);
         }
         else if(!strcmp(generator, "hkm"))
         {
@@ -300,7 +374,7 @@ void cmd(char *argv[], const int argc)
         }
         else
         {
-            fprintf(stderr, "Error : -g <type> : %s is no reconized as type\n type : powm, iowm, hkm, bpm, lm, cm\n", generator);
+            fprintf(stderr, "Error : -g <type> : %s is no reconized as type\n type : cbm, owm, hkm, bpm, lm, cm\n", generator);
             return;
         }
         is_maze = true;
