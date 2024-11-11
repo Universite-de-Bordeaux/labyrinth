@@ -243,36 +243,7 @@ maze_t perfect_one_way_maze(const int width, const int height)
 //modifie les coordonnées px et py pour les coordonnées de la cellule non visitée
 //retourne true si une cellule non visitée adjacente à une cellule visitée a été trouvée, false sinon
 bool finding_hunt(const int width, const int height, const bool_tab visited, int *px, int *py){
-    for(int i = 0; i < height; i++)
-    {
-        for(int j = 0; j < width; j++)
-        {
-            if(!get_bool(visited, j, i))
-            {
-                if(j + 1 < width && get_bool(visited, j + 1, i)){
-                    *px = j;
-                    *py = i;
-                    return true;
-                }
-                if(i + 1 < height && get_bool(visited, j, i + 1)){
-                    *px = j;
-                    *py = i;
-                    return true;
-                }
-                if(j > 1 && get_bool(visited, j - 1, i)){
-                    *px = j;
-                    *py = i;
-                    return true;
-                }
-                if(i > 1 && get_bool(visited, j, i - 1)){
-                    *px = j;
-                    *py = i;
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
+
 }
 
 maze_t hunt_kill_maze(const int width, const int height)
@@ -295,10 +266,7 @@ maze_t hunt_kill_maze(const int width, const int height)
     set_true(visited, x, y);
 
     bool run = true;
-    int *px = &x;
-    int *py = &y;
-
-    while(run)
+    while(true)
     {
         //tant que toutes les cellules n'ont pas été visitées
         //BOUCLE KILL
@@ -349,11 +317,38 @@ maze_t hunt_kill_maze(const int width, const int height)
 
         //sinon on cherche une cellule non visitée adjacente à une cellule visitée
         //BOUCLE HUNT
-        if(!finding_hunt(width, height, visited, px, py))
+        //find_hunt
+        run = false;
+        for(int i = 0; i < height; i++)
         {
-            run = false;
+            for(int j = 0; j < width; j++)
+            {
+                if(!get_bool(visited, j, i))
+                {
+                    if(j + 1 < width && get_bool(visited, j + 1, i)){
+                        x = j;
+                        y = i;
+                        run = true;
+                    }
+                    else if(i + 1 < height && get_bool(visited, j, i + 1)){
+                        x = j;
+                        y = i;
+                        run = true;
+                    }
+                    else if(j > 1 && get_bool(visited, j - 1, i)){
+                        x = j;
+                        y = i;
+                        run = true;
+                    }
+                    else if(i > 1 && get_bool(visited, j, i - 1)){
+                        x = j;
+                        y = i;
+                        run = true;
+                    }
+                }
+            }
         }
-        else
+        if(!run) break;
         {
             char dir[4] = {0}; //tableau des directions possibles
             size = 0;
