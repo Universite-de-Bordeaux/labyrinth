@@ -66,6 +66,10 @@ void cmd(char *argv[], const int argc)
 {
     if(argc < 2)
     {
+        if(argv != NULL)
+        {
+            print_cmd_help(argv[0]);
+        }
         return;
     }
     if(argv == NULL)
