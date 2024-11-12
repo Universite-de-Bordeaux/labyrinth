@@ -2,22 +2,23 @@
 #define OUTSIDE_H
 #include "struct.h"
 
-// crée et renvoie un labyrinthe selon les configurations spécifiées dans le fichier
-// filename : le nom du fichier
+// Create a maze according to the information in the file
+// filename : the name of the file
 maze_t maze_from_file(const char *filename);
 
-// écrit le labyrinthe dans un fichier texte
-// maze : le labyrinthe
-// filename : le nom du fichier où écrire le labyrinthe, sera écrasé s'il existe déjà
+// Write the maze in a text file
+// maze : the maze
+// filename : the name of the file where to write the maze, will be overwritten if it already exists
 void maze_to_file(maze_t maze, const char *filename);
 
-// écrit le chemin dans un fichier texte
-// w : le chemin
-// filename : le nom du fichier où écrire le chemin, sera écrasé s'il existe déjà
+// Create a way according to the information in the file
+// filename : the name of the file
+// returns the way or stops the program if an error occurs
+way *way_from_file(const char *filename);
+
+// Write the way in a text file
+// w : the way
+// filename : the name of the file where to write the way, will be overwritten if it already exists
 void way_to_file(const way* w, const char *filename);
 
-// crée et renvoie un chemin selon les configurations spécifiées dans le fichier
-// filename : le nom du fichier
-//ne vérifie pas si le chemin est valide
-way *way_from_file(const char *filename);
 #endif //OUTSIDE_H
