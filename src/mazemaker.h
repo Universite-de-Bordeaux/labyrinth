@@ -28,28 +28,28 @@ maze_t one_way_maze(const int width, const int height);
 //Creates a perfect maze
 //width : width of the maze
 //height : height of the maze
-//every way only
+//every way only go to the right or down
 maze_t comb_maze(const int width, const int height);
 
-//Crée un labyrinthe parfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//d'après la méthode du hunt and kill
+//Creates a perfect maze (universal generator)
+//width : width of the maze
+//height : height of the maze
+//with the hunt and kill algorithm
 maze_t hunt_kill_maze(const int width, const int height);
 
-//Crée un labyrinthe parfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
+//Creates a perfect maze
+//width : width of the maze
+//height : height of the maze
 maze_t by_path_maze(int width, int height);
 
-//crée un labyrinth de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
+//Creates perfect maze
+//width : width of the maze
+//height : height of the maze
 maze_t cross_maze(const int width, const int height);
 
-//"trou" le labyrinth pour créer des cycles
-//maze : le labyrinthe
-//prop : probabilité de destruction d'un mur par case, en pourcentage
+//"tears" some walls of the maze
+//maze : the maze to modify
+//prop : the proportion of cells with a wall to remove
 void tear(maze_t maze, unsigned int prop);
 
 #endif //MAZEMAKER_H
