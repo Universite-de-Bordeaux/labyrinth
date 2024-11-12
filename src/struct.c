@@ -458,9 +458,13 @@ void free_way(way *w)
 
 bool is_empty(const way *w)
 {
+    if (w -> length == L_TP)
+    {
+        return true;
+    }
     if(w->dad == NULL)
     {
-        return w -> x != 0 || w -> y != 0; //un chemin est vide s'il n'est pas relié à la case (0, 0)
+        return is_origin(w); //un chemin est vide s'il n'est pas relié à la case (0, 0)
     }
     return is_empty(w->dad);
 }
@@ -498,10 +502,9 @@ void fix_size(way* w)
 
 // --- QUEUE FUNCTIONS ---
 
-// Fonction auxiliaire de grow_queue
-// Double la taille du tableau utilisé dans la représentation.
-// Cette fonction sera utilisée lorsque le tableau est plein et qu'on veut y
-// ajouter une valeur.
+// Auxilary function of grow_queue
+// Double the size of the array used in the representation.
+// This function will be used when the array is full and we want to add a value to it.
 static void grow_queue(queue *q) {
     int *new_array = malloc(sizeof(int) * q -> size_array * 2);
     for(int i = 0; i < q -> size_array; i++)
@@ -515,10 +518,9 @@ static void grow_queue(queue *q) {
     q -> size_array *= 2;
 }
 
-// Fonction auxiliaire de dequeue
-// Divise par deux la taille du tableau utilisé dans la représentation
-// Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
-// sa capacité.
+// Auxilary function of shrink_queue
+// Divide by two the size of the array used in the representation.
+// This function will be used when the array is filled at less than a fourth of its capacity.
 static void shrink_queue(queue *p) {
     if(p -> size_array < 3)
     {
@@ -639,30 +641,28 @@ void print_queue(const queue *q)
 
 // --- STACK FUNCTIONS ---
 
-// Fonction auxiliaire de grow_stack
-// Double la taille du tableau utilisé dans la représentation.
-// Cette fonction sera utilisée lorsque le tableau est plein et qu'on veut y
-// ajouter une valeur.
-static void grow_stack(stack *p) {
-    p -> size_array *= 2  ;
-    p -> array = realloc(p -> array, sizeof(int) * p -> size_array);
-    if(p -> array == NULL)
+// Auxilary function of grow_stack
+// Double the size of the array used in the representation.
+// This function will be used when the array is full and we want to add a value to it.
+static void grow_stack(stack *s) {
+    s -> size_array *= 2  ;
+    s -> array = realloc(s -> array, sizeof(int) * s -> size_array);
+    if(s -> array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
         exit(1);
     }
 }
 
-// Fonction auxiliaire de shrink_stack
-// Divise par deux la taille du tableau utilisé dans la représentation.
-// Cette fonction sera utilisée lorsque le tableau est rempli à moins de 25% de
-// sa capacité.
-static void shrink_stack(stack *p) {
-    if(p -> size_array < 3)
+// Auxilary function of shrink_stack
+// Divide by two the size of the array used in the representation.
+// This function will be used when the array is filled at less than a fourth of its capacity.
+static void shrink_stack(stack *s) {
+    if(s -> size_array < 3)
         return;
-    p -> size_array /= 2;
-    p -> array = realloc(p -> array, sizeof(int) * p -> size_array);
-    if(p -> array == NULL)
+    s -> size_array /= 2;
+    s -> array = realloc(s -> array, sizeof(int) * s -> size_array);
+    if(s -> array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
         exit(1);
@@ -687,51 +687,51 @@ stack *create_stack(void) {
   return p;
 }
 
-void free_stack(stack *p) {
-  free(p -> array);
-  free(p);
+void free_stack(stack *s) {
+  free(s -> array);
+  free(s);
 }
 
-bool isempty_stack(const stack *p) {
-  return p -> size_stack == 0;
+bool isempty_stack(const stack *s) {
+  return s -> size_stack == 0;
 }
 
-int size_stack(const stack *p) {
-  return p -> size_stack / 2;
+int size_stack(const stack *s) {
+  return s -> size_stack / 2;
 }
 
-void pop(stack *p, int *x, int *y) {
-    if(p -> size_stack == 0)
+void pop(stack *s, int *x, int *y) {
+    if(s -> size_stack == 0)
     {
         fprintf(stderr, "Error : try to pop en empty pill\n");
         exit(1);
     }
-    if(p -> size_stack == 1)
+    if(s -> size_stack == 1)
     {
         fprintf(stderr, "Error : the pill has only one element\n");
         exit(1);
     }
-    *y = p -> array[p -> size_stack - 1];
-    *x = p -> array[p -> size_stack -2];
-    p -> size_stack -= 2;
-    if(p -> size_stack <= p -> size_array / 4 && p -> size_array > 1)
+    *y = s -> array[s -> size_stack - 1];
+    *x = s -> array[s -> size_stack -2];
+    s -> size_stack -= 2;
+    if(s -> size_stack <= s -> size_array / 4 && s -> size_array > 1)
     {
-        shrink_stack(p);
+        shrink_stack(s);
     }
 }
 
-void push(const int x, const int y, stack *p) {
-    if(p -> size_stack == p -> size_array)
+void push(const int x, const int y, stack *s) {
+    if(s -> size_stack == s -> size_array)
     {
-        grow_stack(p);
+        grow_stack(s);
     }
-    p -> array[p -> size_stack] = x;
-    if(++p -> size_stack == p -> size_array)
+    s -> array[s -> size_stack] = x;
+    if(++s -> size_stack == s -> size_array)
     {
-        grow_stack(p);
+        grow_stack(s);
     }
-    p -> array[p -> size_stack] = y;
-    p -> size_stack++;
+    s -> array[s -> size_stack] = y;
+    s -> size_stack++;
 }
 
 // --- MAZE PRINTING ---
