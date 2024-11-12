@@ -71,9 +71,10 @@ int evaluate_mazemaker(func_ptr f);
                 const maze_t maze = générateur(i, j); \
                 free_maze(maze); \
             } \
-            if(clock() - start > 1000000) \
+            if(clock() - start > 100000000) \
             { \
             score1 = 0; \
+            break; \
             } \
         } \
         score1 -= (clock() - start) / 4000000; \
@@ -83,20 +84,20 @@ int evaluate_mazemaker(func_ptr f);
             const maze_t maze = générateur(1, 1); \
             free_maze(maze); \
         } \
-        score2 -= (clock() - inter) / 4000000; \
+        score2 -= (clock() - inter) / 35000; \
         clock_t inter2 = clock(); \
-        for(int k = 0; k < 100; k++) \
+        for(int k = 0; k < 1000; k++) \
         { \
             const maze_t maze = générateur(4, 4); \
             free_maze(maze); \
         } \
-        score3 -= (clock() - inter2) / 4000000; \
+        score3 -= (clock() - inter2) / 400; \
         for(int k = 0; k < 10; k++) \
         { \
             const maze_t maze = générateur(100, 100); \
             free_maze(maze); \
         } \
-        score4 -= (clock() - inter2) / 4000000; \
+        score4 -= (clock() - inter2) / 100000; \
         if(score1 < 0) \
         { \
             score1 = 0; \
@@ -113,6 +114,6 @@ int evaluate_mazemaker(func_ptr f);
         { \
             score4 = 0; \
         } \
-        printf("Le générateur %s a un score de %d\n", name, (score1 + score2 + score3 + score4)); \
+        printf("Le générateur %s a un score de %d (%d %d %d %d)\n", name, score1 + score2 + score3 + score4, score1, score2, score3, score4); \
     } while(0)
 #endif //TEST_H
