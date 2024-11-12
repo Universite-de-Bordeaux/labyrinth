@@ -1,9 +1,9 @@
 #ifndef CMD_H
 #define CMD_H
 
-//interpreteur et executeur de commandes
-//argv : tableau de chaines de caractères (commandes)
-//argc : nombre de commandes
+//interpreter of command line
+//argv : arguments
+//argc : number of arguments
 void cmd(char *argv[], const int argc);
 
 #endif //CMD_H

@@ -8,11 +8,12 @@
 #include "cmd.h"
 #include "solveur.h"
 
-//convertit une chaine de caractère en entier de manière sécurisée
-//str : chaine de caractère
-//return : booléen, true si la conversion a réussi, false sinon
-//en cas d'erreur, reinitialise out à 0
-bool safe_atoi(const char *str, int *out)
+//convert a string to an integer safely
+//str : string to convert
+//out : the integer
+//return true if the conversion is successful, false otherwise
+//if the conversion is not successful, out is set to 0
+static bool safe_atoi(const char *str, int *out)
 {
     int errno;
     char *endptr;
@@ -26,8 +27,8 @@ bool safe_atoi(const char *str, int *out)
     return true;
 }
 
-//affiche l'aide
-void print_cmd_help(char* namefile)
+//print the help of the command
+static void print_cmd_help(char* namefile)
 {
     printf("\nUsage %s: \n", namefile);
     printf("\nTo make a maze : \n");
