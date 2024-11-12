@@ -238,6 +238,66 @@ maze_t comb_maze(const int width, const int height)
     return maze;
 }
 
+//Prototypes of mazemaker //TODO: to be completed and added to the header file
+maze_t proto_comb_maze(const int width, const int height)
+{
+    const maze_t maze = create_wall_maze(width, height);
+    const bool_tab visited = create_booltab(width, height);
+    const time_t t = time(NULL);
+    srand(t);
+
+    //initialisation à la case (0, 0)
+    int x = 0;
+    int y = 0;
+    set_true(visited, width - 1, height - 1);
+    bool end = false;
+    while(!end)
+    {
+        while(!get_bool(visited, x, y))
+        {
+            const bool right = x < width - 1;
+            const bool down = y < height - 1;
+            set_true(visited, x, y);
+            if(!right) //on ne peut que descendre
+            {
+                unwall_down(maze, x, y);
+                y++;
+                set_true(visited, x, y);
+            }
+            else if(!down || rand() % 2 == 1) //on ne peut que aller à droite ou on le tire aléatoirement
+            {
+                unwall_right(maze, x, y);
+                x++;
+                set_true(visited, x, y);
+            }
+            else //on a tiré au sort d'aller en bas
+            {
+                unwall_down(maze, x, y);
+                y++;
+                set_true(visited, x, y);
+            }
+        }
+        //on cherche une case non visitée pour continuer
+        end = true;
+        for(int i = 0; i < width; i++)
+        {
+            for(int j = 0; j < height; j++)
+            {
+                if(!get_bool(visited, i, j))
+                {
+                    x = i;
+                    y = j;
+                    end = false;
+                    break;
+                }
+            }
+            if(!end) break;
+        }
+    }
+    free_booltab(visited);
+    return maze;
+}
+
 maze_t hunt_kill_maze(const int width, const int height)
 {
     //INITIALISATION
