@@ -2,29 +2,33 @@
 #define MAZEMAKER_H
 #include "struct.h"
 
-//un labyrinth parfait est un labyrinthe où il existe un unique chemin entre chaque paire de cellules
-//un labyrinthe est parfait si et seulement si il existe un chemin entre chaque paire de cellules et qu'il n'existe pas de boucle (principe des solveurs)
-//un labyrinthe solvable est un labyrinthe où il existe au moins un chemin entre le point de départ (0, 0) et le point d'arrivée (width-1, height-1)
-//tout labyrinthe doit être solvable (cahier des charges)
+//a perfect maze is a maze where there is only exactly path between any pair of cells
+//a maze is perfect if and only if connexe and doesn't contain any cycle
+//a maze is connexe if and only if there is a path between any pair of cells
+//a maze is solvable if and only if there is a path between the entrance (0, 0) and the exit (width - 1, height - 1)
+//any of our maze must be solvable, ideally connex
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont verticaux
+//creates a perfect maze
+//every wall is horizontal
+//width : width of the maze
+//height : height of the maze
 maze_t line_maze(const int width, const int height);
 
-//Crée un labyrinthe parfait de taille width x height
-//tous les murs sont horizontaux
+//creates a perfect maze
+//every wall is vertical
+//width : width of the maze
+//height : height of the maze
 maze_t column_maze(const int width, const int height);
 
-//Crée un labyrinthe imparfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//seuls le chemins de sortie possèdent des embranchements
+//Creates a solvable maze
+//width : width of the maze
+//height : height of the maze
 maze_t one_way_maze(const int width, const int height);
 
-//Crée un labyrinthe parfait de taille width x height
-//width : largeur du labyrinthe
-//height : hauteur du labyrinthe
-//tous les embranchements vont seulement vers la droite ou le bas
+//Creates a perfect maze
+//width : width of the maze
+//height : height of the maze
+//every way only
 maze_t comb_maze(const int width, const int height);
 
 //Crée un labyrinthe parfait de taille width x height

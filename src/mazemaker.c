@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include "outside.h"
 
-//fonction auxiliaire
-//met à jour le tableau de connexité en ajoutant les cases connexes à la case (dx, dy) et (0, 0) simultanément
-//retourne le nombre de cases connexes ajoutées
-//maze : labyrinthe
-//is_connexe : tableau de connexité
-//dx, dy : coordonnées de la case à traiter
+//Auxiliary functions
+//update the connexity of the maze by adding a connexion to the cell (dx, dy) if it is connected to the cell (0, 0)
+//return the number of visited cells
+//maze : the maze
+//is_connexe : the connexity of the maze
+//dx, dy : coordinates of the cell to add
 int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int dx, const int dy)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height); //tableau de booléens pour savoir si une case a été traitée
@@ -399,8 +399,8 @@ maze_t hunt_kill_maze(const int width, const int height)
 }
 
 
-//Fonction Auxilliaire de lab_by_path
-//fonctions de directions
+//Auxiliary functions for lab_by_path
+//directions
 
 #define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, *x - 1, *y)) //si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
 
@@ -410,8 +410,8 @@ maze_t hunt_kill_maze(const int width, const int height)
 
 # define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
 
-//Fonction Auxilliaire de lab_by_path
-//fonction qui applique une direction
+//Auxiliary functions for lab_by_path
+//To apply a random move to the current cell
 bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
     bool tab_dir[4] = {}; // créatrion du tableau de possibilité de direction
     int impossible_dir = 0; // compteur de direction en moins
@@ -457,8 +457,8 @@ bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
     }
     return false;
 }
-//Fonction Auxilliaire de lab_by_path
-//fonction qui crée tout les chemins et ajoute les murs
+//Auxiliary functions for lab_by_path
+//function to create a path in the maze by adding walls
 void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab tab_visited){
     int width = maze -> width, height = maze -> height;
     set_true(tab_visited, *x, *y);
