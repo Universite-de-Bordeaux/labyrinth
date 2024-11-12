@@ -5,7 +5,6 @@
 
 // --- Solveur en profondeur ---
 
-
 bool has_exit_deep_seeker(const maze_t maze)
 {
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
