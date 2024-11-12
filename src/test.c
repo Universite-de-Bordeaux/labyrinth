@@ -37,12 +37,12 @@ bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
     return true;
 }
 
-int evaluate_mazemaker(const func_ptr f, const int x, const int y)
+int evaluate_mazemaker(const func_ptr f)
 {
     int t = 3;
-    for(int i = 1; i < x; i++)
+    for(int i = 1; i < 100; i++)
     {
-        for(int j = 1; j < y; j++)
+        for(int j = 1; j < 100; j++)
         {
             const maze_t maze = f(i, j);
             if(t == 3 && !is_perfect_breadth_inspector(maze))
