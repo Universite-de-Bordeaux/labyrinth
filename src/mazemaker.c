@@ -176,31 +176,28 @@ maze_t comb_maze(const int width, const int height)
     //création du chemin principal
     int x = 0;
     int y = 0;
-    while(!(x == width - 1 && y == height - 1))
+    while(x != width - 1 || y != height - 1)
     {
-        if(rand() % 2 == 0 || y == height - 1)
+        if(y == height - 1)
         {
-            const int next_x = (rand() % (width - x)) + x;
-            for (int i = x; i < next_x; i++)
-            {
-                unwall_right(maze, i, y);
-                set_true(visited, i, y);
-            }
-            x = next_x;
+            unwall_right(maze, x, y);
+            set_true(visited, x, y);
+            x++;
+        }
+        else if(x == width - 1 || rand() % 2 == 0)
+        {
+            unwall_down(maze, x, y);
+            set_true(visited, x, y);
+            y++;
         }
         else
         {
-            const int next_y = (rand() % (height - y)) + y;
-            for (int i = y; i < next_y; i++)
-            {
-                unwall_down(maze, x, i);
-                set_true(visited, x, i);
-            }
-            y = next_y;
+            unwall_right(maze, x, y);
+            set_true(visited, x, y);
+            x++;
         }
     }
     set_true(visited, width - 1, height - 1);
-
     //création des embranchements
     bool is_done = false;
     while(!is_done)
