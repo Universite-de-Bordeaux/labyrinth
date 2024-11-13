@@ -11,6 +11,10 @@ Pour compiler le projet il est nécessaire d'avoir
 Utiliser cette commande pour télécharger et installer les dépendances
 ````sudo apt install gcc && sudo apt-get install libsdl2-dev````
 
+## Pour Compiler
+Ce positionner à la source du dépot puis entrer la commande suivante :
+````cd ./build && make && cd ..````
+
 ## Utilisation
 
 Les différents noms de labyrinthes sont abrégés comme ceci :
