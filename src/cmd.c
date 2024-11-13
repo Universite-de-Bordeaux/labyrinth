@@ -158,7 +158,6 @@ void cmd(char *argv[], const int argc)
             }
             else
             {
-                printf("Default dimension applied\n");
                 width = 10;
                 height = 10;
             }
@@ -187,7 +186,6 @@ void cmd(char *argv[], const int argc)
             else
             {
                 tear_prop = 4;
-                printf("Default probability applied\n");
             }
         }
         else if(!strcmp(argv[i], "-slv"))
