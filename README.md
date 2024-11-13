@@ -11,9 +11,10 @@ Pour compiler le projet il est nécessaire d'avoir
 Utiliser cette commande pour télécharger et installer les dépendances
 ````sudo apt install gcc && sudo apt-get install libsdl2-dev````
 
-## Pour Compiler
+## Pour Compiler et exécuter
 Ce positionner à la source du dépot puis entrer la commande suivante :
-````cd ./build && make && cd ..````
+````cd ./build && make && cd ..````  
+Cette commande crée un exécutable "main" à la source du dépot.
 
 ## Utilisation
 
