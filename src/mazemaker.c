@@ -687,11 +687,11 @@ maze_t cross_maze(const int width, const int height)
             t--;
         }
     }
-    for(int i = 0; i < maze.width; i++)
+    for(int i = 0; i < maze.height; i++)
     {
-        for(int j = 0; j < maze.height; j++)
+        for(int j = 0; j < maze.width; j++)
         {
-            set_false(annexe, i, j); //on réinitialise le tableau
+            set_false(annexe, j, i); //on réinitialise le tableau
         }
     }
     //on va connexter les cases non connexes
