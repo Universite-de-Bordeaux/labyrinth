@@ -469,7 +469,7 @@ maze_t hunt_kill_maze(const int width, const int height)
 
 //Auxiliary functions for lab_by_path
 //To apply a random move to the current cell
-bool lbp_path_move(maze_t *maze, int *x, int *y, bool_tab tab_visited){
+bool lbp_path_move(const maze_t *maze, int *x, int *y,const bool_tab tab_visited){
     bool tab_dir[4] = {}; // créatrion du tableau de possibilité de direction
     int impossible_dir = 0; // compteur de direction en moins
     while (impossible_dir < 4){ // tant qu'il nous reste des directions
