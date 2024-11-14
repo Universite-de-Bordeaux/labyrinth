@@ -11,6 +11,11 @@ Pour compiler le projet il est nécessaire d'avoir
 Utiliser cette commande pour télécharger et installer les dépendances
 ````sudo apt install gcc && sudo apt-get install libsdl2-dev````
 
+## Pour Compiler et exécuter
+Ce positionner à la source du dépot puis entrer la commande suivante :
+````cd ./build && make && cd ..````  
+Cette commande crée un exécutable "main" à la source du dépot.
+
 ## Utilisation
 
 Les différents noms de labyrinthes sont abrégés comme ceci :
@@ -111,24 +116,24 @@ Afficher un chemin :
 ## Exemples d'utilisation
 
 Générer un labyrinthe et l'enregistrer dans un fichier  
--g cm -w temp
+./main -g cm -w temp
 
 
 Récupérer le labyrinthe avant de l'afficher  
--r temp -sh
+./main -r temp -sh
 
 
 Afficher l'analyse du labyrinthe  
--r temp -sh isp deep
+./main -r temp -sh isp deep
 
 
 Sans passer par un fichier temporaire  
--g cm -w temp -sh isp deep
+./main -g cm -w temp -sh isp deep
 
 
 Enregistrer un labyrinthe et écrire le chemin le plus court pour le résoudre et les enregistrer dans des fichiers  
--g bpm -w temp -ww temp_c -slv she breath
+./main -g bpm -w temp -ww temp_c -slv she breath
 
 
 Afficher le chemin dans le labyrinthe enregistré  
--r temp -rw temp_c -shw
+./main -r temp -rw temp_c -shw

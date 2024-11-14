@@ -42,7 +42,7 @@ cmd.o : ../src/cmd.c ../src/cmd.h
 clean :
 	@rm -f src/*.o src/main
 	@echo "Clean done in src (security)"
-	@rm -f *.o main
-	@echo "Clean done in root (security)"
+	@rm -f ../*.o ../main
+	@echo "Clean done in root"
 	@rm -f build/*.o build/main
 	@echo "Clean done in build"
