@@ -300,7 +300,7 @@ maze_t hunt_kill_maze(const int width, const int height)
     //width : largeur du labyrinthe
     //height : hauteur du labyrinthe
     const maze_t maze = create_wall_maze(width, height);
-    if(height == 1 || width == 1)
+    if(height == 1 || width == 1) //si le labyrinthe n'a quune dimension, il est parfait
     {
         return maze;
     }
@@ -314,7 +314,6 @@ maze_t hunt_kill_maze(const int width, const int height)
     //cette cellule est visitée
     set_true(visited, x, y);
 
-    bool run = true;
     while(true)
     {
         //tant que toutes les cellules n'ont pas été visitées
@@ -367,7 +366,7 @@ maze_t hunt_kill_maze(const int width, const int height)
         //sinon on cherche une cellule non visitée adjacente à une cellule visitée
         //BOUCLE HUNT
         //find_hunt
-        run = false;
+        bool run = false;
         for(int i = 0; i < height; i++)
         {
             if(run) break;
@@ -418,38 +417,39 @@ maze_t hunt_kill_maze(const int width, const int height)
                 dir[size] = 'L';
                 size++;
             }
-            if(y > 0 && get_bool(visited, x, y - 1)){
+            if(y > 0 && get_bool(visited, x, y - 1))
+            {
                 dir[size] = 'U';
                 size++;
             }
             //chercher une cellule visitée adjacente à notre cellule non visitée
-                c = dir[rand() % size];
-                if (c == 'R')
-                {
-                    unwall_right(maze, x, y);
-                }
-                else if(c == 'L')
-                {
-                    unwall_left(maze, x, y);
-                }
-                else if(c == 'D')
-                {
-                    unwall_down(maze, x, y);
-                }
-                else if(c == 'U')
-                {
-                    unwall_up(maze, x, y);
-                }
-                else
-                {
-                        fprintf(stderr, "Erreur: direction hunt invalide\n");
-                        printf("x : %d, y : %d\n", x, y);
-                        free_booltab(visited);
-                        free_maze(maze);
-                        exit(EXIT_FAILURE);
-                }
+            c = dir[rand() % size];
+            if (c == 'R')
+            {
+                unwall_right(maze, x, y);
             }
-            set_true(visited, x, y);
+            else if(c == 'L')
+            {
+                unwall_left(maze, x, y);
+            }
+            else if(c == 'D')
+            {
+                unwall_down(maze, x, y);
+            }
+            else if(c == 'U')
+            {
+                unwall_up(maze, x, y);
+            }
+            else
+            {
+                fprintf(stderr, "Erreur: direction hunt invalide\n");
+                printf("x : %d, y : %d\n", x, y);
+                free_booltab(visited);
+                free_maze(maze);
+                exit(EXIT_FAILURE);
+            }
+        }
+        set_true(visited, x, y);
     }
     free_booltab(visited);
     return maze;
