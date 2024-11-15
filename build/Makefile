@@ -40,9 +40,9 @@ cmd.o : ../src/cmd.c ../src/cmd.h
 
 .PHONY : clean
 clean :
-	@rm -f src/*.o src/main
+	@rm -f ../src/*.o ../src/main
 	@echo "Clean done in src (security)"
 	@rm -f ../*.o ../main
 	@echo "Clean done in root"
-	@rm -f build/*.o build/main
+	@rm -f *.o main
 	@echo "Clean done in build"
