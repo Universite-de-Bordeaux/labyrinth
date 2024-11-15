@@ -65,13 +65,19 @@ int evaluate_mazemaker(const func_ptr f)
     return t;
 }
 
-int evaluate_time(func_ptr f, char* name)
+int evaluate_time(const func_ptr f, char* name)
 {
     int score1 = 50;
     int score2 = 10;
     int score3 = 15;
     int score4 = 25;
     clock_t start = clock();
+    const maze_t t_maze = create_basic_maze(2, 2);
+    const clock_t temp = clock() - start;
+    free_maze(t_maze);
+
+    //evaluation de la génération standard
+    start = clock();
     for(int i = 1; i < 100; i++)
     {
         for(int j = 1; j < 100; j++)
@@ -79,14 +85,16 @@ int evaluate_time(func_ptr f, char* name)
             const maze_t maze = f(i, j);
             free_maze(maze);
         }
-        if(clock() - start > 200000000)
+        if(clock() - start > 150000000)
         {
             score1 = 0;
             break;
         }
     }
     score1 -= (clock() - start) / 4000000;
-    clock_t inter = clock();
+
+    //evaluation de la génération de labyrinthes ligne/colonne
+    const clock_t inter = clock();
     for(int k = 1; k < 1000; k++)
     {
         for(int i = 1; i < 100; i++)
@@ -97,14 +105,18 @@ int evaluate_time(func_ptr f, char* name)
         const maze_t maze = f(1, k);
         free_maze(maze);
     }
-    score2 -= (clock() - inter) / 35000;
-    clock_t inter2 = clock();
+    score2 -= (clock() - inter) / 400000;
+
+    //evaluation de la génération de labyrinthes 4x4 (petits labyrinthes)
+    const clock_t inter2 = clock();
     for(int k = 0; k < 1000; k++)
     {
         const maze_t maze = f(4, 4);
         free_maze(maze);
     }
     score3 -= (clock() - inter2) / 400;
+
+    //evaluation de la génération de labyrinthes 100x100 (grands labyrinthes)
     for(int k = 0; k < 10; k++)
     {
         const maze_t maze = f(100, 100);
@@ -127,6 +139,10 @@ int evaluate_time(func_ptr f, char* name)
     {
         score4 = 0;
     }
-    printf("Le générateur %s a un score de %d (%d %d %d %d)\n", name, score1 + score2 + score3 + score4, score1, score2, score3, score4);
+    printf("Le générateur %s a un score de %d/100 : \n", name, score1 + score2 + score3 + score4);
+    printf("\tScore de génération standard : %d/50\n", score1);
+    printf("\tScore de génération de labyrinthes ligne/colonne : %d/10\n", score2);
+    printf("\tScore de génération de labyrinthes 4x4 : %d/15\n", score3);
+    printf("\tScore de génération de labyrinthes 100x100 : %d/25\n", score4);
     return score1 + score2 + score3 + score4;
 }
