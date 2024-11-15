@@ -72,8 +72,8 @@ int evaluate_time(const func_ptr f, char* name)
     int score3 = 15;
     int score4 = 25;
     clock_t start = clock();
-    const maze_t t_maze = create_basic_maze(2, 2);
-    const clock_t temp = clock() - start;
+    const maze_t t_maze = create_basic_maze(1000, 10);
+    const clock_t temp = 2 * (clock() - start); //temps moyen pour générer un labyrinthe vide de 1000x10
     free_maze(t_maze);
 
     //evaluation de la génération standard
@@ -85,44 +85,62 @@ int evaluate_time(const func_ptr f, char* name)
             const maze_t maze = f(i, j);
             free_maze(maze);
         }
-        if(clock() - start > 150000000)
+        if(clock() - start > 100000000)
         {
-            score1 = 0;
             break;
         }
     }
-    score1 -= (clock() - start) / 4000000;
-
+    score1 -= (clock() - start) / 4000000; //une valeur arbitraire pour avoir un score entre 0 et 50
+    clock_t temp2;
     //evaluation de la génération de labyrinthes ligne/colonne
-    const clock_t inter = clock();
     for(int k = 1; k < 1000; k++)
     {
         for(int i = 1; i < 100; i++)
         {
+            start = clock();
             const maze_t maze = f(i, 1);
             free_maze(maze);
+            temp2 = clock() - start;
+            if(temp2 > temp) //si on dépasse le double du temps moyen pour générer un labyrinthe vide
+            {
+                score2 -= 1;
+                if(score2 == 0)
+                {
+                    break;
+                }
+            }
         }
+        start = clock();
         const maze_t maze = f(1, k);
         free_maze(maze);
+        temp2 = clock() - start;
+        if(temp2 > temp) //si on dépasse le double du temps moyen pour générer un labyrinthe vide
+        {
+            score2 -= 1;
+        }
+        if(score2 <= 0)
+        {
+            break;
+        }
     }
-    score2 -= (clock() - inter) / 400000;
 
     //evaluation de la génération de labyrinthes 4x4 (petits labyrinthes)
-    const clock_t inter2 = clock();
+    start = clock();
     for(int k = 0; k < 1000; k++)
     {
         const maze_t maze = f(4, 4);
         free_maze(maze);
     }
-    score3 -= (clock() - inter2) / 400;
+    score3 -= (clock() - start) / 400; //une valeur arbitraire pour avoir un score entre 0 et 15
 
     //evaluation de la génération de labyrinthes 100x100 (grands labyrinthes)
+    start = clock();
     for(int k = 0; k < 10; k++)
     {
         const maze_t maze = f(100, 100);
         free_maze(maze);
     }
-    score4 -= (clock() - inter2) / 100000;
+    score4 -= (clock() - start) / 100000; //une valeur arbitraire pour avoir un score entre 0 et 25
     if(score1 < 0)
     {
         score1 = 0;
