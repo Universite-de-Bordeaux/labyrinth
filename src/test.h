@@ -59,9 +59,9 @@ int evaluate_mazemaker(func_ptr f);
 //print a score between 0 (bad) and 100 (good) of the generator
 #define EVALUATE_TIME(générateur, name) \
     do { \
-        int score1 = 25; \
-        int score2 = 25; \
-        int score3 = 25; \
+        int score1 = 50; \
+        int score2 = 10; \
+        int score3 = 15; \
         int score4 = 25; \
         clock_t start = clock(); \
         for(int i = 1; i < 100; i++) \
@@ -71,7 +71,7 @@ int evaluate_mazemaker(func_ptr f);
                 const maze_t maze = générateur(i, j); \
                 free_maze(maze); \
             } \
-            if(clock() - start > 100000000) \
+            if(clock() - start > 200000000) \
             { \
             score1 = 0; \
             break; \
@@ -79,9 +79,14 @@ int evaluate_mazemaker(func_ptr f);
         } \
         score1 -= (clock() - start) / 4000000; \
         clock_t inter = clock(); \
-        for(int k = 0; k < 1000000; k++) \
+        for(int k = 0; k < 1000; k++) \
         { \
-            const maze_t maze = générateur(1, 1); \
+            for(int i = 1; i < 100; i++) \
+            { \
+                const maze_t maze = générateur(i, 1); \
+                free_maze(maze); \
+            } \
+            const maze_t maze = générateur(1, k); \
             free_maze(maze); \
         } \
         score2 -= (clock() - inter) / 35000; \
