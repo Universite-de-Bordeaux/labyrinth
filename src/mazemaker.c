@@ -68,8 +68,6 @@ int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int
 
 maze_t line_maze(const int width, const int height)
 {
-    const time_t t = time(NULL);
-    srand(t);
     const maze_t maze = create_basic_maze(width, height);
     for(int i = 0; i < width - 1; i++)
     {
@@ -87,8 +85,6 @@ maze_t line_maze(const int width, const int height)
 
 maze_t column_maze(const int width, const int height)
 {
-    const time_t t = time(NULL);
-    srand(t);
     const maze_t maze = create_basic_maze(width, height);
     for(int i = 0; i < height - 1; i++)
     {
@@ -107,9 +103,11 @@ maze_t column_maze(const int width, const int height)
 maze_t one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
+    if(height == 1 || width == 1)
+    {
+        return maze;
+    }
     const bool_tab annexe = create_booltab(width, height);
-    const time_t t = time(NULL);
-    srand(t);
     int r = 0, x = 0, y = 0;
     while(!(x == width - 1 && y == height - 1))
     {
@@ -169,9 +167,11 @@ maze_t one_way_maze(const int width, const int height)
 maze_t comb_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
+    if(height == 1 || width == 1)
+    {
+        return maze;
+    }
     const bool_tab visited = create_booltab(width, height);
-    const time_t t = time(NULL);
-    srand(t);
 
     //création du chemin principal
     int x = 0;
@@ -240,8 +240,6 @@ maze_t proto_comb_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab visited = create_booltab(width, height);
-    const time_t t = time(NULL);
-    srand(t);
 
     //initialisation à la case (0, 0)
     int x = 0;
@@ -298,12 +296,14 @@ maze_t proto_comb_maze(const int width, const int height)
 maze_t hunt_kill_maze(const int width, const int height)
 {
     //INITIALISATION
-    const time_t t = time(NULL);
-    srand(t);
     //Créer un labyrithe avec tous les murs fermés
     //width : largeur du labyrinthe
     //height : hauteur du labyrinthe
     const maze_t maze = create_wall_maze(width, height);
+    if(height == 1 || width == 1)
+    {
+        return maze;
+    }
 
     //création d'un tableau repertoriant si une cellule a été visitée
     const bool_tab visited = create_booltab(width, height);
@@ -637,6 +637,10 @@ maze_t by_path_maze(const int width, const int height){
 maze_t cross_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
+    if(height == 1 || width == 1)
+    {
+        return maze;
+    }
     const bool_tab annexe = create_booltab(width, height); //tableau de booléens pour savoir si une case a été traitée
     int d;
     int t = width * height; //nombre de cases à traiter
