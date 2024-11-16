@@ -602,11 +602,6 @@ maze_t by_path_maze(const int width, const int height){
 
     int x_1=0, x_2=0, y_1=0, y_2=0; // création des coordonnées et coordonnées de la case précédente
     set_true(tab_visited, x_1, x_2); // on valide notre passage sur la case de départ
-    if (rand()%2) // on choisit une direction aléatoire
-        x_1++;
-    else
-        y_1++;
-    set_true(tab_visited, x_1, y_1); //on valide notre passage sur la nouvelle case
 
     for (int y=0; y<height-1; y++){
         for (int x=0; x<width-1; x++){
