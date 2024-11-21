@@ -460,7 +460,6 @@ void free_way(way *w)
 
 bool is_empty(const way *w)
 {
-    printf("x : %d, y : %d, length : %d\n", w -> x, w -> y, w -> length);
     if(w -> length == L_TP)
     {
         return true;
