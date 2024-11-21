@@ -233,7 +233,7 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.wall[y][x - 1] & 2;
+    return maze.wall[y][x] & 8;
 }
 
 bool has_wall_right(const maze_t maze, const int x, const int y)
@@ -460,13 +460,14 @@ void free_way(way *w)
 
 bool is_empty(const way *w)
 {
-    if (w -> length == L_TP)
+    printf("x : %d, y : %d, length : %d\n", w -> x, w -> y, w -> length);
+    if(w -> length == L_TP)
     {
         return true;
     }
     if(w->dad == NULL)
     {
-        return is_origin(w); //un chemin est vide s'il n'est pas relié à la case (0, 0)
+        return !is_origin(w); //un chemin est vide s'il n'est pas relié à la case (0, 0)
     }
     return is_empty(w->dad);
 }
