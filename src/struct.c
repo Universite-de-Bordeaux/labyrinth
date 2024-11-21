@@ -8,25 +8,31 @@ maze_t create_basic_maze(const int width, const int height) {
         fprintf(stderr, "Erreur dans la fonction create_basic_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(1);
     }
-    cell** start = malloc(sizeof(cell *) * height);
-    for (int i = 0; i < height; i++) {
-        start[i] = malloc(sizeof(cell) * width);
-    }
-    for (int i = 0; i < height - 1; i++) {
-        for (int j = 0; j < width - 1; j++) //cellules non bordure
+    char **start = malloc(sizeof(char *) * height);
+    for (int i = 0; i < height; i++)
+    {
+        start[i] = malloc(sizeof(char) * width);
+        for(int j = 0; j < width; j++)
         {
-            start[i][j].wall_down = false;
-            start[i][j].wall_right = false;
+            start[i][j] = 0;
+            if(i == 0) //mur du haut
+            {
+                start[i][j] += 1;
+            }
+            if(j == width - 1) //mur de droite
+            {
+                start[i][j] += 2;
+            }
+            if(i == height - 1) //mur du bas
+            {
+                start[i][j] += 4;
+            }
+            if(j == 0) //mur de gauche
+            {
+                start[i][j] += 8;
+            }
         }
-        start[i][width - 1].wall_down = false; //cellules bordure droite
-        start[i][width - 1].wall_right = true;
     }
-    for (int j = 0; j < width - 1; j++) {
-        start[height - 1][j].wall_down = true; //cellules bordure bas
-        start[height - 1][j].wall_right = false;
-    }
-    start[height - 1][width - 1].wall_down = true; //sortie
-    start[height - 1][width - 1].wall_right = true;
     const maze_t maze = {width, height, start};
     return maze;
 }
@@ -37,16 +43,12 @@ maze_t create_wall_maze(const int width, const int height) {
         fprintf(stderr, "Erreur dans la fonction create_wall_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(1);
     }
-    cell** start = malloc(sizeof(cell *) * height);
+    char **start = malloc(sizeof(char *) * height);
     for (int i = 0; i < height; i++) {
-        start[i] = malloc(sizeof(cell) * width);
-    }
-    for(int i = 0; i < height; i++)
-    {
+        start[i] = malloc(sizeof(char) * width);
         for(int j = 0; j < width; j++)
         {
-            start[i][j].wall_down = true;
-            start[i][j].wall_right = true;
+            start[i][j] = 15; //tous les murs sont fermés
         }
     }
     const maze_t maze = {width, height, start};
@@ -55,9 +57,9 @@ maze_t create_wall_maze(const int width, const int height) {
 
 void free_maze(const maze_t maze) {
   for (int i = 0; i < maze.height; i++) {
-    free(maze.cells[i]);
+    free(maze.wall[i]);
   }
-  free(maze.cells);
+  free(maze.wall);
 }
 
 void wall_up(maze_t const maze, const int x, const int y)
@@ -69,7 +71,8 @@ void wall_up(maze_t const maze, const int x, const int y)
     }
     if(y > 0)
     {
-        maze.cells[y - 1][x].wall_down = true;
+        maze.wall[y][x] |= 1; //on ajoute le mur du haut
+        maze.wall[y - 1][x] |= 4; //on ajoute le mur du bas de la cellule du dessus
     }
     else
       {
@@ -86,7 +89,8 @@ void wall_down(const maze_t maze, const int x, const int y)
     }
     if(y < maze.height - 1)
     {
-        maze.cells[y][x].wall_down = true;
+        maze.wall[y][x] |= 4; //on ajoute le mur du bas
+        maze.wall[y + 1][x] |= 1; //on ajoute le mur du haut de la cellule du dessous
     }
     else
     {
@@ -103,7 +107,8 @@ void wall_left(const maze_t maze, const int x, const int y)
     }
     if(x > 0)
     {
-        maze.cells[y][x - 1].wall_right = true;
+        maze.wall[y][x] |= 8; //on ajoute le mur de gauche
+        maze.wall[y][x - 1] |= 2; //on ajoute le mur de droite de la cellule de gauche
     }
     else
     {
@@ -120,7 +125,8 @@ void wall_right(const maze_t maze, const int x, const int y)
     }
     if(x < maze.width - 1)
     {
-        maze.cells[y][x].wall_right = true;
+        maze.wall[y][x] |= 2; //on ajoute le mur de droite
+        maze.wall[y][x + 1] |= 8; //on ajoute le mur de gauche de la cellule de droite
     }
     else
     {
@@ -137,7 +143,8 @@ void unwall_up(const maze_t maze, const int x, const int y)
     }
     if(y > 0)
     {
-        maze.cells[y - 1][x].wall_down = false;
+        maze.wall[y][x] &= ~1; //on retire le mur du haut
+        maze.wall[y - 1][x] &= ~4; //on retire le mur du bas de la cellule du dessus
     }
     else
     {
@@ -154,7 +161,8 @@ void unwall_down(const maze_t maze, const int x, const int y)
     }
     if(y < maze.height - 1)
     {
-        maze.cells[y][x].wall_down = false;
+        maze.wall[y][x] &= ~4; //on retire le mur du bas
+        maze.wall[y + 1][x] &= ~1; //on retire le mur du haut de la cellule du dessous
     }
     else
     {
@@ -171,7 +179,8 @@ void unwall_left(const maze_t maze, const int x, const int y)
     }
     if(x > 0)
     {
-        maze.cells[y][x - 1].wall_right = false;
+        maze.wall[y][x - 1] &= ~2; //on retire le mur de gauche
+        maze.wall[y][x] &= ~8; //on retire le mur de droite de la cellule de gauche
     }
     else
     {
@@ -188,7 +197,8 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
     if(x < maze.width - 1)
     {
-        maze.cells[y][x].wall_right = false;
+        maze.wall[y][x] &= ~2; //on retire le mur de droite
+        maze.wall[y][x + 1] &= ~8; //on retire le mur de gauche de la cellule de droite
     }
     else
     {
@@ -203,11 +213,7 @@ bool has_wall_up(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_up : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    if(y == 0)
-    {
-        return true;
-    }
-    return maze.cells[y - 1][x].wall_down;
+    return maze.wall[y][x] & 1;
 }
 
 bool has_wall_down(const maze_t maze, const int x, const int y)
@@ -217,7 +223,7 @@ bool has_wall_down(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_down : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.cells[y][x].wall_down;
+    return maze.wall[y][x] & 4;
 }
 
 bool has_wall_left(const maze_t maze, const int x, const int y)
@@ -227,11 +233,7 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_left : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    if(x == 0)
-    {
-        return true;
-    }
-    return maze.cells[y][x - 1].wall_right;
+    return maze.wall[y][x - 1] & 2;
 }
 
 bool has_wall_right(const maze_t maze, const int x, const int y)
@@ -241,7 +243,7 @@ bool has_wall_right(const maze_t maze, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction has_wall_right : \nles coordonnées de la cellule sont en dehors des limites du labyrinthe, cible : %d, %d\n", x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.cells[y][x].wall_right;
+    return maze.wall[y][x] & 2;
 }
 
 
@@ -759,8 +761,8 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
     if(d_w < 3) //la taille minimale des cellules est de 2 pixels (1 pixel de vide et 2 pixels pour chaque mur)
     {
         fprintf(stderr, "Warning : la taille des cellules est trop petite pour être affichée correctement, l'affichage va dépasser de l'écran\n");
-        d_w = 3;
-        d_h = 3;
+        d_w = 2;
+        d_h = 2;
     }
 
     // ReSharper disable once CppDFANullDereference
@@ -792,11 +794,11 @@ int initial_print_maze(const maze_t maze, SDL_Renderer **renderer, SDL_Window **
     {
         for(int y = 0; y < maze.height; y++)
         {
-            if(maze.cells[y][x].wall_down)
+            if(has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(*renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur en bas
             }
-            if(maze.cells[y][x].wall_right)
+            if(has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(*renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1, (y + 1) * d_h - 1); //on dessine un mur à droite
             }
