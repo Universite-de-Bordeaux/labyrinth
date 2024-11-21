@@ -597,21 +597,21 @@ maze_t by_path_maze(const int width, const int height){
     const bool_tab tab_visited = create_booltab(width, height);
     maze_t maze = create_basic_maze(width, height);
 
-    if (width==1 || height ==1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
+    if (width == 1 || height == 1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
         return maze;
 
-    int x_1=0, x_2=0, y_1=0, y_2=0; // création des coordonnées et coordonnées de la case précédente
+    int x_1 = 0, x_2 = 0, y_1 = 0, y_2 = 0; // création des coordonnées et coordonnées de la case précédente
     set_true(tab_visited, x_1, x_2); // on valide notre passage sur la case de départ
 
-    for (int y=0; y<height-1; y++){
-        for (int x=0; x<width-1; x++){
+    for (int y = 0; y < height - 1; y++){
+        for (int x = 0; x < width - 1; x++){
             if(get_bool(tab_visited, x, y)){
                 x_1 = x, y_1 = y, x_2 = x, y_2 = y;
-                if (!get_bool(tab_visited, x+1, y)){ // si la case de droite est nouvelle, on y va depuis notre case actuelle
+                if (!get_bool(tab_visited, x + 1, y)){ // si la case de droite est nouvelle, on y va depuis notre case actuelle
                     x_1++;
                     lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
                 }
-                else if (!get_bool(tab_visited, x, y+1)){// si la case du bas est nouvelle, on y va depuis notre case actuelle
+                else if (!get_bool(tab_visited, x, y + 1)){// si la case du bas est nouvelle, on y va depuis notre case actuelle
                     y_1++;
                     lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
                 }
