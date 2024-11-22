@@ -594,7 +594,9 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab t
 }
 
 maze_t by_path_maze(const int width, const int height){
+    printf("1\n");
     const bool_tab tab_visited = create_booltab(width, height);
+    printf("2\n");
     maze_t maze = create_basic_maze(width, height);
 
     if (width == 1 || height == 1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne

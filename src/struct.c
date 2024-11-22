@@ -8,7 +8,15 @@ maze_t create_basic_maze(const int width, const int height) {
         fprintf(stderr, "Erreur dans la fonction create_basic_maze : \nles dimensions du labyrinthe doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(1);
     }
-    char **start = malloc(sizeof(char *) * height);
+    printf("here ?\n");
+    int *t = malloc(15415);
+    printf("size : %zu, height : %d, total : %lu\n", sizeof(char *), height, sizeof(char *) * height);
+    fflush(NULL);
+    size_t size = sizeof(char *) * height;
+    printf("size : %zu\n", size);
+    char **start = malloc(size);
+    printf("nop\n");
+    fflush(stdout);
     for (int i = 0; i < height; i++)
     {
         start[i] = malloc(sizeof(char) * width);
@@ -256,25 +264,17 @@ bool_tab create_booltab(const int width, const int height)
         fprintf(stderr, "Erreur dans la fonction create_booltab : \nles dimensions du tableau de booléens doivent être strictements positives, width : %d, height : %d\n", width, height);
         exit(EXIT_FAILURE);
     }
-    bool** booltab = malloc(sizeof(bool *) * height);
-    for(int i = 0; i < height; i++)
+    char *tab = malloc(sizeof(char) * (width * height) / 8 + 1);
+    for(int i = 0; i < width * height; i++)
     {
-        booltab[i] = malloc(sizeof(bool) * width);
-        for(int j = 0; j < width; j++)
-        {
-            booltab[i][j] = false;
-        }
+        tab[i] = 0;
     }
-    const bool_tab tab = {width, height, booltab};
-    return tab;
+    const bool_tab booltab = {width, height, tab};
+    return booltab;
 }
 
 void free_booltab(const bool_tab tab)
 {
-    for(int i = 0; i < tab.height; i++)
-    {
-        free(tab.tab[i]);
-    }
     free(tab.tab);
 }
 
@@ -285,7 +285,7 @@ void set_true(const bool_tab tab, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction set_true : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
-    tab.tab[y][x] = true;
+    tab.tab[y * tab.width + x / 8] |= 1 << x % 8;
 }
 
 void set_false(const bool_tab tab, const int x, const int y)
@@ -295,7 +295,7 @@ void set_false(const bool_tab tab, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction set_false : \nles coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         return;
     }
-    tab.tab[y][x] = false;
+    tab.tab[y * tab.width + x / 8] &= ~(1 << x % 8);
 }
 
 bool get_bool(const bool_tab tab, const int x, const int y)
@@ -305,7 +305,7 @@ bool get_bool(const bool_tab tab, const int x, const int y)
         fprintf(stderr, "Erreur dans la fonction get_bool : \nLes coordonnées de la case sont en dehors des limites du tableau, cible : %d, %d\n", x, y);
         exit(1);
     }
-    return tab.tab[y][x];
+    return tab.tab[y * tab.width + x / 8] & (1 << x % 8);
 }
 
 

@@ -17,7 +17,7 @@ struct maze {
 struct bool_tab {
     int width;
     int height;
-    bool **tab;
+    char *tab;
 };
 
 struct way
