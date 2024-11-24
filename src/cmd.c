@@ -350,7 +350,7 @@ void cmd(char *argv[], const int argc)
         {
             maze = comb_maze(width, height);
         }
-        else if(!strcmp(generator, "own"))
+        else if(!strcmp(generator, "owm"))
         {
             maze = one_way_maze(width, height);
         }

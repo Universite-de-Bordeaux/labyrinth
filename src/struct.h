@@ -8,10 +8,14 @@
 
 // --- Structures ---
 
+struct cell {
+    bool wall_down;
+    bool wall_right;
+};
 struct maze {
     int width;
     int height;
-    char **wall;
+    struct cell **cells;
 };
 
 struct bool_tab {
@@ -51,11 +55,14 @@ struct stack{
 
 // --- Typedef ---
 
+//Structure representing a cell
+//Contains 2 booleans : wall_down, wall_right
+typedef struct cell cell;
+
 //Structure representing a maze
 //width : width of the maze
 //height : height of the maze
-//wall : table of table of char representing the walls of the maze
-//-> 1st bit : up, 2nd bit : right, 3rd bit : down, 4th bit : left
+//cells : table of table of cells
 //malloc used, remember to free_maze to free memory
 typedef struct maze maze_t;
 
