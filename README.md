@@ -13,7 +13,7 @@ Utiliser cette commande pour télécharger et installer les dépendances
 
 ## Pour Compiler et exécuter
 Ce positionner à la source du dépot puis entrer la commande suivante :
-````make .````  
+````make````  
 Cette commande crée un exécutable "main" à la source du dépot.
 
 ## Utilisation
