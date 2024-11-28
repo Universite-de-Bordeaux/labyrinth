@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "outside.h"
+#include <sys/random.h>
 
 //Auxiliary functions
 //update the connexity of the maze by adding a connexion to the cell (dx, dy) if it is connected to the cell (0, 0)
@@ -589,8 +590,6 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab t
     *x_2 = *x, *y_2 = *y;
     if (lbp_path_move(maze, x, y, tab_visited)) // mouvement
         lbp_path(maze, x, y, x_2, y_2, tab_visited);
-    else
-        return;
 }
 
 maze_t by_path_maze(const int width, const int height){
@@ -637,27 +636,17 @@ maze_t cross_maze(const int width, const int height)
         return maze;
     }
     const bool_tab annexe = create_booltab(width, height); //tableau de booléens pour savoir si une case a été traitée
-    int d;
     int t = width * height; //nombre de cases à traiter
     //on commence par crréer des chemins (en forme d'étoiles)
+    unsigned int r;
     while(t > 0)
     {
-        int r = rand() % t;
-        d = r;
-        for(int i = 0; i <= r; i++)
-        {
-            if(get_bool(annexe, d % width, d / width))
-            {
-                d++; //on saute les case déjà traitées
-                r++;
-            }
-            if(d == width * height) //si on dépasse la taille du labyrinthe
-            {
-                d = 0; //on cycle
-            }
-        }
-        const int x = d % width;
-        const int y = d / width;
+        do {
+            getrandom(&r, sizeof(r), 0);
+            r %= width * height;
+        }while(get_bool(annexe, r % width, r / width));
+        const int x = r % width;
+        const int y = r / width;
         set_true(annexe, x, y);
         t--;
         //on ouvre les murs
@@ -694,8 +683,11 @@ maze_t cross_maze(const int width, const int height)
         }
     }
     //on va connexter les cases non connexes
-    int x = rand() % width;
-    int y = rand() % height;
+    unsigned int x, y;
+    getrandom(&x, sizeof(x), 0);
+    getrandom(&y, sizeof(y), 0);
+    x %= width;
+    y %= height;
     set_true(annexe, x, y); //on marque la case comme celle de départ
     t = width * height - 1; //nombre de cases à traiter
     if(!has_wall_down(maze, x, y))
@@ -716,22 +708,12 @@ maze_t cross_maze(const int width, const int height)
     }
     while(t > 0) //tant que toutes les cases ne sont pas connexes
     {
-        d = rand() % t;
-        int temp = d;
-        for(int i = 0; i <= temp; i++)
-        {
-            if(get_bool(annexe, d % width, d / width))
-            {
-                d++; //on saute les case déjà traitées
-                temp++;
-            }
-            if(d == width * height)
-            {
-                d = 0;
-            }
-        }
-        x = d % width;
-        y = d / width;
+        do {
+            getrandom(&r, sizeof(r), 0);
+            r %= width * height;
+        }while(get_bool(annexe, r % width, r / width));
+        x = r % width;
+        y = r / width;
         //on regarde les directions possibles
         int size = 0;
         bool dir[3] = {false, false, false}; //tableau des directions possibles (la 4eme est assuré par les 3 autres et le size)
@@ -758,7 +740,8 @@ maze_t cross_maze(const int width, const int height)
         {
             continue; //on passe à la case suivante
         }
-        const int r = rand() % size;
+        getrandom(&r, sizeof(r), 0);
+        r %= size;
         if(r == 0) //la première direction peut être n'importe laquelle
         {
             if(dir[0]) //on regarde si la direction est possible
