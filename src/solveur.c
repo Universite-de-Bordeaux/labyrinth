@@ -450,6 +450,12 @@ way *best_exit_breadth_seeker(const maze_t maze)
 
 int show_has_exit_deep_seeker(const maze_t maze)
 {
+    int reach = maze.width * maze.height / 100; //on affichera un frame tous les 1% du labyrinthe
+    if(reach == 0)
+    {
+        reach = 1;
+    }
+    int frame_count = 0;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
@@ -533,9 +539,15 @@ int show_has_exit_deep_seeker(const maze_t maze)
                 set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
             }
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+        }
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_stack(s);
@@ -545,6 +557,12 @@ int show_has_exit_deep_seeker(const maze_t maze)
 
 int show_is_connexe_deep_inspector(const maze_t maze)
 {
+    int reach = maze.width * maze.height / 100; //on affichera un frame tous les 1% du labyrinthe
+    if(reach == 0)
+    {
+        reach = 1;
+    }
+    int frame_count = 0;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pou repérer les cycles et la connexité
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
@@ -611,8 +629,12 @@ int show_is_connexe_deep_inspector(const maze_t maze)
                 push(x + 1, y, s);
             }
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+        }
     }
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); //on dessine en rouge
     bool is_connected = true;
@@ -654,6 +676,8 @@ int show_is_connexe_deep_inspector(const maze_t maze)
         free_booltab(visited);
         return 1;
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "Maze connected !"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_stack(s);
@@ -663,6 +687,12 @@ int show_is_connexe_deep_inspector(const maze_t maze)
 
 int show_is_perfect_deep_inspector(const maze_t maze)
 {
+    int reach = maze.width * maze.height / 100; //on affichera un frame tous les 1% du labyrinthe
+    if(reach == 0)
+    {
+        reach = 1;
+    }
+    int frame_count = 0;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pou repérer les cycles et la connexité
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); //on commence par l'entrée
@@ -759,8 +789,12 @@ int show_is_perfect_deep_inspector(const maze_t maze)
             free_booltab(visited);
             return 1;
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+        }
     }
     for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
     {
@@ -781,6 +815,8 @@ int show_is_perfect_deep_inspector(const maze_t maze)
             }
         }
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "perfect maze !"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_stack(s);
@@ -792,6 +828,12 @@ int show_best_exit_deep_seeker(const maze_t maze)
 {
     //on va constituer un tableau de way pour chaque case, qui contiendra le chemin le plus court pour y arriver, en partant de l'entrée
     //il nous permettra d'éviter les cycle (la taille du cycle serait plus grande) et de relier des fragments de chemin plutôt que de tout recalculer
+    int frame_count = 0;
+    int reach = maze.width * maze.height / 100; //on affichera un frame tous les 1% du labyrinthe
+    if(reach == 0)
+    {
+        reach = 1;
+    }
     const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
     stack *s = create_stack(); //cette pile contiendra les coordonnées des cases à visiter
     SDL_Window *window = NULL;
@@ -814,8 +856,12 @@ int show_best_exit_deep_seeker(const maze_t maze)
         SDL_SetRenderDrawColor(renderer, 125, 125, 125, 255); //on dessine en gris
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach)
+        {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+        }
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); //on dessine en bleu
         if(x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie, on ne va pas plus loin
         {
@@ -859,20 +905,31 @@ int show_best_exit_deep_seeker(const maze_t maze)
             }
         }
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+        }
     }
-    way *w = copy_way(get_way(ways, maze.width - 1, maze.height - 1)); //on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
+    const way *w = copy_way(get_way(ways, maze.width - 1, maze.height - 1)); //on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
     free_waytab(ways);
     free_stack(s);
     if(is_empty(w))
     {
+        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+        SDL_RenderPresent(renderer);
         SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     }
     else
     {
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
         SDL_SetWindowTitle(window, "best exit found !"); //on change le titre de la fenêtre
+        reach = length_way(w) / 10; //on affichera un frame tous les 10% du chemin
+        if(reach == 0)
+        {
+            reach = 1;
+        }
+        frame_count = 0;
         while(w != NULL)
         {
             SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
@@ -893,17 +950,25 @@ int show_best_exit_deep_seeker(const maze_t maze)
             {
                 SDL_RenderDrawLine(renderer, (get_x(w) + 1) * dw - 1, get_y(w) * dh + 1, (get_x(w) + 1) * dw - 1, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la droite
             }
-            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-            SDL_RenderPresent(renderer);
+            frame_count++;
+            if(frame_count == reach) {
+                SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+                SDL_RenderPresent(renderer);
+                frame_count = 0;
+            }
             w = get_dad(w);
         }
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     wait_and_destroy_print_maze(renderer, window);
     return 1;
 }
 
 int show_has_exit_breadth_seeker(const maze_t maze)
 {
+    int frame_count = 0;
+    int reach = 1;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pour éviter les boucles infinies
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
@@ -987,9 +1052,16 @@ int show_has_exit_breadth_seeker(const maze_t maze)
                 set_true(visited, x + 1, y); //on marque la case comme visitée por éviter de repasser par là
             }
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+            reach = size_queue(q) / 2;
+        }
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
@@ -999,6 +1071,8 @@ int show_has_exit_breadth_seeker(const maze_t maze)
 
 int show_is_connexe_breadth_inspector(const maze_t maze)
 {
+    int frame_count = 0;
+    int reach = 1;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pou repérer les cycles et la connexité
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
@@ -1065,8 +1139,13 @@ int show_is_connexe_breadth_inspector(const maze_t maze)
                 enqueue(x + 1, y, q);
             }
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+            reach = size_queue(q) / 2;
+        }
     }
     bool connected = true;
     for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
@@ -1109,6 +1188,8 @@ int show_is_connexe_breadth_inspector(const maze_t maze)
         free_booltab(visited);
         return 1;
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "Maze connected !"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
@@ -1118,6 +1199,8 @@ int show_is_connexe_breadth_inspector(const maze_t maze)
 
 int show_is_perfect_breadth_inspector(const maze_t maze)
 {
+    int frame_count = 0;
+    int reach = 1;
     const bool_tab visited = create_booltab(maze.width, maze.height); //ce tableau nous permettra de connaitre les cases déjà visitées pou repérer les cycles et la connexité
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
@@ -1214,8 +1297,13 @@ int show_is_perfect_breadth_inspector(const maze_t maze)
             free_booltab(visited);
             return 1;
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+            reach = size_queue(q) / 2;
+        }
     }
     bool connected = true;
     for(x = 0; x < maze.width; x++) //on vérifie que toutes les cases ont été visitées
@@ -1258,6 +1346,8 @@ int show_is_perfect_breadth_inspector(const maze_t maze)
         free_booltab(visited);
         return 1;
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "perfect maze !"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
@@ -1267,6 +1357,8 @@ int show_is_perfect_breadth_inspector(const maze_t maze)
 
 int show_best_exit_breadth_seeker(const maze_t maze)
 {
+    int frame_count = 0;
+    int reach = 1;
     const waytab ways = create_waytab(maze.width, maze.height); //ce tableau nous permettra de connaitre le meilleur chemin pour sortir du labyrinthe
     queue *q = create_queue(); //cette file contiendra les coordonnées des cases à visiter
     enqueue(0, 0, q); //on commence par l'entrée
@@ -1303,6 +1395,12 @@ int show_best_exit_breadth_seeker(const maze_t maze)
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); //on dessine en vert
             SDL_SetWindowTitle(window, "best exit found !"); //on change le titre de la fenêtre
             const way *w = get_way(ways, x, y);
+            frame_count = 0;
+            reach = length_way(w) / 10; //on affichera un frame tous les 10% du chemin
+            if(reach == 0)
+            {
+                reach = 1;
+            }
             while(w != NULL)
             {
                 SDL_Rect rec = {get_x(w) * dw + 1, get_y(w) * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
@@ -1323,10 +1421,16 @@ int show_best_exit_breadth_seeker(const maze_t maze)
                 {
                     SDL_RenderDrawLine(renderer, (get_x(w) + 1) * dw - 1, get_y(w) * dh + 1, (get_x(w) + 1) * dw - 1, (get_y(w) + 1) * dh - 2); //on dessine une ligne vers la droite
                 }
-                SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-                SDL_RenderPresent(renderer);
+                frame_count++;
+                if(frame_count == reach) {
+                    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+                    SDL_RenderPresent(renderer);
+                    frame_count = 0;
+                }
                 w = get_dad(w);
             }
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
             wait_and_destroy_print_maze(renderer, window); //on attend que l'utilisateur ferme la fenêtre
             free_queue(q);
             free_waytab(ways);
@@ -1334,7 +1438,7 @@ int show_best_exit_breadth_seeker(const maze_t maze)
         }
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        int l = length_waytab(ways, x, y) + 1;
+        const int l = length_waytab(ways, x, y) + 1;
         if(!has_wall_up(maze, x, y)) //si on peut aller en haut
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2, y * dh); //on dessine une ligne vers le haut
@@ -1371,9 +1475,16 @@ int show_best_exit_breadth_seeker(const maze_t maze)
                 connected_way(ways, x + 1, y, x, y); //on met à jour le chemin
             }
         }
-        SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
-        SDL_RenderPresent(renderer);
+        frame_count++;
+        if(frame_count == reach) {
+            SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+            SDL_RenderPresent(renderer);
+            frame_count = 0;
+            reach = size_queue(q) / 2;
+        }
     }
+    SDL_Delay(dm.refresh_rate); //pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(renderer);
     SDL_SetWindowTitle(window, "exit do not exist"); //on change le titre de la fenêtre
     wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
