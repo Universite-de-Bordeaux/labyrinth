@@ -46,7 +46,7 @@ int evaluate_mazemaker(const func_ptr f)
         for(int j = 1; j < 100; j++)
         {
             const maze_t maze = f(i, j);
-            if(t == 3 && !is_perfect_breadth_inspector(maze))
+            if(t == 3 && !is_perfect_deep_inspector(maze))
             {
                 t = 2;
             }
