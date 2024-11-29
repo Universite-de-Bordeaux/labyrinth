@@ -109,12 +109,13 @@ maze_t one_way_maze(const int width, const int height)
         return maze;
     }
     const bool_tab annexe = create_booltab(width, height);
-    int r = 0, x = 0, y = 0;
+    unsigned int r = 0, x = 0, y = 0;
     while(!(x == width - 1 && y == height - 1))
     {
+        getrandom(&r, sizeof(r), 0);
         if(r % 2 == 0)
         {
-            const int next_x = (rand() % (width - x)) + x;
+            const int next_x = rand() % (width - x) + x;
             for (int i = x; i < next_x; i++)
             {
                 unwall_right(maze, i, y);
@@ -125,7 +126,7 @@ maze_t one_way_maze(const int width, const int height)
         }
         else
         {
-            const int next_y = (rand() % (height - y)) + y;
+            const int next_y = rand() % (height - y) + y;
             for (int i = y; i < next_y; i++)
             {
                 unwall_down(maze, x, i);
@@ -593,12 +594,12 @@ void lbp_path(maze_t *maze, int *x, int *y, int *x_2, int *y_2, const bool_tab t
 }
 
 maze_t by_path_maze(const int width, const int height){
-    const bool_tab tab_visited = create_booltab(width, height);
     maze_t maze = create_basic_maze(width, height);
 
     if (width == 1 || height == 1) //si le labyrinthe est une simple cellule, une ligne ou une collone, on la retourne
         return maze;
 
+    const bool_tab tab_visited = create_booltab(width, height);
     int x_1 = 0, x_2 = 0, y_1 = 0, y_2 = 0; // création des coordonnées et coordonnées de la case précédente
     set_true(tab_visited, x_1, x_2); // on valide notre passage sur la case de départ
 
