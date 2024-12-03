@@ -20,10 +20,19 @@ maze_t line_maze(const int width, const int height);
 //height : height of the maze
 maze_t column_maze(const int width, const int height);
 
-//Creates a solvable maze
+//Creates a perfect maze
 //width : width of the maze
 //height : height of the maze
+//create a main path with a branch in every possible direction
+// (deep creation)
 maze_t one_way_maze(const int width, const int height);
+
+//Creates a perfect maze
+//width : width of the maze
+//height : height of the maze
+//every way try to go the most far possible
+// (breadth creation)
+maze_t octopus_maze(const int width, const int height);
 
 //Creates a perfect maze
 //width : width of the maze

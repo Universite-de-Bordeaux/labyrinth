@@ -105,59 +105,313 @@ maze_t one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height);
-    unsigned int r = 0, x = 0, y = 0;
-    while(!(x == width - 1 && y == height - 1))
+    int dh, dv;
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    initial_print_maze(maze, &renderer, &window, &dh, &dv);
+    SDL_SetRenderDrawColor(renderer, 250, 50, 0, 255);
+    int x, y;
+    stack *s = create_stack();
+    getrandom(&x, sizeof(x), 0);
+    if(x < 0){
+        x = -x;
+    }
+    x %= width;
+    getrandom(&y, sizeof(y), 0);
+    if(y < 0){
+        y = -y;
+    }
+    y %= height;
+    push(x, y, s); //on commence par une case aléatoire
+    set_true(annexe, x, y);
+    int temp = 0;
+    const int delai = width * height / 100;
+    while(!isempty_stack(s))
     {
-        getrandom(&r, sizeof(r), 0);
-        if(r % 2 == 0)
+        pop(s, &x, &y);
+        temp++;
+        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_Delay(10);
+        SDL_RenderPresent(renderer);
+        int dir[4] = {0, 1, 2, 3};
+        unsigned int r;
+        for(int i = 0; i < 4; i++)
         {
-            const int next_x = rand() % (width - x) + x;
-            for (int i = x; i < next_x; i++)
-            {
-                unwall_right(maze, i, y);
-                set_true(annexe, i, y);
-            }
-            x = next_x;
-            r++;
+            //on mélange les directions
+            getrandom(&r, sizeof(r), 0);
+            r %= 4;
+            const int tmp = dir[i];
+            dir[i] = dir[r];
+            dir[r] = tmp;
         }
-        else
+        //on regarde les cases adjacentes (dans un ordre aléatoire)
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        for(int i = 0; i < 4; i++)
         {
-            const int next_y = rand() % (height - y) + y;
-            for (int i = y; i < next_y; i++)
+            if(dir[i] == 0)
             {
-                unwall_down(maze, x, i);
-                set_true(annexe, x, i);
+                if(y > 0 && !get_bool(annexe, x, y - 1)) //si la case n'a pas été visitée
+                {
+                    unwall_up(maze, x, y); //on crée un chemin
+                    push(x, y - 1, s);  //on poursuit la visite
+                    set_true(annexe, x, y - 1); //on marque la case comme visitée
+                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
             }
-            y = next_y;
-            r++;
+            else if(dir[i] == 1)
+            {
+                if(y < height - 1 && !get_bool(annexe, x, y + 1))
+                {
+                    unwall_down(maze, x, y);
+                    push(x, y + 1, s);
+                    set_true(annexe, x, y + 1);
+                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            else if(dir[i] == 2)
+            {
+                if(x > 0 && !get_bool(annexe, x - 1, y))
+                {
+                    unwall_left(maze, x, y);
+                    push(x - 1, y, s);
+                    set_true(annexe, x - 1, y);
+                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            else
+            {
+                if(x < width - 1 && !get_bool(annexe, x + 1, y))
+                {
+                    unwall_right(maze, x, y);
+                    push(x + 1, y, s);
+                    set_true(annexe, x + 1, y);
+                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 250, 50, 0, 255);
+        if(temp >= delai)
+        {
+            SDL_Delay(10);
+            SDL_RenderPresent(renderer);
+            temp = 0;
         }
     }
-    for(int i = 0; i < width; i++)
+    destroy_print_maze(renderer, window);
+    free_stack(s);
+    free_booltab(annexe);
+    return maze;
+}
+
+maze_t octopus_maze(const int width, const int height)
+{
+    const maze_t maze = create_wall_maze(width, height);
+    const bool_tab annexe = create_booltab(width, height);
+    int dh, dv;
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    initial_print_maze(maze, &renderer, &window, &dh, &dv);
+    int x, y;
+    queue *q = create_queue();
+    getrandom(&x, sizeof(x), 0);
+    if(x < 0){
+        x = -x;
+    }
+    x %= width;
+    getrandom(&y, sizeof(y), 0);
+    if(y < 0){
+        y = -y;
+    }
+    y %= height;
+    enqueue(x, y, q); //on commence par une case aléatoire
+    int temp = 1;
+    int cmp = 0;
+    set_true(annexe, x, y);
+    while(!isempty_queue(q))
     {
-        for(int j = 0; j < height; j++)
+        dequeue(q, &x, &y);
+        cmp++;
+        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
+        SDL_RenderFillRect(renderer, &rect);
+        int dir[4] = {0, 1, 2, 3};
+        unsigned int r;
+        for(int i = 0; i < 4; i++)
         {
-            if(!get_bool(annexe, i, j))
+            //on mélange les directions
+            getrandom(&r, sizeof(r), 0);
+            r %= 4;
+            const int tmp = dir[i];
+            dir[i] = dir[r];
+            dir[r] = tmp;
+        }
+        //on regarde les cases adjacentes (dans un ordre aléatoire)
+        for(int i = 0; i < 4; i++)
+        {
+            if(dir[i] == 0)
             {
-                const int direction = rand() % 4;
-                if(direction == 0 && i > 0)
+                if(y > 0 && !get_bool(annexe, x, y - 1)) //si la case n'a pas été visitée
                 {
-                    unwall_left(maze, i, j);
+                    unwall_up(maze, x, y); //on crée un chemin
+                    enqueue(x, y - 1, q);  //on poursuit la visite
+                    set_true(annexe, x, y - 1); //on marque la case comme visitée
+                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
                 }
-                else if(direction == 1 && i < width - 1)
+            }
+            else if(dir[i] == 1)
+            {
+                if(y < height - 1 && !get_bool(annexe, x, y + 1))
                 {
-                    unwall_right(maze, i, j);
+                    unwall_down(maze, x, y);
+                    enqueue(x, y + 1, q);
+                    set_true(annexe, x, y + 1);
+                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
                 }
-                else if(direction == 2 && j > 0)
+            }
+            else if(dir[i] == 2)
+            {
+                if(x > 0 && !get_bool(annexe, x - 1, y))
                 {
-                    unwall_up(maze, i, j);
+                    unwall_left(maze, x, y);
+                    enqueue(x - 1, y, q);
+                    set_true(annexe, x - 1, y);
+                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
                 }
-                else if(direction == 3 && j < height - 1)
+            }
+            else
+            {
+                if(x < width - 1 && !get_bool(annexe, x + 1, y))
                 {
-                    unwall_down(maze, i, j);
+                    unwall_right(maze, x, y);
+                    enqueue(x + 1, y, q);
+                    set_true(annexe, x + 1, y);
+                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
                 }
+            }
+            cmp++;
+            if(cmp >= temp)
+            {
+                SDL_Delay(10);
+                SDL_RenderPresent(renderer);
+                temp = size_queue(q) / 2;
+                cmp = 0;
             }
         }
     }
+    wait_and_destroy_print_maze(renderer, window);
+    free_queue(q);
+    free_booltab(annexe);
+    return maze;
+}
+
+maze_t my_octopus_maze(const int width, const int height)
+{
+    const maze_t maze = create_wall_maze(width, height);
+    const bool_tab annexe = create_booltab(width, height);
+    int dh, dv;
+    SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
+    initial_print_maze(maze, &renderer, &window, &dh, &dv);
+    int x, y;
+    queue *q = create_queue();
+    getrandom(&x, sizeof(x), 0);
+    if(x < 0){
+        x = -x;
+    }
+    x %= width;
+    getrandom(&y, sizeof(y), 0);
+    if(y < 0){
+        y = -y;
+    }
+    y %= height;
+    enqueue(x, y, q); //on commence par une case aléatoire
+    int temp = 1;
+    int cmp = 0;
+    set_true(annexe, x, y);
+    while(!isempty_queue(q))
+    {
+        dequeue(q, &x, &y);
+        cmp++;
+        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
+        SDL_RenderFillRect(renderer, &rect);
+        int dir[4] = {0, 1, 2, 3};
+        unsigned int r;
+        for(int i = 0; i < 4; i++)
+        {
+            //on mélange les directions
+            getrandom(&r, sizeof(r), 0);
+            r %= 4;
+            const int tmp = dir[i];
+            dir[i] = dir[r];
+            dir[r] = tmp;
+        }
+        //on regarde les cases adjacentes (dans un ordre aléatoire)
+        for(int i = 0; i < 4; i++)
+        {
+            if(dir[i] == 0)
+            {
+                if(y > 0 && !get_bool(annexe, x, y - 1)) //si la case n'a pas été visitée
+                {
+                    unwall_up(maze, x, y); //on crée un chemin
+                    enqueue(x, y - 1, q);  //on poursuit la visite
+                    set_true(annexe, x, y - 1); //on marque la case comme visitée
+                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            else if(dir[i] == 1)
+            {
+                if(y < height - 1 && !get_bool(annexe, x, y + 1))
+                {
+                    unwall_down(maze, x, y);
+                    enqueue(x, y + 1, q);
+                    set_true(annexe, x, y + 1);
+                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            else if(dir[i] == 2)
+            {
+                if(x > 0 && !get_bool(annexe, x - 1, y))
+                {
+                    unwall_left(maze, x, y);
+                    enqueue(x - 1, y, q);
+                    set_true(annexe, x - 1, y);
+                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            else
+            {
+                if(x < width - 1 && !get_bool(annexe, x + 1, y))
+                {
+                    unwall_right(maze, x, y);
+                    enqueue(x + 1, y, q);
+                    set_true(annexe, x + 1, y);
+                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
+                    SDL_RenderFillRect(renderer, &rect1);
+                }
+            }
+            cmp++;
+            if(cmp >= temp)
+            {
+                SDL_Delay(10);
+                SDL_RenderPresent(renderer);
+                temp = size_queue(q) / 2;
+                cmp = 0;
+            }
+        }
+    }
+    wait_and_destroy_print_maze(renderer, window);
+    free_queue(q);
     free_booltab(annexe);
     return maze;
 }
