@@ -386,6 +386,14 @@ void enqueue(int x, int y, queue *q);
 // Displays an error message and stops the program in case of error.
 void dequeue(queue *q, int *x, int *y);
 
+// Returns the coordinates at the given position in the queue and removes them.
+// x, y : addresses of the variables that will receive the coordinates.
+// q : address of the queue.
+// pos : position of the coordinates in the queue (may be the x or y coordinate).
+// pos can be any integer, the function will modulo it by the queue.
+// Displays an error message and stops the program in case of error.
+void get_queue(const queue *q, int *x, int *y, int pos);
+
 // Print the queue.
 // q : address of the queue.
 void print_queue(const queue *q);
