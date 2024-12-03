@@ -354,10 +354,6 @@ void cmd(char *argv[], const int argc)
         {
             maze = one_way_maze(width, height);
         }
-        else if(!strcmp(generator, "ocm"))
-        {
-            maze = my_octopus_maze(width, height);
-        }
         else if(!strcmp(generator, "hkm"))
         {
             maze = hunt_kill_maze(width, height);
