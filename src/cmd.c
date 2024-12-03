@@ -218,14 +218,14 @@ void cmd(char *argv[], const int argc)
                 {
                     i += 2;
                 }
-                else if(!strcmp(argv[i+2], "breath"))
+                else if(!strcmp(argv[i+2], "breadth"))
                 {
                     solve_type += 4;
                     i += 2;
                 }
                 else
                 {
-                    fprintf(stderr, "Error: -slv <inspection> <solveur> : <solveur> must be specified as deep or breath\n");
+                    fprintf(stderr, "Error: -slv <inspection> <solveur> : <solveur> must be specified as deep or breadth\n");
                     return;
                 }
             }
@@ -279,14 +279,14 @@ void cmd(char *argv[], const int argc)
                 {
                     i += 2;
                 }
-                else if(!strcmp(argv[i+2], "breath"))
+                else if(!strcmp(argv[i+2], "breadth"))
                 {
                     type_show += 4;
                     i += 2;
                 }
                 else
                 {
-                    fprintf(stderr, "Error: -sh <inspection> <solveur> : <solveur> must be specified as deep or breath\n");
+                    fprintf(stderr, "Error: -sh <inspection> <solveur> : <solveur> must be specified as deep or breadth\n");
                     return;
                 }
             }

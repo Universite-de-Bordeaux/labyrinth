@@ -82,7 +82,7 @@ Analyser un labyrinthe :
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breath</span>]
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>]
 
 ### Ecrire dans un fichier
 
@@ -106,7 +106,7 @@ Afficher le déroulement d'une analyse (sans en renvoyer le résultat) :
 <span style="color:green">-sh</span> <span style="color:red">inspection</span> <span style="color:red">solver</span> 
 
 <span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breath</span>]
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>]
 
 
 Afficher un chemin :  
@@ -132,7 +132,7 @@ Sans passer par un fichier temporaire
 
 
 Enregistrer un labyrinthe et écrire le chemin le plus court pour le résoudre et les enregistrer dans des fichiers  
-./main -g bpm -w temp -ww temp_c -slv she breath
+./main -g bpm -w temp -ww temp_c -slv she breadth
 
 
 Afficher le chemin dans le labyrinthe enregistré  
