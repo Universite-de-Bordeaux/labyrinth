@@ -104,10 +104,6 @@ maze_t column_maze(const int width, const int height)
 maze_t one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
-    if(height == 1 || width == 1)
-    {
-        return maze;
-    }
     const bool_tab annexe = create_booltab(width, height);
     unsigned int r = 0, x = 0, y = 0;
     while(!(x == width - 1 && y == height - 1))
@@ -289,6 +285,75 @@ maze_t proto_comb_maze(const int width, const int height)
                 }
             }
             if(!end) break;
+        }
+    }
+    for(int i = 0; i < maze.width; i++)
+    {
+        for(int j = 0; j < maze.height; j++)
+        {
+            set_false(visited, i, j);
+        }
+    }
+    unsigned int r;
+    int t = maze.height * maze.width - 1;
+    set_true(visited, 0, 0);
+    t -= set_connexion(maze, visited, x, y);
+    bool dir[4];
+    while(t > 0) {
+        dir[0] = false, dir[1] = false, dir[2] = false, dir[3] = false;
+        do
+        {
+            getrandom(&r, sizeof(r), 0);
+            r %= maze.width * maze.height;
+            x = r % maze.width;
+            y = r / maze.width;
+        } while(get_bool(visited, x, y));
+
+        if(x > 0 && get_bool(visited, x - 1, y))
+        {
+            dir[0] = true;
+        }
+        if(x < maze.width - 1 && get_bool(visited, x + 1, y))
+        {
+            dir[1] = true;
+        }
+        if(y > 0 && get_bool(visited, x, y - 1))
+        {
+            dir[2] = true;
+        }
+        if(y < maze.height - 1 && get_bool(visited, x, y + 1))
+        {
+            dir[3] = true;
+        }
+        if(!dir[0] && !dir[1] && !dir[2] && !dir[3])
+        {
+            continue;
+        }
+        getrandom(&r, sizeof(r), 0);
+        r %= 4;
+        while(!dir[r])
+        {
+            r = (r + 1) % 4;
+        }
+        if(r == 0)
+        {
+            unwall_left(maze, x, y);
+            t -= set_connexion(maze, visited, x, y);
+        }
+        else if(r == 1)
+        {
+            unwall_right(maze, x, y);
+            t -= set_connexion(maze, visited, x, y);
+        }
+        else if(r == 2)
+        {
+            unwall_up(maze, x, y);
+            t -= set_connexion(maze, visited, x, y);
+        }
+        else
+        {
+            unwall_down(maze, x, y);
+            t -= set_connexion(maze, visited, x, y);
         }
     }
     free_booltab(visited);

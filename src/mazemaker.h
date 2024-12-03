@@ -31,6 +31,8 @@ maze_t one_way_maze(const int width, const int height);
 //every way only go to the right or down
 maze_t comb_maze(const int width, const int height);
 
+maze_t proto_comb_maze(const int width, const int height);
+
 //Creates a perfect maze (universal generator)
 //width : width of the maze
 //height : height of the maze
