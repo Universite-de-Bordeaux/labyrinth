@@ -33,7 +33,7 @@ static void print_cmd_help(char* namefile)
     printf("\nUsage %s: \n", namefile);
     printf("\nTo make a maze : \n");
     printf("\t-g <type> <nb> <nb> : generate maze (type) powm, iowm, hkm, bpm, cm (if nb) width, height\n");
-    printf("\t-g <type> : generate maze (if type) owm, lbm, hkm, bpm, lm, cm of size 10x10\n");
+    printf("\t-g <type> : generate maze (if type) owm, ocm, lbm, hkm, bpm, lm, cm of size 10x10\n");
     printf("\t-r <filename> : read maze from file\n");
     printf("\t-t <nb> : (if maze) tear the maze by removing nb%% of the walls\n");
     printf("\t-t : (if maze) tear the maze by removing 4%% of the walls\n");
@@ -353,6 +353,14 @@ void cmd(char *argv[], const int argc)
         else if(!strcmp(generator, "owm"))
         {
             maze = one_way_maze(width, height);
+        }
+        else if(!strcmp(generator, "ocm"))
+        {
+            maze = octopus_maze(width, height);
+        }
+        else if(!strcmp(generator, "mocm"))
+        {
+            maze = my_octopus_maze(width, height);
         }
         else if(!strcmp(generator, "hkm"))
         {
