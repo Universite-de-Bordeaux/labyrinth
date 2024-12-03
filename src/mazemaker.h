@@ -34,6 +34,8 @@ maze_t one_way_maze(const int width, const int height);
 // (breadth creation)
 maze_t octopus_maze(const int width, const int height);
 
+maze_t my_octopus_maze(const int width, const int height);
+
 //Creates a perfect maze
 //width : width of the maze
 //height : height of the maze

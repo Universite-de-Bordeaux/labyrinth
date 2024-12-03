@@ -584,11 +584,6 @@ int size_queue(const queue *q){
 
 void enqueue(const int x, const int y, queue *q)
 {
-    while(q->array[q->right - 1] == -1) //on supprime les cases à détruire (get_queue)
-    {
-        q->right = (q->right - 1 + q->size_array) % q->size_array;
-        q->array[q->right] = 0; //on remet à 0 pour éviter de confondre avec une case à détruire
-    }
     if(q -> right == q -> left && !isempty_queue(q))
     {
         grow_queue(q);
@@ -623,38 +618,9 @@ void dequeue(queue *q, int *x, int *y) {
     {
         q -> empty = true;
     }
-    while(q->array[q->left] == -1) //on supprime les cases à détruire (get_queue)
-    {
-        q->left = (q->left + 1) % q->size_array;
-        q->array[q->left] = 0; //on remet à 0 pour éviter de confondre avec une case à détruire
-    }
     if(size_queue(q) < q -> size_array / 4)
     {
         shrink_queue(q);
-    }
-}
-
-void get_queue(const queue *q, int *x, int *y, int pos)
-{
-    if(isempty_queue(q))
-    {
-        fprintf(stderr, "Error : try to get an element from an empty queue\n");
-        exit(EXIT_FAILURE);
-    }
-    pos = (pos % size_queue(q) + size_queue(q)) % size_queue(q);
-    if(pos % 2 == 0) //il s'agit de la position x
-    {
-        *x = q -> array[(q -> left + pos) % q -> size_array];
-        q -> array[(q -> left + pos) % q -> size_array] = -1;
-        *y = q -> array[(q -> left + pos + 1) % q -> size_array];
-        q -> array[(q -> left + pos + 1) % q -> size_array] = -1;
-    }
-    else //il s'agit de la position y
-    {
-        *x = q -> array[(q -> left + pos - 1) % q -> size_array];
-        q -> array[(q -> left + pos - 1) % q -> size_array] = -1;
-        *y = q -> array[(q -> left + pos) % q -> size_array];
-        q -> array[(q -> left + pos) % q -> size_array] = -1;
     }
 }
 
