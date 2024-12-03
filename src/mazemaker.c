@@ -322,6 +322,7 @@ maze_t my_octopus_maze(const int width, const int height)
     initial_print_maze(maze, &renderer, &window, &dh, &dv);
     int x, y;
     queue *q = create_queue();
+    stack *s = create_stack();
     getrandom(&x, sizeof(x), 0);
     if(x < 0){
         x = -x;
@@ -335,9 +336,22 @@ maze_t my_octopus_maze(const int width, const int height)
     enqueue(x, y, q); //on commence par une case aléatoire
     int temp = 1;
     int cmp = 0;
+    unsigned int r;
     set_true(annexe, x, y);
-    while(!isempty_queue(q))
+    while(!(isempty_queue(q) && isempty_stack(s)))
     {
+        while(!isempty_stack(s))
+        {
+            pop(s, &x, &y);
+            enqueue(x, y, q);
+        }
+        getrandom(&r, sizeof(r), 0);
+        r %= size_queue(q) / 2;
+        for(int i = 0; i < r; i++)
+        {
+            dequeue(q, &x, &y);
+            push(x, y, s);
+        }
         dequeue(q, &x, &y);
         cmp++;
         SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
