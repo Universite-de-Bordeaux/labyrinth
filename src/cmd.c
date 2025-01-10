@@ -15,7 +15,6 @@
 //if the conversion is not successful, out is set to 0
 static bool safe_atoi(const char *str, int *out)
 {
-    int errno;
     char *endptr;
     const long val = strtol(str, &endptr, 10);
     if(errno == ERANGE || val > INT_MAX || val < INT_MIN || *endptr != '\0' || str == endptr)
