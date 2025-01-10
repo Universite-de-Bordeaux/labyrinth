@@ -42,7 +42,7 @@ static bool safe_atoi(const char* str, int* out)
 #define WRITE_WAY "-ww <filename> : write way in file (if way)"
 #define SHOW_DEFAULT "-sh : show maze (if maze)"
 #define SHOW_ARG                                                                                                                                                                   \
-    "-sh <inspection> <SOLVEUR> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
+    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth) algorithm"
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"
