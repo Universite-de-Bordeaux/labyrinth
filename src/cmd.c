@@ -237,33 +237,34 @@ void cmd(char* argv[], const int argc)
                 }
                 else
                 {
-                    solve_type = 0;
+                    fprintf(stderr, "Error : -slv <inspection> : %s is not a valid inspection\n", argv[i + 1]);
+                    printf("usage : %s\n", SOLVEUR);
+                    printf("usage : %s\n", SOLVEUR_DEFAULT);
+                    return;
                 }
             }
-            if (solve_type != 0)
+            if (i < argc - 2)
             {
-                if (i < argc - 2)
+                printf("i < argc - 2 : %d %d\n", i, argc - 2);
+                if (!strcmp(argv[i + 2], "deep"))
                 {
-                    if (!strcmp(argv[i + 2], "deep"))
-                    {
-                        printf("deep\n");
-                        i += 2;
-                    }
-                    else if (!strcmp(argv[i + 2], "breadth"))
-                    {
-                        solve_type += 4;
-                        i += 2;
-                    }
-                    else
-                    {
-                        solve_type = -solve_type;
-                        i++;
-                    }
+                    i += 2;
+                }
+                else if (!strcmp(argv[i + 2], "breadth"))
+                {
+                    solve_type += 4;
+                    i += 2;
                 }
                 else
                 {
                     solve_type = -solve_type;
+                    i++;
                 }
+            }
+            else
+            {
+                solve_type = -solve_type;
+                i++;
             }
         }
         else if (!strcmp(argv[i], "-w"))
