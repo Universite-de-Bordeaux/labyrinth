@@ -1135,7 +1135,7 @@ void tear(const maze_t maze, const unsigned int prop)
             const bool wr = has_wall_right(maze, i, j) && i < maze.width - 1;
             if (tear && wd && wr)
             {
-                if (r() % 2 == 0)
+                if (r % 2 == 0)
                 {
                     unwall_down(maze, i, j);
                 }
