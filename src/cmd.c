@@ -238,7 +238,6 @@ void cmd(char* argv[], const int argc)
                 else
                 {
                     solve_type = 0;
-                    i++;
                 }
             }
             if (solve_type != 0)
@@ -247,9 +246,10 @@ void cmd(char* argv[], const int argc)
                 {
                     if (!strcmp(argv[i + 2], "deep"))
                     {
+                        printf("deep\n");
                         i += 2;
                     }
-                    else if (!strcmp(argv[i + 2], "breath"))
+                    else if (!strcmp(argv[i + 2], "breadth"))
                     {
                         solve_type += 4;
                         i += 2;
@@ -257,6 +257,7 @@ void cmd(char* argv[], const int argc)
                     else
                     {
                         solve_type = -solve_type;
+                        i++;
                     }
                 }
                 else
@@ -283,7 +284,7 @@ void cmd(char* argv[], const int argc)
         else if (!strcmp(argv[i], "-sh"))
         {
             show = true;
-            if (i < argc - 2)
+            if (i < argc - 1)
             {
                 if (!strcmp(argv[i + 1], "isp"))
                 {
@@ -308,14 +309,22 @@ void cmd(char* argv[], const int argc)
             }
             if (type_show != 0)
             {
-                if (!strcmp(argv[i + 2], "deep"))
+                if (i < argc - 2)
                 {
-                    i += 2;
-                }
-                else if (!strcmp(argv[i + 2], "breath"))
-                {
-                    type_show += 4;
-                    i += 2;
+                    if (!strcmp(argv[i + 2], "deep"))
+                    {
+                        i += 2;
+                    }
+                    else if (!strcmp(argv[i + 2], "breadth"))
+                    {
+                        type_show += 4;
+                        i += 2;
+                    }
+                    else
+                    {
+                        type_show = -type_show;
+                        i++;
+                    }
                 }
                 else
                 {
