@@ -70,9 +70,11 @@ int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int
 maze_t line_maze(const int width, const int height)
 {
     const maze_t maze = create_basic_maze(width, height);
+    unsigned int break_wall;
     for (int i = 0; i < width - 1; i++)
     {
-        const int break_wall = rand() % height;
+        getrandom(&break_wall, sizeof(break_wall), 0);
+        break_wall %= height;
         for (int j = 0; j < height; j++)
         {
             if (j != break_wall)
@@ -87,9 +89,11 @@ maze_t line_maze(const int width, const int height)
 maze_t column_maze(const int width, const int height)
 {
     const maze_t maze = create_basic_maze(width, height);
+    unsigned int break_wall;
     for (int i = 0; i < height - 1; i++)
     {
-        const int break_wall = rand() % width;
+        getrandom(&break_wall, sizeof(break_wall), 0);
+        break_wall %= width;
         for (int j = 0; j < width; j++)
         {
             if (j != break_wall)
@@ -105,11 +109,6 @@ maze_t one_way_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height);
-    int dh, dv;
-    SDL_Renderer* renderer = NULL;
-    SDL_Window* window = NULL;
-    initial_print_maze(maze, &renderer, &window, &dh, &dv);
-    SDL_SetRenderDrawColor(renderer, 250, 50, 0, 255);
     int x, y;
     stack* s = create_stack();
     getrandom(&x, sizeof(x), 0);
@@ -126,16 +125,9 @@ maze_t one_way_maze(const int width, const int height)
     y %= height;
     push(x, y, s); // on commence par une case aléatoire
     set_true(annexe, x, y);
-    int temp = 0;
-    const int delai = width * height / 100;
     while (!isempty_stack(s))
     {
         pop(s, &x, &y);
-        temp++;
-        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(10);
-        SDL_RenderPresent(renderer);
         int dir[4] = {0, 1, 2, 3};
         unsigned int r;
         for (int i = 0; i < 4; i++)
@@ -148,7 +140,6 @@ maze_t one_way_maze(const int width, const int height)
             dir[r] = tmp;
         }
         // on regarde les cases adjacentes (dans un ordre aléatoire)
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         for (int i = 0; i < 4; i++)
         {
             if (dir[i] == 0)
@@ -158,8 +149,6 @@ maze_t one_way_maze(const int width, const int height)
                     unwall_up(maze, x, y); // on crée un chemin
                     push(x, y - 1, s); // on poursuit la visite
                     set_true(annexe, x, y - 1); // on marque la case comme visitée
-                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 1)
@@ -169,8 +158,6 @@ maze_t one_way_maze(const int width, const int height)
                     unwall_down(maze, x, y);
                     push(x, y + 1, s);
                     set_true(annexe, x, y + 1);
-                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 2)
@@ -180,8 +167,6 @@ maze_t one_way_maze(const int width, const int height)
                     unwall_left(maze, x, y);
                     push(x - 1, y, s);
                     set_true(annexe, x - 1, y);
-                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else
@@ -191,20 +176,10 @@ maze_t one_way_maze(const int width, const int height)
                     unwall_right(maze, x, y);
                     push(x + 1, y, s);
                     set_true(annexe, x + 1, y);
-                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
         }
-        SDL_SetRenderDrawColor(renderer, 250, 50, 0, 255);
-        if (temp >= delai)
-        {
-            SDL_Delay(10);
-            SDL_RenderPresent(renderer);
-            temp = 0;
-        }
     }
-    destroy_print_maze(renderer, window);
     free_stack(s);
     free_booltab(annexe);
     return maze;
@@ -214,10 +189,6 @@ maze_t octopus_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height);
-    int dh, dv;
-    SDL_Renderer* renderer = NULL;
-    SDL_Window* window = NULL;
-    initial_print_maze(maze, &renderer, &window, &dh, &dv);
     int x, y;
     queue* q = create_queue();
     getrandom(&x, sizeof(x), 0);
@@ -233,15 +204,10 @@ maze_t octopus_maze(const int width, const int height)
     }
     y %= height;
     enqueue(x, y, q); // on commence par une case aléatoire
-    int temp = 1;
-    int cmp = 0;
     set_true(annexe, x, y);
     while (!isempty_queue(q))
     {
         dequeue(q, &x, &y);
-        cmp++;
-        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
-        SDL_RenderFillRect(renderer, &rect);
         int dir[4] = {0, 1, 2, 3};
         unsigned int r;
         for (int i = 0; i < 4; i++)
@@ -263,8 +229,6 @@ maze_t octopus_maze(const int width, const int height)
                     unwall_up(maze, x, y); // on crée un chemin
                     enqueue(x, y - 1, q); // on poursuit la visite
                     set_true(annexe, x, y - 1); // on marque la case comme visitée
-                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 1)
@@ -274,8 +238,6 @@ maze_t octopus_maze(const int width, const int height)
                     unwall_down(maze, x, y);
                     enqueue(x, y + 1, q);
                     set_true(annexe, x, y + 1);
-                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 2)
@@ -285,8 +247,6 @@ maze_t octopus_maze(const int width, const int height)
                     unwall_left(maze, x, y);
                     enqueue(x - 1, y, q);
                     set_true(annexe, x - 1, y);
-                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else
@@ -296,21 +256,10 @@ maze_t octopus_maze(const int width, const int height)
                     unwall_right(maze, x, y);
                     enqueue(x + 1, y, q);
                     set_true(annexe, x + 1, y);
-                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
-            }
-            cmp++;
-            if (cmp >= temp)
-            {
-                SDL_Delay(10);
-                SDL_RenderPresent(renderer);
-                temp = size_queue(q) / 2;
-                cmp = 0;
             }
         }
     }
-    wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
     free_booltab(annexe);
     return maze;
@@ -320,10 +269,6 @@ maze_t my_octopus_maze(const int width, const int height)
 {
     const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height);
-    int dh, dv;
-    SDL_Renderer* renderer = NULL;
-    SDL_Window* window = NULL;
-    initial_print_maze(maze, &renderer, &window, &dh, &dv);
     int x, y;
     queue* q = create_queue();
     stack* s = create_stack();
@@ -340,9 +285,7 @@ maze_t my_octopus_maze(const int width, const int height)
     }
     y %= height;
     enqueue(x, y, q); // on commence par une case aléatoire
-    int temp = 1;
-    int cmp = 0;
-    unsigned int r;
+    int r;
     set_true(annexe, x, y);
     while (!(isempty_queue(q) && isempty_stack(s)))
     {
@@ -352,23 +295,19 @@ maze_t my_octopus_maze(const int width, const int height)
             enqueue(x, y, q);
         }
         getrandom(&r, sizeof(r), 0);
-        r %= size_queue(q) / 2;
+        r = abs(r) % (size_queue(q) / 2);
         for (int i = 0; i < r; i++)
         {
             dequeue(q, &x, &y);
             push(x, y, s);
         }
         dequeue(q, &x, &y);
-        cmp++;
-        SDL_Rect rect = {x * dh + 1, y * dv + 1, dh - 2, dv - 2};
-        SDL_RenderFillRect(renderer, &rect);
         int dir[4] = {0, 1, 2, 3};
-        unsigned int r;
         for (int i = 0; i < 4; i++)
         {
             // on mélange les directions
             getrandom(&r, sizeof(r), 0);
-            r %= 4;
+            r = abs(r) % 4;
             const int tmp = dir[i];
             dir[i] = dir[r];
             dir[r] = tmp;
@@ -383,8 +322,6 @@ maze_t my_octopus_maze(const int width, const int height)
                     unwall_up(maze, x, y); // on crée un chemin
                     enqueue(x, y - 1, q); // on poursuit la visite
                     set_true(annexe, x, y - 1); // on marque la case comme visitée
-                    SDL_Rect rect1 = {x * dh + 1, (y - 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 1)
@@ -394,8 +331,6 @@ maze_t my_octopus_maze(const int width, const int height)
                     unwall_down(maze, x, y);
                     enqueue(x, y + 1, q);
                     set_true(annexe, x, y + 1);
-                    SDL_Rect rect1 = {x * dh + 1, (y + 1) * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else if (dir[i] == 2)
@@ -405,8 +340,6 @@ maze_t my_octopus_maze(const int width, const int height)
                     unwall_left(maze, x, y);
                     enqueue(x - 1, y, q);
                     set_true(annexe, x - 1, y);
-                    SDL_Rect rect1 = {(x - 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
             }
             else
@@ -416,21 +349,10 @@ maze_t my_octopus_maze(const int width, const int height)
                     unwall_right(maze, x, y);
                     enqueue(x + 1, y, q);
                     set_true(annexe, x + 1, y);
-                    SDL_Rect rect1 = {(x + 1) * dh + 1, y * dv + 1, dh - 2, dv - 2};
-                    SDL_RenderFillRect(renderer, &rect1);
                 }
-            }
-            cmp++;
-            if (cmp >= temp)
-            {
-                SDL_Delay(10);
-                SDL_RenderPresent(renderer);
-                temp = size_queue(q) / 2;
-                cmp = 0;
             }
         }
     }
-    wait_and_destroy_print_maze(renderer, window);
     free_queue(q);
     free_booltab(annexe);
     return maze;
@@ -451,12 +373,12 @@ maze_t comb_maze(const int width, const int height)
     while (x != width - 1 || y != height - 1)
     {
         if (y == height - 1)
-        {
+        { // NOLINT(*-branch-clone)
             unwall_right(maze, x, y);
             set_true(visited, x, y);
             x++;
         }
-        else if (x == width - 1 || rand() % 2 == 0)
+        else if (x == width - 1 || rand() % 2 == 0) // NOLINT(*-msc50-cpp)
         {
             unwall_down(maze, x, y);
             set_true(visited, x, y);
@@ -486,7 +408,7 @@ maze_t comb_maze(const int width, const int height)
                     is_done = false;
                     while (!get_bool(visited, x, y))
                     {
-                        if (rand() % 2 == 0 && i > 0)
+                        if (rand() % 2 == 0 && i > 0) // NOLINT(*-msc50-cpp)
                         {
                             unwall_left(maze, x, y);
                             set_true(visited, x, y);
@@ -526,12 +448,12 @@ maze_t proto_comb_maze(const int width, const int height)
             const bool down = y < height - 1;
             set_true(visited, x, y);
             if (!right) // on ne peut que descendre
-            {
+            { // NOLINT(*-branch-clone)
                 unwall_down(maze, x, y);
                 y++;
                 set_true(visited, x, y);
             }
-            else if (!down || rand() % 2 == 1) // on ne peut que aller à droite ou on le tire aléatoirement
+            else if (!down || rand() % 2 == 1) // on ne peut que aller à droite ou on le tire aléatoirement NOLINT(*-msc50-cpp)
             {
                 unwall_right(maze, x, y);
                 x++;
@@ -569,7 +491,7 @@ maze_t proto_comb_maze(const int width, const int height)
             set_false(visited, i, j);
         }
     }
-    unsigned int r;
+    int r;
     int t = maze.height * maze.width - 1;
     set_true(visited, 0, 0);
     t -= set_connexion(maze, visited, x, y);
@@ -581,8 +503,8 @@ maze_t proto_comb_maze(const int width, const int height)
         {
             getrandom(&r, sizeof(r), 0);
             r %= maze.width * maze.height;
-            x = r % maze.width;
-            y = r / maze.width;
+            x = abs(r) % maze.width;
+            y = abs(r) / maze.width;
         }
         while (get_bool(visited, x, y));
 
@@ -607,7 +529,7 @@ maze_t proto_comb_maze(const int width, const int height)
             continue;
         }
         getrandom(&r, sizeof(r), 0);
-        r %= 4;
+        r = abs(r) % 4;
         while (!dir[r])
         {
             r = (r + 1) % 4;
@@ -653,8 +575,9 @@ maze_t hunt_kill_maze(const int width, const int height)
     const bool_tab visited = create_booltab(width, height);
 
     // choisir une cellule aléatoire
-    int x = rand() % width;
-    int y = rand() % height;
+    int x, y;
+    getrandom(&x, sizeof(x), 0), getrandom(&y, sizeof(y), 0);
+    x = abs(x) % width, y = abs(y) % height;
     // cette cellule est visitée
     set_true(visited, x, y);
 
@@ -672,7 +595,7 @@ maze_t hunt_kill_maze(const int width, const int height)
             size = 4;
             while (size > 0) // tant qu'il reste des directions possibles et qu'on n'en a pas tiré de valide
             {
-                const int r = rand() % size;
+                const int r = rand() % size; // NOLINT(*-msc50-cpp)
                 c = dir[r];
                 if (c == 'R' && x + 1 < width && !get_bool(visited, x + 1, y)) // si on a tiré la direction droite et qu'on peut y aller
                 {
@@ -780,7 +703,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                 size++;
             }
             // chercher une cellule visitée adjacente à notre cellule non visitée
-            c = dir[rand() % size];
+            c = dir[rand() % size]; // NOLINT(*-msc50-cpp)
             if (c == 'R')
             {
                 unwall_right(maze, x, y);
@@ -832,7 +755,7 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
     int impossible_dir = 0; // compteur de direction en moins
     while (impossible_dir < 4)
     { // tant qu'il nous reste des directions
-        int choice = rand() % (4 - impossible_dir); // choix d'une direction
+        int choice = rand() % (4 - impossible_dir); // choix d'une direction NOLINT(*-msc50-cpp)
         while (tab_dir[choice]) // si notre direction n'est pas possible, on passe à la suivante
             choice++;
         switch (choice)
@@ -998,7 +921,7 @@ maze_t by_path_maze(const int width, const int height)
     }
     if (!get_bool(tab_visited, width - 1, height - 1))
     { // si on n'est jamais passé par la sortie, alors on passe
-        if (rand() % 2)
+        if (rand() % 2) // NOLINT(*-msc50-cpp)
             wall_up(maze, width - 1, height - 1);
         else
             wall_left(maze, width - 1, height - 1);
@@ -1017,17 +940,17 @@ maze_t cross_maze(const int width, const int height)
     const bool_tab annexe = create_booltab(width, height); // tableau de booléens pour savoir si une case a été traitée
     int t = width * height; // nombre de cases à traiter
     // on commence par crréer des chemins (en forme d'étoiles)
-    unsigned int r;
+    int r;
     while (t > 0)
     {
         do
         {
             getrandom(&r, sizeof(r), 0);
-            r %= width * height;
+            r = abs(r) % (width * height);
         }
         while (get_bool(annexe, r % width, r / width));
-        const int x = r % width;
-        const int y = r / width;
+        const int x = abs(r) % width;
+        const int y = abs(r) / width;
         set_true(annexe, x, y);
         t--;
         // on ouvre les murs
@@ -1064,11 +987,11 @@ maze_t cross_maze(const int width, const int height)
         }
     }
     // on va connexter les cases non connexes
-    unsigned int x, y;
+    int x, y;
     getrandom(&x, sizeof(x), 0);
     getrandom(&y, sizeof(y), 0);
-    x %= width;
-    y %= height;
+    x = abs(x) % width;
+    y = abs(y) % height;
     set_true(annexe, x, y); // on marque la case comme celle de départ
     t = width * height - 1; // nombre de cases à traiter
     if (!has_wall_down(maze, x, y))
@@ -1092,11 +1015,11 @@ maze_t cross_maze(const int width, const int height)
         do
         {
             getrandom(&r, sizeof(r), 0);
-            r %= width * height;
+            r = abs(r) % (width * height);
         }
         while (get_bool(annexe, r % width, r / width));
-        x = r % width;
-        y = r / width;
+        x = abs(r) % width;
+        y = abs(r) / width;
         // on regarde les directions possibles
         int size = 0;
         bool dir[3] = {false, false, false}; // tableau des directions possibles (la 4eme est assuré par les 3 autres et le size)
@@ -1124,7 +1047,7 @@ maze_t cross_maze(const int width, const int height)
             continue; // on passe à la case suivante
         }
         getrandom(&r, sizeof(r), 0);
-        r %= size;
+        r = abs(r) % size;
         if (r == 0) // la première direction peut être n'importe laquelle
         {
             if (dir[0]) // on regarde si la direction est possible
@@ -1198,19 +1121,21 @@ void tear(const maze_t maze, const unsigned int prop)
     if (prop > 100)
     {
         fprintf(stderr, "Erreur: la probabilité de déchirure doit être comprise entre 0 et 100, soumis : %d\n", prop);
-        printf("exit de tear sans intervention\n");
+        printf("sortie de tear sans intervention\n");
         return;
     }
+    short unsigned int r;
     for (int i = 0; i < maze.width; i++)
     {
         for (int j = 0; j < maze.height; j++)
         {
-            const bool tear = rand() % 100 < prop;
+            getrandom(&r, sizeof(r), 0);
+            const bool tear = (r % 100) < prop;
             const bool wd = has_wall_down(maze, i, j) && j < maze.height - 1;
             const bool wr = has_wall_right(maze, i, j) && i < maze.width - 1;
             if (tear && wd && wr)
             {
-                if (rand() % 2 == 0)
+                if (r() % 2 == 0)
                 {
                     unwall_down(maze, i, j);
                 }
