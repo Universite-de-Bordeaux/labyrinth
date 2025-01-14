@@ -46,7 +46,7 @@ int evaluate_mazemaker(func_ptr f);
         const int t = evaluate_mazemaker(generator);                                                                                                                               \
         if (t == 3)                                                                                                                                                                \
         {                                                                                                                                                                          \
-            printf("The %s seem to create perfect mazes");                                                                                                                         \
+            printf("The %s seem to create perfect mazes", name);                                                                                                                   \
         }                                                                                                                                                                          \
         else if (t == 2)                                                                                                                                                           \
         {                                                                                                                                                                          \
