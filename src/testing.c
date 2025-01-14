@@ -18,7 +18,7 @@ static void usage(const char* name)
     printf("\t b : basic maze\n");
     printf("\t m : basic walled maze\n");
     printf("\t cbm : comb maze\n");
-    printf("\t own : one way maze\n");
+    printf("\t owm : one way maze\n");
     printf("\t ocm : octopus maze\n");
     printf("\t hkm : hunt kill maze\n");
     printf("\t bpm : by path maze\n");
@@ -116,33 +116,41 @@ int main(const int argc, char* argv[])
     }
     // récupération du générateur
     func_ptr f;
+    char* generator_name;
     if (!strcmp(generator, "b"))
     {
         f = create_basic_maze;
+        generator_name = "basic generator";
     }
     else if (!strcmp(generator, "m"))
     {
         f = create_wall_maze;
+        generator_name = "basic wall generator";
     }
     else if (!strcmp(generator, "cbm"))
     {
         f = comb_maze;
+        generator_name = "comb generator";
     }
-    else if (!strcmp(generator, "own"))
+    else if (!strcmp(generator, "owm"))
     {
         f = one_way_maze;
+        generator_name = "one way generator";
     }
     else if (!strcmp(generator, "ocm"))
     {
         f = my_octopus_maze;
+        generator_name = "octopus generator";
     }
     else if (!strcmp(generator, "hkm"))
     {
         f = hunt_kill_maze;
+        generator_name = "hunt kill generator";
     }
     else if (!strcmp(generator, "bpm"))
     {
         f = by_path_maze;
+        generator_name = "by path generator";
     }
     else if (!strcmp(generator, "sm"))
     {
@@ -156,10 +164,12 @@ int main(const int argc, char* argv[])
         {
             f = column_maze;
         }
+        generator_name = "straight generator";
     }
     else if (!strcmp(generator, "cm"))
     {
         f = cross_maze;
+        generator_name = "cross generator";
     }
     else
     {
@@ -170,48 +180,48 @@ int main(const int argc, char* argv[])
     // évaluation
     if (evaluate)
     {
-        printf("Evaluation of %s, criteria : solvable, connected, perfect\n", generator);
-        EVALUATE_MAZEMAKERN(f, generator);
+        printf("Evaluation of the %s, criteria : solvable, connected, perfect\n", generator_name);
+        EVALUATE_MAZEMAKERN(f, generator_name);
     }
     if (timed)
     {
-        printf("Evaluation of %s, criteria : time\n", generator);
-        evaluate_time(f, generator);
+        printf("Evaluation of the %s, criteria : time\n", generator_name);
+        evaluate_time(f, generator_name);
     }
     if (evaluate_solvable)
     {
-        printf("Evaluation of %s, criteria : solvable\n", generator);
+        printf("Evaluation of the %s, criteria : solvable\n", generator_name);
         if (do_made_solvable_maze(f, nb, nb))
         {
-            printf("%s seems to create solvable mazes\n", generator);
+            printf("The %s seems to create solvable mazes\n", generator_name);
         }
         else
         {
-            printf("%s do not create solvable mazes\n", generator);
+            printf("The %s do not create solvable mazes\n", generator_name);
         }
     }
     if (evaluate_connected)
     {
-        printf("Evaluation of %s, criteria : connected\n", generator);
+        printf("Evaluation of the %s, criteria : connected\n", generator_name);
         if(do_made_connected_maze(f, nb, nb))
         {
-            printf("%s seems to create connected mazes\n", generator);
+            printf("The %s seems to create connected mazes\n", generator_name);
         }
         else
         {
-            printf("%s do not create connected mazes\n", generator);
+            printf("The %s do not create connected mazes\n", generator_name);
         }
     }
     if (evaluate_perfect)
     {
-        printf("Evaluation of %s, criteria : perfect\n", generator);
+        printf("Evaluation of the %s, criteria : perfect\n", generator_name);
         if (do_made_perfect_maze(f, nb, nb))
         {
-            printf("%s seems to create perfect mazes\n", generator);
+            printf("The %s seems to create perfect mazes\n", generator_name);
         }
         else
         {
-            printf("%s do not create perfect mazes\n", generator);
+            printf("The %s do not create perfect mazes\n", generator_name);
         }
     }
     return EXIT_SUCCESS;
