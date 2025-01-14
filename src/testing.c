@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <sys/random.h>
+#include <stdbool.h>
 
 #include "mazemaker.h"
 //comparable à cmd.c, ce fichier va uniquement gérer les arguments de la ligne de commande
@@ -10,7 +11,7 @@ static void usage(const char* name)
 {
     printf("usage : %s\n", name);
 
-    printf(".\\%s -h or .\\%s--help : display this help\n", name, name);
+    printf(".\\\\%s -h or .\\\\%s--help : display this help\n", name, name);
     printf(".\\%s <generator> <nb> [options] : evaluate the generator\n", name);
 
     printf("\nfixed tests :\n");
@@ -46,6 +47,7 @@ static void usage(const char* name)
 static bool safe_atoi(const char* str, int* out)
 {
     char* endptr;
+    errno = 0;
     const long val = strtol(str, &endptr, 10);
     if (errno == ERANGE || val > INT_MAX || val < INT_MIN || *endptr != '\0' || str == endptr)
     {
