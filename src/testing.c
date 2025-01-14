@@ -10,24 +10,11 @@
 static void usage(const char* name)
 {
     printf("usage : %s\n", name);
+    printf("-h or --help : display this help\n");
+    printf("<generator> <nb> [options] : evaluate the generator\n");
 
-    printf(".\\\\%s -h or .\\\\%s--help : display this help\n", name, name);
-    printf(".\\%s <generator> <nb> [options] : evaluate the generator\n", name);
-
-    printf("\nfixed tests :\n");
-    printf("--evaluated or -e : trigger the general evaluation\n");
-    printf("--timed or -t : trigger the time evaluation\n");
-    printf("<nb> won't be used\n");
-
-    printf("\nspecific tests :\n");
-    printf("--evaluate_solvable or -es : trigger the evaluation of solvability\n");
-    printf("--evaluate_connected or -ec : trigger the evaluation of connectivity\n");
-    printf("--evaluate_perfect or -ep : trigger the evaluation of perfection\n");
-    printf("an negative result triggers a visualisation of the problem\n");
-    printf("warning : with a too high <nb>, the program may take a long time to execute\n");
-
-    printf("\n<nb> must be an integer, its default value is 100\n");
-    printf("<generator> must be a valid generator :\n");
+    printf("\n<nb> must be an integer, its default value is 100, so it can be omitted\n");
+    printf("<generator> must be one of the following :\n");
     printf("\t b : basic maze\n");
     printf("\t m : basic walled maze\n");
     printf("\t cbm : comb maze\n");
@@ -37,6 +24,21 @@ static void usage(const char* name)
     printf("\t bpm : by path maze\n");
     printf("\t sm : straight maze\n");
     printf("\t cm : cross maze\n");
+
+    printf("\noptions :\n");
+    printf("\nfixed tests :\n");
+    printf("--evaluated or -e : trigger the general evaluation\n");
+    printf("--timed or -t : trigger the time evaluation\n");
+    printf("<nb> won't be used here\n");
+
+    printf("\nspecific tests :\n");
+    printf("--evaluate_solvable or -es : trigger the evaluation of solvability\n");
+    printf("--evaluate_connected or -ec : trigger the evaluation of connectivity\n");
+    printf("--evaluate_perfect or -ep : trigger the evaluation of perfection\n");
+    printf("an negative result triggers a visualisation of the problem\n");
+    printf("nb is used to determine the size of the maze and the number of tests\n");
+    printf("warning : the evaluation is exponential in time\n");
+
 }
 
 // convert a string to an integer safely
@@ -168,14 +170,17 @@ int main(const int argc, char* argv[])
     // évaluation
     if (evaluate)
     {
+        printf("Evaluation of %s, criteria : solvable, connected, perfect\n", generator);
         EVALUATE_MAZEMAKERN(f, generator);
     }
     if (timed)
     {
+        printf("Evaluation of %s, criteria : time\n", generator);
         evaluate_time(f, generator);
     }
     if (evaluate_solvable)
     {
+        printf("Evaluation of %s, criteria : solvable\n", generator);
         if (do_made_solvable_maze(f, nb, nb))
         {
             printf("%s seems to create solvable mazes\n", generator);
@@ -187,6 +192,7 @@ int main(const int argc, char* argv[])
     }
     if (evaluate_connected)
     {
+        printf("Evaluation of %s, criteria : connected\n", generator);
         if(do_made_connected_maze(f, nb, nb))
         {
             printf("%s seems to create connected mazes\n", generator);
@@ -198,6 +204,7 @@ int main(const int argc, char* argv[])
     }
     if (evaluate_perfect)
     {
+        printf("Evaluation of %s, criteria : perfect\n", generator);
         if (do_made_perfect_maze(f, nb, nb))
         {
             printf("%s seems to create perfect mazes\n", generator);
