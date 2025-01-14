@@ -178,10 +178,11 @@ int evaluate_time(const func_ptr f, char* name)
     {
         score4 = 0;
     }
-    printf("Le générateur %s a un score de %d/100 : \n", name, score1 + score2 + score3 + score4);
-    printf("\tScore de génération standard : %d/50\n", score1);
-    printf("\tScore de génération de labyrinthes ligne/colonne : %d/10\n", score2);
-    printf("\tScore de génération de labyrinthes 4x4 : %d/15\n", score3);
-    printf("\tScore de génération de labyrinthes 100x100 : %d/25\n", score4);
+    printf("The %s has been evaluated\n", name);
+    printf("\tStandard generation score : %d/50\n", score1);
+    printf("\tLine/Column generation score : %d/10\n", score2);
+    printf("\t4x4 maze generation score : %d/15\n", score3);
+    printf("\t100x100 maze generation score : %d/25\n", score4);
+    printf("\tTotal score : %d/100\n", score1 + score2 + score3 + score4);
     return score1 + score2 + score3 + score4;
 }

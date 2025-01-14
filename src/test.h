@@ -46,19 +46,19 @@ int evaluate_mazemaker(func_ptr f);
         const int t = evaluate_mazemaker(generator);                                                                                                                               \
         if (t == 3)                                                                                                                                                                \
         {                                                                                                                                                                          \
-            printf("%s semble créer des labyrinthes parfaits\n", name);                                                                                                            \
+            printf("The %s seem to create perfect mazes");                                                                                                                         \
         }                                                                                                                                                                          \
         else if (t == 2)                                                                                                                                                           \
         {                                                                                                                                                                          \
-            printf("%s semble créer des labyrinthes connexes\n", name);                                                                                                            \
+            printf("The %s seem to create connected mazes\n", name);                                                                                                               \
         }                                                                                                                                                                          \
         else if (t == 1)                                                                                                                                                           \
         {                                                                                                                                                                          \
-            printf("%s semble créer des labyrinthes solvables\n", name);                                                                                                           \
+            printf("The %s seem to create solvable mazes\n", name);                                                                                                                \
         }                                                                                                                                                                          \
         else                                                                                                                                                                       \
         {                                                                                                                                                                          \
-            printf("%s n'est pas conforme au cahier des charges\n", name);                                                                                                         \
+            printf("The %s do not seem to create solvable mazes\n", name);                                                                                                         \
         }                                                                                                                                                                          \
     }                                                                                                                                                                              \
     while (0)
