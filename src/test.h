@@ -13,6 +13,14 @@ typedef maze_t (*func_ptr)(int, int);
 // exponential in time (do not use for large values of x and y)
 bool do_made_solvable_maze(const func_ptr f, const int x, const int y);
 
+// function to analysed if a maze is connected
+// f : pointer to the maze generator function
+// x : the range of the width of the maze
+// y : the range of the height of the maze
+// return true if generator looks making connected maze, false otherwise
+// exponential in time (do not use for large values of x and y)
+bool do_made_connected_maze(const func_ptr f, const int x, const int y);
+
 // function to analysed if a maze is perfect
 // f : pointer to the maze generator function
 // x : the range of the width of the maze

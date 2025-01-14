@@ -20,6 +20,24 @@ bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
     return true;
 }
 
+bool do_make_connected_maze(const func_ptr f, const int x, const int y)
+{
+    for (int i = 1; i < x; i++)
+    {
+        for (int j = 1; j < y; j++)
+        {
+            const maze_t maze = f(i, j);
+            if (!is_connexe_breadth_inspector(maze))
+            {
+                free_maze(maze);
+                return false;
+            }
+            free_maze(maze);
+        }
+    }
+    return true;
+}
+
 bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
 {
     for (int i = 1; i < x; i++)
