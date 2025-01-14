@@ -11,7 +11,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 # Define source files for libraries
 set(MAZE_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/outside.c src/cmd.c)
-set(TEST_SOURCES src/test.c)
+set(TEST_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/test.c)
 
 # Create libraries
 add_library(maze ${MAZE_SOURCES})
@@ -23,4 +23,4 @@ add_executable(test src/testing.c)
 
 # Link libraries to executables
 target_link_libraries(main maze ${SDL2_LIBRARIES})
-target_link_libraries(test maze test_interne ${SDL2_LIBRARIES})
+target_link_libraries(test test_interne ${SDL2_LIBRARIES})
