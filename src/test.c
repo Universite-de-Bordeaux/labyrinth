@@ -21,7 +21,7 @@ bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
     return true;
 }
 
-bool do_make_connected_maze(const func_ptr f, const int x, const int y)
+bool do_made_connected_maze(const func_ptr f, const int x, const int y)
 {
     for (int i = 1; i < x; i++)
     {
