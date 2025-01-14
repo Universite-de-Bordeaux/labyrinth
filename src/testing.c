@@ -180,7 +180,7 @@ int main(const int argc, char* argv[])
     // évaluation
     if (evaluate)
     {
-        printf("Evaluation of the %s, criteria : solvable, connected, perfect\n", generator_name);
+        printf("Evaluation of the %s, criteria : general\n", generator_name);
         EVALUATE_MAZEMAKERN(f, generator_name);
     }
     if (timed)
