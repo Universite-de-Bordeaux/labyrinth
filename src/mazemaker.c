@@ -562,15 +562,15 @@ maze_t proto_comb_maze(const int width, const int height)
 
 maze_t hunt_kill_maze(const int width, const int height)
 {
+    if (height == 1 || width == 1) // si le labyrinthe n'a qu'une dimension, il est parfait
+    {
+        return create_basic_maze(width, height);
+    }
     // INITIALISATION
     // Créer un labyrithe avec tous les murs fermés
     // width : largeur du labyrinthe
     // height : hauteur du labyrinthe
     const maze_t maze = create_wall_maze(width, height);
-    if (height == 1 || width == 1) // si le labyrinthe n'a quune dimension, il est parfait
-    {
-        return maze;
-    }
 
     // création d'un tableau repertoriant si une cellule a été visitée
     const bool_tab visited = create_booltab(width, height);
