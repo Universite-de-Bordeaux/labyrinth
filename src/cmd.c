@@ -28,8 +28,8 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
-#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type) powm, iowm, hkm, bpm, cm (if nb) width, height"
-#define GENERATE_TYPE "-g <type> : generate maze (if type) owm, ocm, lbm, hkm, bpm, lm, cm of size 10x10"
+#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, cm, sm) of size nb x nb"
+#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, cm, sm) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
 #define READ_WAY "-rw <filename> : read way from file"
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
