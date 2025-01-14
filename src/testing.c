@@ -224,5 +224,6 @@ int main(const int argc, char* argv[])
             printf("The %s do not create perfect mazes\n", generator_name);
         }
     }
+    printf("End of the evaluation\n");
     return EXIT_SUCCESS;
 }
