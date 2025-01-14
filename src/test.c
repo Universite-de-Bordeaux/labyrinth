@@ -11,6 +11,7 @@ bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
             const maze_t maze = f(i, j);
             if (!has_exit_deep_seeker(maze))
             {
+                show_best_exit_deep_seeker(maze);
                 free_maze(maze);
                 return false;
             }
@@ -29,6 +30,7 @@ bool do_make_connected_maze(const func_ptr f, const int x, const int y)
             const maze_t maze = f(i, j);
             if (!is_connexe_breadth_inspector(maze))
             {
+                show_is_connexe_breadth_inspector(maze);
                 free_maze(maze);
                 return false;
             }
@@ -47,6 +49,7 @@ bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
             const maze_t maze = f(i, j);
             if (!is_perfect_deep_inspector(maze))
             {
+                show_is_perfect_deep_inspector(maze);
                 free_maze(maze);
                 return false;
             }
