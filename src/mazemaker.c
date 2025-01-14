@@ -5,6 +5,7 @@
 #include <sys/random.h>
 #include <time.h>
 #include "outside.h"
+#include "struct.h"
 
 // Auxiliary functions
 // update the connexity of the maze by adding a connexion to the cell (dx, dy) if it is connected to the cell (0, 0)
@@ -747,58 +748,63 @@ maze_t hunt_kill_maze(const int width, const int height)
 
 #define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
 
+static int can_move_dir(const maze_t* maze, int* x, int* y, const bool_tab tab_visited, int dir)
+{
+    switch (dir)
+    {
+    case 0:
+        return CAN_MOVE_LEFT;
+    case 1:
+        return CAN_MOVE_RIGHT;
+    case 2:
+        return CAN_MOVE_UP;
+    case 3:
+        return CAN_MOVE_DOWN;
+    default:
+        fprintf(stderr, "Problem in the switch case in lbp_path_move");
+        exit(EXIT_FAILURE);
+    }
+}
+
 // Auxiliary functions for lab_by_path
 // To apply a random move to the current cell
 bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
 {
-    bool tab_dir[4] = {}; // créatrion du tableau de possibilité de direction
-    int impossible_dir = 0; // compteur de direction en moins
-    while (impossible_dir < 4)
-    { // tant qu'il nous reste des directions
-        int choice = rand() % (4 - impossible_dir); // choix d'une direction NOLINT(*-msc50-cpp)
-        while (tab_dir[choice]) // si notre direction n'est pas possible, on passe à la suivante
-            choice++;
-        switch (choice)
-        {
-        case 0:
-            if (CAN_MOVE_LEFT)
-            {
-                (*x)--;
-                set_true(tab_visited, *x, *y);
-                return true;
-            }
-            break;
-        case 1:
-            if (CAN_MOVE_RIGHT)
-            {
-                (*x)++;
-                set_true(tab_visited, *x, *y);
-                return true;
-            }
-            break;
-        case 2:
-            if (CAN_MOVE_UP)
-            {
-                (*y)--;
-                set_true(tab_visited, *x, *y);
-                return true;
-            }
-            break;
-        case 3:
-            if (CAN_MOVE_DOWN)
-            {
-                (*y)++;
-                set_true(tab_visited, *x, *y);
-                return true;
-            }
-            break;
-        default:
-            fprintf(stderr, "Problem in the switch case in lbp_path_move");
-            exit(EXIT_FAILURE);
-        }
-        tab_dir[choice] = true;
-        impossible_dir++;
+    if (!(CAN_MOVE_LEFT || CAN_MOVE_RIGHT || CAN_MOVE_UP || CAN_MOVE_DOWN))
+    {
+        return false;
     }
+    // tant qu'il nous reste des directions
+    int choice = rand() % 4; // choix d'une direction NOLINT(*-msc50-cpp)
+    while (!can_move_dir(maze, x, y, tab_visited, choice)) // si notre direction n'est pas possible, on passe à la suivante
+        choice = rand() % (4);
+    switch (choice)
+    {
+    case 0:
+        (*x)--;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 1:
+        (*x)++;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 2:
+        (*y)--;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 3:
+        (*y)++;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    default:
+        fprintf(stderr, "Problem in the switch case in lbp_path_move");
+        exit(EXIT_FAILURE);
+    }
+
     return false;
 }
 // Auxiliary functions for lab_by_path
@@ -808,80 +814,22 @@ void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab t
     int width = maze->width, height = maze->height;
     set_true(tab_visited, *x, *y);
 
-    if (*x == 0 && *y == height - 1)
-    { // coin bas gauche
-        if (*y - 1 != *y_2 && get_bool(tab_visited, *x, (*y) - 1))
-            wall_up(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, (*x) + 1, *y))
-            wall_right(*maze, *x, *y);
+    if (!CAN_MOVE_UP && !has_wall_up(*maze, *x, *y) && *y != *y_2 + 1)
+    {
+        wall_up(*maze, *x, *y);
     }
-    else if (*x == width - 1 && *y == height - 1)
-    { // coin bas droit
-        if ((*y) - 1 != *y_2 && get_bool(tab_visited, *x, (*y) - 1))
-            wall_up(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, (*x) - 1, *y))
-            wall_left(*maze, *x, *y);
+
+    if (!CAN_MOVE_DOWN && !has_wall_down(*maze, *x, *y) && *y != *y_2 - 1)
+    {
+        wall_down(*maze, *x, *y);
     }
-    else if (*x == 0 && *y == height - 1)
-    { // coin haut gauche
-        if ((*y) + 1 != *y_2 && get_bool(tab_visited, *x, (*y) + 1))
-            wall_down(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, (*x) + 1, *y))
-            wall_right(*maze, *x, *y);
+    if (!CAN_MOVE_LEFT && !has_wall_left(*maze, *x, *y) && *x != *x_2 + 1)
+    {
+        wall_left(*maze, *x, *y);
     }
-    else if (*x == width - 1 && *y == 0)
-    { // coin du haut droit
-        if ((*y) + 1 != *y_2 && get_bool(tab_visited, *x, *y + 1))
-            wall_down(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, *x - 1, *y))
-            wall_left(*maze, *x, *y);
-    }
-    else if (*x == 0)
-    { // colonne gauche
-        if (*y - 1 != *y_2 && get_bool(tab_visited, *x, *y - 1))
-            wall_up(*maze, *x, *y);
-        if (*y + 1 != *y_2 && get_bool(tab_visited, *x, *y + 1))
-            wall_down(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, *x + 1, *y))
-            wall_right(*maze, *x, *y);
-    }
-    else if (*x == width - 1)
-    { // colonne droite
-        if (*y - 1 != *y_2 && get_bool(tab_visited, *x, *y - 1))
-            wall_up(*maze, *x, *y);
-        if (*y + 1 != *y_2 && get_bool(tab_visited, *x, *y + 1))
-            wall_down(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, *x - 1, *y))
-            wall_left(*maze, *x, *y);
-    }
-    else if (*y == 0)
-    { // ligne haut
-        if (*y + 1 != *y_2 && get_bool(tab_visited, *x, *y + 1))
-            wall_down(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, *x - 1, *y))
-            wall_left(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, *x + 1, *y))
-            wall_right(*maze, *x, *y);
-    }
-    else if (*y == height - 1)
-    { // ligne bas
-        if (*y - 1 != *y_2 && get_bool(tab_visited, *x, *y - 1))
-            wall_up(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, *x - 1, *y))
-            wall_left(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, *x + 1, *y))
-            wall_right(*maze, *x, *y);
-    }
-    else
-    { // tout ce qui n'est pas sur le bord
-        if (*y + 1 != *y_2 && get_bool(tab_visited, *x, *y + 1))
-            wall_down(*maze, *x, *y);
-        if (*y - 1 != *y_2 && get_bool(tab_visited, *x, *y - 1))
-            wall_up(*maze, *x, *y);
-        if (*x - 1 != *x_2 && get_bool(tab_visited, *x - 1, *y))
-            wall_left(*maze, *x, *y);
-        if (*x + 1 != *x_2 && get_bool(tab_visited, *x + 1, *y))
-            wall_right(*maze, *x, *y);
+    if (!CAN_MOVE_RIGHT && !has_wall_right(*maze, *x, *y) && *x != *x_2 - 1)
+    {
+        wall_right(*maze, *x, *y);
     }
     *x_2 = *x, *y_2 = *y;
     if (lbp_path_move(maze, x, y, tab_visited)) // mouvement
@@ -906,15 +854,31 @@ maze_t by_path_maze(const int width, const int height)
             if (get_bool(tab_visited, x, y))
             {
                 x_1 = x, y_1 = y, x_2 = x, y_2 = y;
-                if (!get_bool(tab_visited, x + 1, y))
-                { // si la case de droite est nouvelle, on y va depuis notre case actuelle
-                    x_1++;
-                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
-                }
-                else if (!get_bool(tab_visited, x, y + 1))
-                { // si la case du bas est nouvelle, on y va depuis notre case actuelle
-                    y_1++;
-                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                int num_rand = rand() % 2;
+                switch (num_rand)
+                {
+                case 0:
+                    if (!get_bool(tab_visited, x + 1, y))
+                    { // si la case de droite est nouvelle, on y va depuis notre case actuelle
+                        x_1++;
+                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                    }
+                    else if (!get_bool(tab_visited, x, y + 1))
+                    { // si la case du bas est nouvelle, on y va depuis notre case actuelle
+                        y_1++;
+                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                    }
+                case 1:
+                    if (!get_bool(tab_visited, x, y + 1))
+                    { // si la case du bas est nouvelle, on y va depuis notre case actuelle
+                        y_1++;
+                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                    }
+                    else if (!get_bool(tab_visited, x + 1, y))
+                    { // si la case de droite est nouvelle, on y va depuis notre case actuelle
+                        x_1++;
+                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                    }
                 }
             }
         }
