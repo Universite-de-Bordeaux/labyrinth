@@ -269,3 +269,8 @@ Interprète les commandes passées en argument du programme et appelle les fonct
 ## Fichier " main.c " :
 
 ne fait actuellement rien d'autre qu'appeler cmd...
+
+## Fichier " testing.c " :
+Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de tests.
+
+Ne sera pas compilé dans le programme final.
