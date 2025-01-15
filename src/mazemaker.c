@@ -811,7 +811,6 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
 // function to create a path in the maze by adding walls
 void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
 {
-    int width = maze->width, height = maze->height;
     set_true(tab_visited, *x, *y);
 
     if (!CAN_MOVE_UP && !has_wall_up(*maze, *x, *y) && *y != *y_2 + 1)
