@@ -853,31 +853,16 @@ maze_t by_path_maze(const int width, const int height)
             if (get_bool(tab_visited, x, y))
             {
                 x_1 = x, y_1 = y, x_2 = x, y_2 = y;
-                int num_rand = rand() % 2;
-                switch (num_rand)
-                {
-                case 0:
-                    if (!get_bool(tab_visited, x + 1, y))
-                    { // si la case de droite est nouvelle, on y va depuis notre case actuelle
-                        x_1++;
-                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
-                    }
-                    else if (!get_bool(tab_visited, x, y + 1))
-                    { // si la case du bas est nouvelle, on y va depuis notre case actuelle
-                        y_1++;
-                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
-                    }
-                case 1:
-                    if (!get_bool(tab_visited, x, y + 1))
-                    { // si la case du bas est nouvelle, on y va depuis notre case actuelle
-                        y_1++;
-                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
-                    }
-                    else if (!get_bool(tab_visited, x + 1, y))
-                    { // si la case de droite est nouvelle, on y va depuis notre case actuelle
-                        x_1++;
-                        lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
-                    }
+                if (!get_bool(tab_visited, x + 1, y))
+                { // si la case de droite est nouvelle, on y va depuis notre case actuelle
+                    x_1++;
+                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
+                }
+
+                else if (!get_bool(tab_visited, x, y + 1))
+                { // si la case du bas est nouvelle, on y va depuis notre case actuelle
+                    y_1++;
+                    lbp_path(&maze, &x_1, &y_1, &x_2, &y_2, tab_visited);
                 }
             }
         }
