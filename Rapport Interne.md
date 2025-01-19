@@ -1,5 +1,3 @@
-# je sais plus ce qu'est le nom de ce que je fais
-
 ## Fichier " struct.c " :
 
 Ce fichier contient la définition de l'ensemble des structures de données utilisées ainsi que leurs primitives.
@@ -13,7 +11,144 @@ Ce fichier contient la définition de l'ensemble des structures de données util
 6. `queue` : structure de file de coordonnées, elle stock les valeurs par paires de coordonnées.
 7. `stack` : structure de pile de coordonnées, elle stock les valeurs par paires de coordonnées.
 
-### Primitives
+### Primitives labyrinthes
+#### **maze_t create_basic_maze(int width, int height)**
+Fonction qui créer un labyrinthe avec uniquement les murs extérieurs.
+
+width : largeur du labyrinthe
+
+height : hauteur du labyrinthe
+
+#### **maze_t create_wall_maze(int width, int height)**
+Fonction qui créer un labyrinthe avec tous les murs internes et externes.
+
+width : largeur du labyrinthe
+
+height : hauteur du labyrinthe
+
+#### **void free_maze(maze_t maze)**
+Fonction qui libère la mémoire allouée pour un labyrinthe.
+
+maze : labyrinthe à libérer
+
+#### **void wall_up(maze_t maze, int x, int y)**
+Fonction qui ajoute un mur en haut de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void wall_down(maze_t maze, int x, int y)**
+Fonction qui ajoute un mur en bas de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void wall_left(maze_t maze, int x, int y)**
+Fonction qui ajoute un mur à gauche de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void wall_right(maze_t maze, int x, int y)**
+Fonction qui ajoute un mur à droite de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void unwall_up(maze_t maze, int x, int y)**
+Fonction qui retire un mur en haut de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void unwall_down(maze_t maze, int x, int y)**
+Fonction qui retire un mur en bas de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void unwall_left(maze_t maze, int x, int y)**
+Fonction qui retire un mur à gauche de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **void unwall_right(maze_t maze, int x, int y)**
+Fonction qui retire un mur à droite de la case `(x, y)`.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **bool has_wall_up(const maze_t maze, int x, int y)**
+Fonction qui renvoie `true` si la case `(x, y)` a un mur en haut, `false` sinon.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **bool has_wall_down(const maze_t maze, int x, int y)**
+Fonction qui renvoie `true` si la case `(x, y)` a un mur en bas, `false` sinon.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **bool has_wall_left(const maze_t maze, int x, int y)**
+Fonction qui renvoie `true` si la case `(x, y)` a un mur à gauche, `false` sinon.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+#### **bool has_wall_right(const maze_t maze, int x, int y)**
+Fonction qui renvoie `true` si la case `(x, y)` a un mur à droite, `false` sinon.
+
+maze : labyrinthe
+
+x : abscisse de la case
+
+y : ordonnée de la case
+
+### Primitives affichage
+#### **int print_maze(maze_t maze)**
+Fonction qui affiche le labyrinthe. Retourne 1 si l'affichage a réussi, -1 sinon.
+Les murs de l'entrée sont bleus, les murs de sortie sont verts.
+La taille de chaque cellule est automatiquement ajustée en fonction de la taille de la fenêtre, si la taille du labyrinthe est trop grande, l'affichage peut ne pas fonctionner.
+Le programme s'arrête quand quand la fenêtre est fermée (en pressant ESCAPE` ou `ENTER`).
+
+maze : labyrinthe à afficher
+
+#### **int initial_print_maze(const maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
 
 
 A completer
