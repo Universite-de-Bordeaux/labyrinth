@@ -36,108 +36,84 @@ Fonction qui ajoute un mur en haut de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void wall_down(maze_t maze, int x, int y)**
 Fonction qui ajoute un mur en bas de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void wall_left(maze_t maze, int x, int y)**
 Fonction qui ajoute un mur à gauche de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void wall_right(maze_t maze, int x, int y)**
 Fonction qui ajoute un mur à droite de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void unwall_up(maze_t maze, int x, int y)**
 Fonction qui retire un mur en haut de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void unwall_down(maze_t maze, int x, int y)**
 Fonction qui retire un mur en bas de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void unwall_left(maze_t maze, int x, int y)**
 Fonction qui retire un mur à gauche de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **void unwall_right(maze_t maze, int x, int y)**
 Fonction qui retire un mur à droite de la case `(x, y)`.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **bool has_wall_up(const maze_t maze, int x, int y)**
 Fonction qui renvoie `true` si la case `(x, y)` a un mur en haut, `false` sinon.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **bool has_wall_down(const maze_t maze, int x, int y)**
 Fonction qui renvoie `true` si la case `(x, y)` a un mur en bas, `false` sinon.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **bool has_wall_left(const maze_t maze, int x, int y)**
 Fonction qui renvoie `true` si la case `(x, y)` a un mur à gauche, `false` sinon.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 #### **bool has_wall_right(const maze_t maze, int x, int y)**
 Fonction qui renvoie `true` si la case `(x, y)` a un mur à droite, `false` sinon.
 
 maze : labyrinthe
 
-x : abscisse de la case
-
-y : ordonnée de la case
+x, y : les coordonnées de la case
 
 ### Primitives affichage
 #### **int print_maze(maze_t maze)**
@@ -168,7 +144,34 @@ renderer : pointeur sur le renderer à libérer
 window : pointeur sur la fenêtre à libérer
 
 ### Primitives `bool_tab`
-#### **bool_tab create_bool_tab(const maze_t maze)**
+#### **bool_tab create_bool_tab(int width, int height)**
+Fonction qui crée un tableau de booléens de dimensions `width` par `height`.
+
+width : largeur du tableau
+
+height : hauteur du tableau
+
+#### **void set_true(bool_tab tab, int x, int y)**
+Fonction qui met à `true` la case `(x, y)` du tableau `tab`.
+
+tab : tableau de booléens
+
+x, y : les coordonnées de la case
+
+#### **void set_false(bool_tab tab, int x, int y)**
+Fonction qui met à `false` la case `(x, y)` du tableau `tab`.
+
+tab : tableau de booléens
+
+x, y : les coordonnées de la case
+
+#### **bool get_bool(bool_tab tab, int x, int y)**
+Fonction qui renvoie la valeur de la case `(x, y)` du tableau `tab`.
+
+tab : tableau de booléens
+
+x, y : les coordonnées de la case
+
 
 
 A completer
