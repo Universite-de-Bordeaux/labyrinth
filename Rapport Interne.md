@@ -142,13 +142,33 @@ y : ordonnée de la case
 ### Primitives affichage
 #### **int print_maze(maze_t maze)**
 Fonction qui affiche le labyrinthe. Retourne 1 si l'affichage a réussi, -1 sinon.
-Les murs de l'entrée sont bleus, les murs de sortie sont verts.
-La taille de chaque cellule est automatiquement ajustée en fonction de la taille de la fenêtre, si la taille du labyrinthe est trop grande, l'affichage peut ne pas fonctionner.
-Le programme s'arrête quand quand la fenêtre est fermée (en pressant ESCAPE` ou `ENTER`).
+Les murs de l'entrée sont bleus, les murs de la sortie sont verts.
+La taille de chaque cellule est automatiquement ajustée en fonction de la taille de la fenêtre, si la taille du labyrinthe est trop grande, l'affichage peut ne pas fonctionner correctement.
+Le programme s'arrête quand quand la fenêtre est fermée (en pressant `ESCAPE` ou `ENTER`).
 
 maze : labyrinthe à afficher
 
 #### **int initial_print_maze(const maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
+Fonction qui initialise l'affichage du labyrinthe. Retourne 1 si l'initialisation a réussi, -1 sinon.
+
+@Vincent
+
+#### **void destroy_print_maze(SDL_Renderer\* renderer, SDL_Window\* window)**
+Fonction qui libère la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre.
+
+renderer : pointeur sur le renderer à libérer
+
+window : pointeur sur la fenêtre à libérer
+
+#### **void wait_and_destroy_print_maze(SDL_Renderer\* renderer, SDL_Window\* window)**
+Fontion qui attend que l'utilisateur ferme la fenêtre avant de libérer la mémoire allouée pour l'affichage du labyrinthe et fermer la fenêtre.
+
+renderer : pointeur sur le renderer à libérer
+
+window : pointeur sur la fenêtre à libérer
+
+### Primitives `bool_tab`
+#### **bool_tab create_bool_tab(const maze_t maze)**
 
 
 A completer
