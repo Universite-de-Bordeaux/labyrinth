@@ -13,14 +13,14 @@ Ce fichier contient la définition de l'ensemble des structures de données util
 
 ### Primitives labyrinthes
 #### **maze_t create_basic_maze(int width, int height)**
-Fonction qui créer un labyrinthe avec uniquement les murs extérieurs.
+Fonction qui crée et renvoie un labyrinthe avec uniquement les murs extérieurs.
 
 width : largeur du labyrinthe
 
 height : hauteur du labyrinthe
 
 #### **maze_t create_wall_maze(int width, int height)**
-Fonction qui créer un labyrinthe avec tous les murs internes et externes.
+Fonction qui crée et renvoie un labyrinthe avec tous les murs internes et externes.
 
 width : largeur du labyrinthe
 
@@ -145,11 +145,16 @@ window : pointeur sur la fenêtre à libérer
 
 ### Primitives `bool_tab`
 #### **bool_tab create_bool_tab(int width, int height)**
-Fonction qui crée un tableau de booléens de dimensions `width` par `height`.
+Fonction qui crée et renvoie un tableau de booléens de dimensions `width` par `height`.
 
 width : largeur du tableau
 
 height : hauteur du tableau
+
+#### **void free_bool_tab(bool_tab tab)**
+Fonction qui libère la mémoire allouée pour un tableau de booléens.
+
+tab : tableau de booléens à libérer
 
 #### **void set_true(bool_tab tab, int x, int y)**
 Fonction qui met à `true` la case `(x, y)` du tableau `tab`.
@@ -171,6 +176,53 @@ Fonction qui renvoie la valeur de la case `(x, y)` du tableau `tab`.
 tab : tableau de booléens
 
 x, y : les coordonnées de la case
+
+### Primitives `waytab`
+#### **waytab create_waytab(int width, int height)**
+Fonction qui crée et renvoie un tableau de `way` de dimensions `width` par `height`.
+
+width : largeur du tableau
+
+height : hauteur du tableau
+
+#### **void free_waytab(waytab tab)**
+Fonction qui libère la mémoire allouée pour un tableau de `way`.
+
+tab : tableau de `way` à libérer
+
+#### **bool has_way(waytab tab, int x, int y);**
+Fonction qui renvoie `true` si la case `(x, y)` du tableau `tab` contient un chemin vers la case `(0, 0)`, `false` sinon.
+
+tab : tableau de `way`
+
+x, y : les coordonnées de la case
+
+#### **way\* get_way(waytab tab, int x, int y)**
+Fonction qui renvoie le chemin de la case `(x, y)` du tableau `tab`.
+
+tab : tableau de `way`
+
+x, y : les coordonnées de la case
+
+#### **void connected_way(waytab tab, int x, int y, int dad_x, int dad_y)**
+Fonction qui connecte le chemin de la case `(x, y)` du tableau `tab` à la case `(dad_x, dad_y)`.
+
+tab : tableau de `way`
+
+x, y : les coordonnées de la case
+
+dad_x, dad_y : les coordonnées de la case à connecter
+
+#### **unsigned int length_waytab(waytab tab, int x, int y)**
+Fonction qui renvoie la longueur du chemin de la case `(x, y)` du tableau `tab`.
+
+tab : tableau de `way`
+
+x, y : les coordonnées de la case
+
+### Primitives `way`
+
+
 
 
 
