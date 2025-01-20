@@ -71,6 +71,10 @@ int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int
 maze_t line_maze(const int width, const int height)
 {
     const maze_t maze = create_basic_maze(width, height);
+    if (height == 1 || width == 1)
+    {
+        return maze;
+    }
     unsigned int break_wall;
     for (int i = 0; i < width - 1; i++)
     {
@@ -90,6 +94,10 @@ maze_t line_maze(const int width, const int height)
 maze_t column_maze(const int width, const int height)
 {
     const maze_t maze = create_basic_maze(width, height);
+    if (height == 1 || width == 1)
+    {
+        return maze;
+    }
     unsigned int break_wall;
     for (int i = 0; i < height - 1; i++)
     {
@@ -880,11 +888,11 @@ maze_t by_path_maze(const int width, const int height)
 
 maze_t cross_maze(const int width, const int height)
 {
-    const maze_t maze = create_wall_maze(width, height);
     if (height == 1 || width == 1)
     {
-        return maze;
+        return create_basic_maze(width, height);
     }
+    const maze_t maze = create_wall_maze(width, height);
     const bool_tab annexe = create_booltab(width, height); // tableau de booléens pour savoir si une case a été traitée
     int t = width * height; // nombre de cases à traiter
     // on commence par crréer des chemins (en forme d'étoiles)
