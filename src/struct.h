@@ -8,16 +8,15 @@
 
 // --- Structures ---
 
-struct cell
-{
-    bool wall_down;
-    bool wall_right;
-};
 struct maze
 {
     int width;
     int height;
-    struct cell** cells;
+    char** walls;
+    //wall up : 1
+    //wall down : 2
+    //wall left : 4
+    //wall right : 8
 };
 
 struct bool_tab
@@ -59,10 +58,6 @@ struct stack
 };
 
 // --- Typedef ---
-
-// Structure representing a cell
-// Contains 2 booleans : wall_down, wall_right
-typedef struct cell cell;
 
 // Structure representing a maze
 // width : width of the maze
