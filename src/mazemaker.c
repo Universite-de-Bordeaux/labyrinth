@@ -369,11 +369,11 @@ maze_t my_octopus_maze(const int width, const int height)
 
 maze_t comb_maze(const int width, const int height)
 {
-    const maze_t maze = create_wall_maze(width, height);
     if (height == 1 || width == 1)
     {
-        return maze;
+        return create_basic_maze(width, height);
     }
+    const maze_t maze = create_wall_maze(width, height);
     const bool_tab visited = create_booltab(width, height);
 
     // création du chemin principal
