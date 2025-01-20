@@ -17,24 +17,20 @@ maze_t create_basic_maze(const int width, const int height)
     {
         start[i] = malloc(sizeof(char) * width);
     }
-    for (int i = 1; i < height - 1; i++)
+    for (int i = 0; i < height; i++)
     {
-        for (int j = 1; j < width - 1; j++) // cellules non bordure
+        for (int j = 0; j < width; j++) // cellules non bordure
         {
             start[i][j] = 0;
         }
-        start[i][width - 1] = 8; // cellules bordure droite
-        start[i][0] = 4; // cellules bordure gauche
+        start[i][width - 1] += 8; // cellules bordure droite
+        start[i][0] += 4; // cellules bordure gauche
     }
-    for (int j = 0; j < width - 1; j++)
+    for (int j = 0; j < width; j++)
     {
-        start[height - 1][j] = 2; // cellules bordure bas
-        start[0][j] = 1; // cellules bordure haut
+        start[height - 1][j] += 2; // cellules bordure bas
+        start[0][j] += 1; // cellules bordure haut
     }
-    start[0][0] = 5; // cellule bordure haut gauche
-    start[height - 1][width - 1] = 10; // cellule bordure bas droite
-    start[0][width - 1] = 9; // cellule bordure haut droite
-    start[height - 1][0] = 6; // cellule bordure bas gauche
 
     const maze_t maze = {width, height, start};
     return maze;
