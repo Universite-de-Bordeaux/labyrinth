@@ -12,11 +12,7 @@ struct maze
 {
     int width;
     int height;
-    char** walls;
-    //wall up : 1
-    //wall down : 2
-    //wall left : 4
-    //wall right : 8
+    char** walls; // wall up: 1, down: 2, left: 4, right: 8
 };
 
 struct bool_tab
@@ -28,33 +24,33 @@ struct bool_tab
 
 struct way
 {
+    struct way* dad;
     int x;
     int y;
     unsigned int length;
-    struct way* dad;
 };
 
 struct waytab
 {
+    struct way** tab;
     int width;
     int height;
-    struct way** tab;
 };
 
 struct queue
 {
+    int* array; // Array of values.
     int size_array; // Size of the array allocated in memory.
     int left; // Index of the value to the left of the file (if non-empty).
     int right; // Index following that of the value to the right of the file (if it is non-empty).
-    int* array; // Array of values.
     bool empty; // Boolean indicating if the file is empty.
 };
 
 struct stack
 {
+    int* array; // Array containing the values of the represented stack.
     int size_array; // Size of the array allocated in memory.
     int size_stack; // Number of elements in the stack represented.
-    int* array; // Array containing the values of the represented stack.
 };
 
 // --- Typedef ---
@@ -62,7 +58,7 @@ struct stack
 // Structure representing a maze
 // width : width of the maze
 // height : height of the maze
-// cells : table of table of cells
+// walls : sort of table of booleans representing the walls of the maze
 // malloc used, remember to free_maze to free memory
 typedef struct maze maze_t;
 
