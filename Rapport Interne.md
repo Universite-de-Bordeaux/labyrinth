@@ -125,9 +125,19 @@ Le programme s'arrête quand quand la fenêtre est fermée (en pressant `ESCAPE`
 maze : labyrinthe à afficher
 
 #### **int initial_print_maze(const maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
-Fonction qui initialise l'affichage du labyrinthe. Retourne 1 si l'initialisation a réussi, -1 sinon.
+Fonction pour afficher le labyrinth et ses murs dans une fenêtre SDL.
+Initialise les données nécessaires pour l'affichage et sa modification.
+Renvoie 1 en cas de succès, un nombre négatif en cas d'échec.
 
-@Vincent
+maze : labyrinthe à afficher
+
+renderer : pointeur sur le renderer à initialiser
+
+window : pointeur sur la fenêtre à initialiser
+
+dw : pointeur sur la largeur d'une cellule
+
+dh : pointeur sur la hauteur d'une cellule
 
 #### **void destroy_print_maze(SDL_Renderer\* renderer, SDL_Window\* window)**
 Fonction qui libère la mémoire allouée pour l'affichage du labyrinthe et ferme la fenêtre.
