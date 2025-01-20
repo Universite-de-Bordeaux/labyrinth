@@ -16,7 +16,7 @@ static void usage(const char* name)
     printf("\n<nb> must be an integer, its default value is 100, so it can be omitted\n");
     printf("<generator> must be one of the following :\n");
     printf("\t b : basic maze\n");
-    printf("\t m : basic walled maze\n");
+    printf("\t w : basic walled maze\n");
     printf("\t cbm : comb maze\n");
     printf("\t owm : one way maze\n");
     printf("\t ocm : octopus maze\n");
@@ -122,7 +122,7 @@ int main(const int argc, char* argv[])
         f = create_basic_maze;
         generator_name = "basic generator";
     }
-    else if (!strcmp(generator, "m"))
+    else if (!strcmp(generator, "w"))
     {
         f = create_wall_maze;
         generator_name = "basic wall generator";
