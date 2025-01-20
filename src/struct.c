@@ -338,7 +338,7 @@ void set_true(const bool_tab tab, const int x, const int y)
         return;
     }
     const int nx = x / 8;
-    tab.tab[y][nx] |= 1 << (x % 8); // set the bit to 1
+    tab.tab[y][nx] |= 1 << (x % 8); // set the bit to 1 NOLINT(*-narrowing-conversions)
 }
 
 void set_false(const bool_tab tab, const int x, const int y)
@@ -352,7 +352,7 @@ void set_false(const bool_tab tab, const int x, const int y)
         return;
     }
     const int nx = x / 8;
-    tab.tab[y][nx] &= ~(1 << (x % 8)); // set the bit to 0
+    tab.tab[y][nx] &= ~(1 << (x % 8)); // set the bit to 0 NOLINT(*-narrowing-conversions)
 }
 
 bool get_bool(const bool_tab tab, const int x, const int y)
@@ -395,7 +395,7 @@ waytab create_waytab(const int width, const int height)
         }
     }
     way_tab[0][0].length = 0;
-    const waytab tab = {width, height, way_tab};
+    const waytab tab = {way_tab, width, height};
     // ReSharper disable once CppDFAMemoryLeak
     return tab;
 }
@@ -718,7 +718,7 @@ void print_queue(const queue* q)
 static void grow_stack(stack* s)
 {
     s->size_array *= 2;
-    s->array = realloc(s->array, sizeof(int) * s->size_array);
+    s->array = realloc(s->array, sizeof(int) * s->size_array); // NOLINT(*-suspicious-realloc-usage)
     if (s->array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
@@ -734,7 +734,7 @@ static void shrink_stack(stack* s)
     if (s->size_array < 3)
         return;
     s->size_array /= 2;
-    s->array = realloc(s->array, sizeof(int) * s->size_array);
+    s->array = realloc(s->array, sizeof(int) * s->size_array); // NOLINT(*-suspicious-realloc-usage)
     if (s->array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
