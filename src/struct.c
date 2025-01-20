@@ -308,17 +308,18 @@ bool_tab create_booltab(const int width, const int height)
                 width, height);
         exit(EXIT_FAILURE);
     }
-    bool** booltab = malloc(sizeof(bool*) * height);
+    char** tab = malloc(sizeof(char*) * height);
+    const int size = width % 8 == 0 ? width / 8 : width / 8 + 1;
     for (int i = 0; i < height; i++)
     {
-        booltab[i] = malloc(sizeof(bool) * width);
-        for (int j = 0; j < width; j++)
+        tab[i] = malloc(sizeof(char) * size);
+        for (int j = 0; j < size; j++)
         {
-            booltab[i][j] = false;
+            tab[i][j] = 0;
         }
     }
-    const bool_tab tab = {width, height, booltab};
-    return tab;
+    const bool_tab btab = {width, height, tab};
+    return btab;
 }
 
 void free_booltab(const bool_tab tab)
@@ -340,7 +341,8 @@ void set_true(const bool_tab tab, const int x, const int y)
                 x, y);
         return;
     }
-    tab.tab[y][x] = true;
+    const int nx = x / 8;
+    tab.tab[y][nx] |= 1 << (x % 8); // set the bit to 1
 }
 
 void set_false(const bool_tab tab, const int x, const int y)
@@ -353,7 +355,8 @@ void set_false(const bool_tab tab, const int x, const int y)
                 x, y);
         return;
     }
-    tab.tab[y][x] = false;
+    const int nx = x / 8;
+    tab.tab[y][nx] &= ~(1 << (x % 8)); // set the bit to 0
 }
 
 bool get_bool(const bool_tab tab, const int x, const int y)
@@ -366,7 +369,9 @@ bool get_bool(const bool_tab tab, const int x, const int y)
                 x, y);
         exit(1);
     }
-    return tab.tab[y][x];
+    const int nx = x / 8;
+    const char temp = tab.tab[y][nx];
+    return (temp >> (x % 8)) & 1;
 }
 
 

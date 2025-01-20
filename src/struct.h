@@ -23,7 +23,7 @@ struct bool_tab
 {
     int width;
     int height;
-    bool** tab;
+    char** tab;
 };
 
 struct way
@@ -233,7 +233,7 @@ void wait_and_destroy_print_maze(SDL_Renderer* renderer, SDL_Window* window);
 
 // --- BOOL_TAB ---
 
-// create a boolean table
+// create a boolean table with all values set to false
 // width : width of the table
 // height : height of the table
 // returns the boolean table
