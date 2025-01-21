@@ -12,28 +12,26 @@ maze_t create_basic_maze(const int width, const int height)
                 width, height);
         exit(1);
     }
-    cell** start = malloc(sizeof(cell*) * height);
+    char** start = malloc(sizeof(char*) * height);
     for (int i = 0; i < height; i++)
     {
-        start[i] = malloc(sizeof(cell) * width);
+        start[i] = malloc(sizeof(char) * width);
     }
-    for (int i = 0; i < height - 1; i++)
+    for (int i = 0; i < height; i++)
     {
-        for (int j = 0; j < width - 1; j++) // cellules non bordure
+        for (int j = 0; j < width; j++) // cellules non bordure
         {
-            start[i][j].wall_down = false;
-            start[i][j].wall_right = false;
+            start[i][j] = 0;
         }
-        start[i][width - 1].wall_down = false; // cellules bordure droite
-        start[i][width - 1].wall_right = true;
+        start[i][width - 1] += 8; // cellules bordure droite
+        start[i][0] += 4; // cellules bordure gauche
     }
-    for (int j = 0; j < width - 1; j++)
+    for (int j = 0; j < width; j++)
     {
-        start[height - 1][j].wall_down = true; // cellules bordure bas
-        start[height - 1][j].wall_right = false;
+        start[height - 1][j] += 2; // cellules bordure bas
+        start[0][j] += 1; // cellules bordure haut
     }
-    start[height - 1][width - 1].wall_down = true; // sortie
-    start[height - 1][width - 1].wall_right = true;
+
     const maze_t maze = {width, height, start};
     return maze;
 }
@@ -48,17 +46,16 @@ maze_t create_wall_maze(const int width, const int height)
                 width, height);
         exit(1);
     }
-    cell** start = malloc(sizeof(cell*) * height);
+    char** start = malloc(sizeof(char*) * height);
     for (int i = 0; i < height; i++)
     {
-        start[i] = malloc(sizeof(cell) * width);
+        start[i] = malloc(sizeof(char) * width);
     }
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            start[i][j].wall_down = true;
-            start[i][j].wall_right = true;
+            start[i][j] = 15; // toutes les cellules ont les 4 murs
         }
     }
     const maze_t maze = {width, height, start};
@@ -69,9 +66,9 @@ void free_maze(const maze_t maze)
 {
     for (int i = 0; i < maze.height; i++)
     {
-        free(maze.cells[i]);
+        free(maze.walls[i]);
     }
-    free(maze.cells);
+    free(maze.walls);
 }
 
 void wall_up(maze_t const maze, const int x, const int y)
@@ -86,7 +83,8 @@ void wall_up(maze_t const maze, const int x, const int y)
     }
     if (y > 0)
     {
-        maze.cells[y - 1][x].wall_down = true;
+        maze.walls[y][x] |= 1; // ajoute le mur du haut
+        maze.walls[y - 1][x] |= 2; // ajoute le mur du bas de la cellule du haut
     }
     else
     {
@@ -106,7 +104,8 @@ void wall_down(const maze_t maze, const int x, const int y)
     }
     if (y < maze.height - 1)
     {
-        maze.cells[y][x].wall_down = true;
+        maze.walls[y][x] |= 2; // ajoute le mur du bas
+        maze.walls[y + 1][x] |= 1; // ajoute le mur du haut de la cellule du bas
     }
     else
     {
@@ -126,7 +125,8 @@ void wall_left(const maze_t maze, const int x, const int y)
     }
     if (x > 0)
     {
-        maze.cells[y][x - 1].wall_right = true;
+        maze.walls[y][x] |= 4; // ajoute le mur de gauche
+        maze.walls[y][x - 1] |= 8; // ajoute le mur de droite de la cellule de gauche
     }
     else
     {
@@ -146,7 +146,8 @@ void wall_right(const maze_t maze, const int x, const int y)
     }
     if (x < maze.width - 1)
     {
-        maze.cells[y][x].wall_right = true;
+        maze.walls[y][x] |= 8; // ajoute le mur de droite
+        maze.walls[y][x + 1] |= 4; // ajoute le mur de gauche de la cellule de droite
     }
     else
     {
@@ -166,7 +167,8 @@ void unwall_up(const maze_t maze, const int x, const int y)
     }
     if (y > 0)
     {
-        maze.cells[y - 1][x].wall_down = false;
+        maze.walls[y][x] &= 14; // retire le mur du haut
+        maze.walls[y - 1][x] &= 13; // retire le mur du bas de la cellule du haut
     }
     else
     {
@@ -186,7 +188,8 @@ void unwall_down(const maze_t maze, const int x, const int y)
     }
     if (y < maze.height - 1)
     {
-        maze.cells[y][x].wall_down = false;
+        maze.walls[y][x] &= 13; // retire le mur du bas
+        maze.walls[y + 1][x] &= 14; // retire le mur du haut de la cellule du bas
     }
     else
     {
@@ -206,7 +209,8 @@ void unwall_left(const maze_t maze, const int x, const int y)
     }
     if (x > 0)
     {
-        maze.cells[y][x - 1].wall_right = false;
+        maze.walls[y][x] &= 11; // retire le mur de gauche
+        maze.walls[y][x - 1] &= 7; // retire le mur de droite de la cellule de gauche
     }
     else
     {
@@ -226,7 +230,8 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
     if (x < maze.width - 1)
     {
-        maze.cells[y][x].wall_right = false;
+        maze.walls[y][x] &= 7; // retire le mur de droite
+        maze.walls[y][x + 1] &= 11; // retire le mur de gauche de la cellule de droite
     }
     else
     {
@@ -244,11 +249,7 @@ bool has_wall_up(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    if (y == 0)
-    {
-        return true;
-    }
-    return maze.cells[y - 1][x].wall_down;
+    return maze.walls[y][x] & 1;
 }
 
 bool has_wall_down(const maze_t maze, const int x, const int y)
@@ -261,7 +262,7 @@ bool has_wall_down(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.cells[y][x].wall_down;
+    return maze.walls[y][x] & 2;
 }
 
 bool has_wall_left(const maze_t maze, const int x, const int y)
@@ -274,11 +275,7 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    if (x == 0)
-    {
-        return true;
-    }
-    return maze.cells[y][x - 1].wall_right;
+    return maze.walls[y][x] & 4;
 }
 
 bool has_wall_right(const maze_t maze, const int x, const int y)
@@ -291,7 +288,7 @@ bool has_wall_right(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.cells[y][x].wall_right;
+    return maze.walls[y][x] & 8;
 }
 
 
@@ -307,17 +304,18 @@ bool_tab create_booltab(const int width, const int height)
                 width, height);
         exit(EXIT_FAILURE);
     }
-    bool** booltab = malloc(sizeof(bool*) * height);
+    char** tab = malloc(sizeof(char*) * height);
+    const int size = width % 8 == 0 ? width / 8 : width / 8 + 1;
     for (int i = 0; i < height; i++)
     {
-        booltab[i] = malloc(sizeof(bool) * width);
-        for (int j = 0; j < width; j++)
+        tab[i] = malloc(sizeof(char) * size);
+        for (int j = 0; j < size; j++)
         {
-            booltab[i][j] = false;
+            tab[i][j] = 0;
         }
     }
-    const bool_tab tab = {width, height, booltab};
-    return tab;
+    const bool_tab btab = {width, height, tab};
+    return btab;
 }
 
 void free_booltab(const bool_tab tab)
@@ -339,7 +337,8 @@ void set_true(const bool_tab tab, const int x, const int y)
                 x, y);
         return;
     }
-    tab.tab[y][x] = true;
+    const int nx = x / 8;
+    tab.tab[y][nx] |= 1 << (x % 8); // set the bit to 1 NOLINT(*-narrowing-conversions)
 }
 
 void set_false(const bool_tab tab, const int x, const int y)
@@ -352,7 +351,8 @@ void set_false(const bool_tab tab, const int x, const int y)
                 x, y);
         return;
     }
-    tab.tab[y][x] = false;
+    const int nx = x / 8;
+    tab.tab[y][nx] &= ~(1 << (x % 8)); // set the bit to 0 NOLINT(*-narrowing-conversions)
 }
 
 bool get_bool(const bool_tab tab, const int x, const int y)
@@ -365,7 +365,9 @@ bool get_bool(const bool_tab tab, const int x, const int y)
                 x, y);
         exit(1);
     }
-    return tab.tab[y][x];
+    const int nx = x / 8;
+    const char temp = tab.tab[y][nx];
+    return (temp >> (x % 8)) & 1;
 }
 
 
@@ -393,7 +395,7 @@ waytab create_waytab(const int width, const int height)
         }
     }
     way_tab[0][0].length = 0;
-    const waytab tab = {width, height, way_tab};
+    const waytab tab = {way_tab, width, height};
     // ReSharper disable once CppDFAMemoryLeak
     return tab;
 }
@@ -716,7 +718,7 @@ void print_queue(const queue* q)
 static void grow_stack(stack* s)
 {
     s->size_array *= 2;
-    s->array = realloc(s->array, sizeof(int) * s->size_array);
+    s->array = realloc(s->array, sizeof(int) * s->size_array); // NOLINT(*-suspicious-realloc-usage)
     if (s->array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
@@ -732,7 +734,7 @@ static void shrink_stack(stack* s)
     if (s->size_array < 3)
         return;
     s->size_array /= 2;
-    s->array = realloc(s->array, sizeof(int) * s->size_array);
+    s->array = realloc(s->array, sizeof(int) * s->size_array); // NOLINT(*-suspicious-realloc-usage)
     if (s->array == NULL)
     {
         fprintf(stderr, "Erreur realloc\n");
@@ -868,12 +870,12 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
     {
         for (int y = 0; y < maze.height; y++)
         {
-            if (maze.cells[y][x].wall_down)
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(*renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1,
                                    (y + 1) * d_h - 1); // on dessine un mur en bas
             }
-            if (maze.cells[y][x].wall_right)
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(*renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1,
                                    (y + 1) * d_h - 1); // on dessine un mur à droite
