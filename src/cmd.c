@@ -28,8 +28,8 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
-#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, cm, sm) of size nb x nb"
-#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, cm, sm) of size 10x10"
+#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size nb x nb"
+#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
 #define READ_WAY "-rw <filename> : read way from file"
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
@@ -100,7 +100,7 @@ void cmd(char* argv[], const int argc)
         fprintf(stderr, "Error : argv is NULL\n");
         return;
     }
-    //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cm
+    //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cmr
     //-r <filename> -> read maze
     //-slv <inspection> <solver> : said if the maze (inspection) isp, isc, he, she with the (solver)
     //-w <filename> -> write maze in file (if maze)
@@ -407,7 +407,7 @@ void cmd(char* argv[], const int argc)
         {
             maze = by_path_maze(width, height);
         }
-        else if (!strcmp(generator, "sm"))
+        else if (!strcmp(generator, "stm"))
         {
             unsigned short int r;
             getrandom(&r, sizeof(r), 0);
@@ -420,7 +420,7 @@ void cmd(char* argv[], const int argc)
                 maze = column_maze(width, height);
             }
         }
-        else if (!strcmp(generator, "cm"))
+        else if (!strcmp(generator, "crm"))
         {
             maze = cross_maze(width, height);
         }
