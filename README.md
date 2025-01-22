@@ -82,7 +82,7 @@ Extraire un chemin depuis un fichier :
 Analyser un labyrinthe :  
 <span style="color:green">-slv</span> <span style="color:red">inspection</span>
 
-On peut préciser le solveur "slv" :
+On peut préciser le solveur "solver" :
 
 
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
@@ -113,7 +113,7 @@ Afficher un labyrinthe :
 Afficher le déroulement d'une analyse (sans en renvoyer le résultat) :  
 <span style="color:green">-sh</span> <span style="color:red">inspection</span>
 
-On peut préciser le solveur "slv" : 
+On peut préciser le solveur "solver" : 
 
 
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
