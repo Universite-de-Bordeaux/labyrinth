@@ -15,7 +15,7 @@ Utiliser cette commande pour télécharger et installer les dépendances
 Ce positionner à la source du dépot puis entrer la commande suivante :
 ````mkdir build && cd build && cmake .. && make````  
 Cette commande crée un exécutable "main" dans le dossier build à la source du dépot.
-Il suffit de faire ````./main```` pour l'exécuter.
+Il suffit de faire ````./main [arg, ...]```` pour l'exécuter.
 
 ## Utilisation
 
