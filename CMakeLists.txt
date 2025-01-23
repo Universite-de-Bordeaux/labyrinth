@@ -10,7 +10,7 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # Define source files for libraries
-set(MAZE_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/outside.c src/cmd.c)
+set(MAZE_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/outside.c src/cmd.c src/escape.c)
 set(TEST_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/test.c)
 
 # Create libraries
