@@ -16,38 +16,40 @@ void ESCAPE_TYPE(const maze_t maze, int x, int y)
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
-    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); //couleur customisable
-    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //la position actuelle
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); // couleur customisable
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer); //on affiche la position actuelle
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
 
-    //vos variables à déclarer avant la boucle
+    // vos variables à déclarer avant la boucle
     int truc = 18;
     char machin = 5;
 
     SDL_Event event = {0}; // on crée un event vide
-    while (SDL_PollEvent(&event)) {
-        //on vide la file d'attente des événements
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-            (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //on efface la position actuelle
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
-        //le corps de l'algorithme
-        //votre déplacement
+        // le corps de l'algorithme
+        // votre déplacement
         truc++;
         if (truc == 49)
         {
@@ -58,7 +60,7 @@ void ESCAPE_TYPE(const maze_t maze, int x, int y)
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //delay customisable (actuellement à sa vitesse maximale)
+        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -82,67 +84,69 @@ void random_escape(const maze_t maze, int x, int y)
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
     SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
-    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //la position actuelle
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer); //on affiche la position actuelle
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
 
-    unsigned char choix; //la direction qu'on va suivre le plus possible
+    unsigned char choix; // la direction qu'on va suivre le plus possible
     getrandom(&choix, sizeof(char), 0);
     choix %= 4;
 
     SDL_Event event = {0}; // on crée un event vide
-    while (SDL_PollEvent(&event)) {
-        //on vide la file d'attente des événements
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-            (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //on efface la position actuelle
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         switch (choix)
         {
-            case 0:
-                if (!has_wall_up(maze, x, y))
-                {
-                    y--;
-                }
-                break;
-            case 1:
-                if (!has_wall_down(maze, x, y))
-                {
-                    y++;
-                }
-                break;
-            case 2:
-                if (!has_wall_left(maze, x, y))
-                {
-                    x--;
-                }
-                break;
-            case 3:
-                if (!has_wall_right(maze, x, y))
-                {
-                    x++;
-                }
-                break;
-            default:
-                fprintf(stderr, "Erreur dans la fonction try_to_escape : choix invalide.\n");
-                printf("choix = %d\n", choix);
-                destroy_print_maze(renderer, window);
-                exit(EXIT_FAILURE);
-                break;
+        case 0:
+            if (!has_wall_up(maze, x, y))
+            {
+                y--;
+            }
+            break;
+        case 1:
+            if (!has_wall_down(maze, x, y))
+            {
+                y++;
+            }
+            break;
+        case 2:
+            if (!has_wall_left(maze, x, y))
+            {
+                x--;
+            }
+            break;
+        case 3:
+            if (!has_wall_right(maze, x, y))
+            {
+                x++;
+            }
+            break;
+        default:
+            fprintf(stderr, "Erreur dans la fonction try_to_escape : choix invalide.\n");
+            printf("choix = %d\n", choix);
+            destroy_print_maze(renderer, window);
+            exit(EXIT_FAILURE);
+            break;
         }
 
         getrandom(&choix, sizeof(char), 0);
@@ -175,123 +179,125 @@ void try_direction(const maze_t maze, int x, int y)
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
-    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); //couleur customisable
-    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //la position actuelle
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); // couleur customisable
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer); //on affiche la position actuelle
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
 
-    unsigned char tendance = 0; //la direction qu'on va suivre le plus possible
-    const int CONF = 50; //le nombre de fois qu'on va conserver la tendance si elle n'est pas possible
-    int confiance = CONF; //le nombre de fois qu'on va conserver la tendance si elle n'est pas possible
+    unsigned char tendance = 0; // la direction qu'on va suivre le plus possible
+    const int CONF = 50; // le nombre de fois qu'on va conserver la tendance si elle n'est pas possible
+    int confiance = CONF; // le nombre de fois qu'on va conserver la tendance si elle n'est pas possible
 
     SDL_Event event = {0}; // on crée un event vide
-    while (SDL_PollEvent(&event)) {
-        //on vide la file d'attente des événements
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-            (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //on efface la position actuelle
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         switch (tendance)
         {
-            case 0: //plutot bas droite
-                if (!has_wall_down(maze, x, y))
-                {
-                    y++;
-                }
-                else if (!has_wall_right(maze, x, y))
-                {
-                    x++;
-                    confiance--;
-                }
-                else if (!has_wall_left(maze, x, y))
-                {
-                    x--;
-                    confiance -= 2;
-                    tendance = 1;
-                }
-                else
-                {
-                    confiance = 0;
-                }
-                break;
-            case 1: //plutot bas gauche
-                if (!has_wall_down(maze, x, y))
-                {
-                    y++;
-                }
-                else if (!has_wall_left(maze, x, y))
-                {
-                    x--;
-                    confiance--;
-                }
-                else if (!has_wall_right(maze, x, y))
-                {
-                    x++;
-                    confiance -= 2;
-                    tendance = 0;
-                }
-                else
-                {
-                    confiance = 0;
-                }
-                break;
-            case 2: //plutot haut droite
-                if (!has_wall_up(maze, x, y))
-                {
-                    y--;
-                }
-                else if (!has_wall_right(maze, x, y))
-                {
-                    x++;
-                    confiance--;
-                }
-                else if (!has_wall_left(maze, x, y))
-                {
-                    x--;
-                    confiance -= 2;
-                    tendance = 3;
-                }
-                else
-                {
-                    confiance = 0;
-                }
-                break;
-            case 3: //plutot haut gauche
-                if (!has_wall_up(maze, x, y))
-                {
-                    y--;
-                }
-                else if (!has_wall_left(maze, x, y))
-                {
-                    x--;
-                    confiance--;
-                }
-                else if (!has_wall_right(maze, x, y))
-                {
-                    x++;
-                    confiance -= 2;
-                    tendance = 2;
-                }
-                else
-                {
-                    confiance = 0;
-                }
-                break;
-            case 4: //plutot gauche bas
+        case 0: // plutot bas droite
+            if (!has_wall_down(maze, x, y))
+            {
+                y++;
+            }
+            else if (!has_wall_right(maze, x, y))
+            {
+                x++;
+                confiance--;
+            }
+            else if (!has_wall_left(maze, x, y))
+            {
+                x--;
+                confiance -= 2;
+                tendance = 1;
+            }
+            else
+            {
+                confiance = 0;
+            }
+            break;
+        case 1: // plutot bas gauche
+            if (!has_wall_down(maze, x, y))
+            {
+                y++;
+            }
+            else if (!has_wall_left(maze, x, y))
+            {
+                x--;
+                confiance--;
+            }
+            else if (!has_wall_right(maze, x, y))
+            {
+                x++;
+                confiance -= 2;
+                tendance = 0;
+            }
+            else
+            {
+                confiance = 0;
+            }
+            break;
+        case 2: // plutot haut droite
+            if (!has_wall_up(maze, x, y))
+            {
+                y--;
+            }
+            else if (!has_wall_right(maze, x, y))
+            {
+                x++;
+                confiance--;
+            }
+            else if (!has_wall_left(maze, x, y))
+            {
+                x--;
+                confiance -= 2;
+                tendance = 3;
+            }
+            else
+            {
+                confiance = 0;
+            }
+            break;
+        case 3: // plutot haut gauche
+            if (!has_wall_up(maze, x, y))
+            {
+                y--;
+            }
+            else if (!has_wall_left(maze, x, y))
+            {
+                x--;
+                confiance--;
+            }
+            else if (!has_wall_right(maze, x, y))
+            {
+                x++;
+                confiance -= 2;
+                tendance = 2;
+            }
+            else
+            {
+                confiance = 0;
+            }
+            break;
+        case 4: // plutot gauche bas
             {
                 if (!has_wall_left(maze, x, y))
                 {
@@ -313,8 +319,8 @@ void try_direction(const maze_t maze, int x, int y)
                     confiance = 0;
                 }
             }
-                break;
-            case 5: //plutot gauche haut
+            break;
+        case 5: // plutot gauche haut
             {
                 if (!has_wall_left(maze, x, y))
                 {
@@ -336,8 +342,8 @@ void try_direction(const maze_t maze, int x, int y)
                     confiance = 0;
                 }
             }
-                break;
-            case 6: //plutot droite bas
+            break;
+        case 6: // plutot droite bas
             {
                 if (!has_wall_right(maze, x, y))
                 {
@@ -359,8 +365,8 @@ void try_direction(const maze_t maze, int x, int y)
                     confiance = 0;
                 }
             }
-                break;
-            case 7: //plutot droite haut
+            break;
+        case 7: // plutot droite haut
             {
                 if (!has_wall_right(maze, x, y))
                 {
@@ -382,14 +388,14 @@ void try_direction(const maze_t maze, int x, int y)
                     confiance = 0;
                 }
             }
-                break;
+            break;
 
-            default:
-                fprintf(stderr, "Erreur dans la fonction try_direction : tendance invalide.\n");
-                printf("tendance = %d\n", tendance);
-                destroy_print_maze(renderer, window);
-                exit(EXIT_FAILURE);
-                break;
+        default:
+            fprintf(stderr, "Erreur dans la fonction try_direction : tendance invalide.\n");
+            printf("tendance = %d\n", tendance);
+            destroy_print_maze(renderer, window);
+            exit(EXIT_FAILURE);
+            break;
         }
 
         if (confiance <= 0)
@@ -412,7 +418,8 @@ void try_direction(const maze_t maze, int x, int y)
             {
                 getrandom(&tendance, sizeof(char), 0);
                 tendance %= 8;
-            }while (!trust[tendance / 2]);
+            }
+            while (!trust[tendance / 2]);
 
             getrandom(&confiance, sizeof(int), 0);
             confiance = abs(confiance) % CONF;
@@ -421,7 +428,7 @@ void try_direction(const maze_t maze, int x, int y)
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //delay customisable (actuellement à sa vitesse maximale)
+        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -445,35 +452,37 @@ void cheat_escape(const maze_t maze, int x, int y)
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
-    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); //couleur customisable
-    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; //la position actuelle
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); // couleur customisable
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer); //on affiche la position actuelle
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
 
     SDL_Event event = {0}; // on crée un event vide
-    while (SDL_PollEvent(&event)) {
-        //on vide la file d'attente des événements
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-            (event.type == SDL_KEYUP && (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); //on efface la position actuelle
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
-        //le corps de l'algorithme
-        //votre déplacement
-        if (x < maze.width - 1 && rand () % 2 == 0)
+        // le corps de l'algorithme
+        // votre déplacement
+        if (x < maze.width - 1 && rand() % 2 == 0)
         {
             x++;
         }
@@ -489,7 +498,7 @@ void cheat_escape(const maze_t maze, int x, int y)
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
         SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); //delay customisable (actuellement à sa vitesse maximale)
+        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -499,4 +508,3 @@ void cheat_escape(const maze_t maze, int x, int y)
     SDL_RenderPresent(renderer);
     wait_and_destroy_print_maze(renderer, window);
 }
-

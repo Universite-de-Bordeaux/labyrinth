@@ -1,11 +1,11 @@
-#include "test.h"
 #include <errno.h>
 #include <limits.h>
-#include <sys/random.h>
 #include <stdbool.h>
+#include <sys/random.h>
+#include "test.h"
 
 #include "mazemaker.h"
-//comparable à cmd.c, ce fichier va uniquement gérer les arguments de la ligne de commande
+// comparable à cmd.c, ce fichier va uniquement gérer les arguments de la ligne de commande
 
 static void usage(const char* name)
 {
@@ -38,7 +38,6 @@ static void usage(const char* name)
     printf("an negative result triggers a visualisation of the problem\n");
     printf("nb is used to determine the size of the maze and the number of tests\n");
     printf("warning : the evaluation is exponential in time\n");
-
 }
 
 // convert a string to an integer safely
@@ -203,7 +202,7 @@ int main(const int argc, char* argv[])
     if (evaluate_connected)
     {
         printf("Evaluation of the %s, criteria : connected\n", generator_name);
-        if(do_made_connected_maze(f, nb, nb))
+        if (do_made_connected_maze(f, nb, nb))
         {
             printf("The %s seems to create connected mazes\n", generator_name);
         }
