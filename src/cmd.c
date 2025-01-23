@@ -6,6 +6,7 @@
 #include <string.h>
 #include "mazemaker.h"
 #include "outside.h"
+#include "escape.h"
 
 #include <sys/random.h>
 
