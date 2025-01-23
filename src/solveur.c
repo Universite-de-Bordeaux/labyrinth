@@ -205,6 +205,10 @@ way* best_exit_deep_seeker(const maze_t maze)
             continue;
         }
         const int l = length_waytab(ways, x, y) + 1;
+        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        {
+            continue;
+        }
         if (!has_wall_up(maze, x, y) && l < length_waytab(ways, x, y - 1)) // si on peut aller en haut et que le chemin est plus court
         {
             push(x, y - 1, s); // on ajoute la case à celle à visiter
@@ -909,6 +913,10 @@ int show_best_exit_deep_seeker(const maze_t maze)
             continue;
         }
         const int l = length_waytab(ways, x, y) + 1;
+        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        {
+            continue;
+        }
         if (!has_wall_up(maze, x, y)) // si on peut aller en haut et que le chemin est plus court
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2,
