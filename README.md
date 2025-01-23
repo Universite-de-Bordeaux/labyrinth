@@ -13,8 +13,9 @@ Utiliser cette commande pour télécharger et installer les dépendances
 
 ## Pour Compiler et exécuter
 Ce positionner à la source du dépot puis entrer la commande suivante :
-````make````  
-Cette commande crée un exécutable "main" à la source du dépot.
+````mkdir build && cd build && cmake .. && make````  
+Cette commande crée un exécutable "main" dans le dossier build à la source du dépot.
+Il suffit de faire ````./main [arg, ...]```` pour l'exécuter.
 
 ## Utilisation
 
@@ -23,8 +24,9 @@ Les différents noms de labyrinthes sont abrégés comme ceci :
 - <span style="color:red">cbm</span> : comb maze
 - <span style="color:red">hkm</span> : hunt and kill maze
 - <span style="color:red">bpm</span> : by path maze
-- <span style="color:red">sm</span> : straight maze (column maze or line maze)
-- <span style="color:red">cm</span> : cross maze
+- <span style="color:red">stm</span> : straight maze (column maze or line maze)
+- <span style="color:red">crm</span> : cross maze
+- <span style="color:red">ocm</span> : octopus maze
 
 Les différents types d'analyse seront abrégés comme ceci :
 - <span style="color:red">isp</span> : is perfect
@@ -79,10 +81,17 @@ Extraire un chemin depuis un fichier :
 #### Analyse
 
 Analyser un labyrinthe :  
+<span style="color:green">-slv</span> <span style="color:red">inspection</span>
+
+On peut préciser le solveur "solver" :
+
+
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>]
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
+
+
 
 ### Ecrire dans un fichier
 
@@ -103,10 +112,15 @@ Afficher un labyrinthe :
 
 
 Afficher le déroulement d'une analyse (sans en renvoyer le résultat) :  
-<span style="color:green">-sh</span> <span style="color:red">inspection</span> <span style="color:red">solver</span> 
+<span style="color:green">-sh</span> <span style="color:red">inspection</span>
+
+On peut préciser le solveur "solver" : 
+
+
+<span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>]
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
 
 
 Afficher un chemin :  

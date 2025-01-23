@@ -299,7 +299,7 @@ Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en 
 
 
 #### by_path_maze
-Fonction qui crée un labyrinthe parfait @micky
+Fonction qui crée un labyrinthe parfait à partir de la case 0 0 en murant des couloirs puis sélectionne la prochaine case de haut en bas qui créera un couloir.
 
 #### cross_maze
 Fonction qui crée un labyrinthe parfait en deux étapes :
