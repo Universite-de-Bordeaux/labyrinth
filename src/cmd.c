@@ -147,6 +147,9 @@ void cmd(char* argv[], const int argc)
 
     bool show_way = false; // -shw
 
+    bool exit = false; // -ex
+    int exit_type = 0; // <type>
+
 
     // tri des arguments
     int i = 1;
@@ -376,6 +379,27 @@ void cmd(char* argv[], const int argc)
             }
             print_cmd_help(argv[0]);
             return;
+        }
+        else if (!strcmp(argv[i], "-ex"))
+        {
+            exit = true;
+            i++;
+            if (i >= argc)
+            {
+                continue;
+            }
+            if (!strcmp(argv[i], "random"))
+            {
+                exit_type = 0;
+            }
+            else if (!strcmp(argv[i], "try_direction"))
+            {
+                exit_type = 1;
+            }
+            else if (!strcmp(argv[i], "cheat"))
+            {
+                exit_type = 2;
+            }
         }
         else
         {
@@ -679,6 +703,37 @@ void cmd(char* argv[], const int argc)
         }
         // ReSharper disable twice CppLocalVariableMightNotBeInitialized
         show_the_way(maze, w);
+    }
+    if (exit)
+    {
+        if (!is_maze)
+        {
+            fprintf(stderr, "Error : -ex : no maze to exit\n");
+            return;
+        }
+
+        int x, y;
+        getrandom(&x, sizeof(x), 0);
+        x = abs(x) % maze.width;
+        getrandom(&y, sizeof(y), 0);
+        y = abs(y) % maze.height;
+
+        if (exit_type == 0)
+        {
+            random_escape(maze, x, y);
+        }
+        else if (exit_type == 1)
+        {
+            try_direction(maze, x, y);
+        }
+        else if (exit_type == 2)
+        {
+            cheat_escape(maze, x, y);
+        }
+        else // théoriquement impossible
+        {
+            printf("Error : -ex <type> : %d is not a valid type\n", exit_type);
+        }
     }
     if (is_maze)
     {
