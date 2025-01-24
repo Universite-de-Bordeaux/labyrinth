@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/random.h>
+#include "struct.h"
 
 void ESCAPE_TYPE(const maze_t maze, int x, int y)
 {
@@ -507,4 +508,152 @@ void cheat_escape(const maze_t maze, int x, int y)
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer);
     wait_and_destroy_print_maze(renderer, window);
+}
+
+// fonction pour savoir si une cellule a des cellules adjacentes accessibles
+// renvoie true si la cellule n'a pas de cellules adjacentes accessibles
+// renvoie false si la cellule a des cellules adjacentes accessibles
+static bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze, int* dir_acc)
+{
+    if (!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
+    {
+        dir_acc[0] = 1;
+    }
+    if (!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
+    {
+        dir_acc[1] = 1;
+    }
+    if (!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
+    {
+        dir_acc[2] = 1;
+    }
+    if (!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
+    {
+        dir_acc[3] = 1;
+    }
+    return dir_acc[0] && dir_acc[1] && dir_acc[2] && dir_acc[3];
+}
+
+void hunt_kill_escape(maze_t maze, int x, int y)
+{
+    // on crée un bool_tab pour stocker les cellules visitées
+    // on marque la cellule actuelle comme visitée
+    bool_tab visited = create_booltab(maze.width, maze.height);
+    set_true(visited, x, y);
+    int* dir_acc = malloc(4 * sizeof(int));
+    int old_dir = -1;
+    while (x != maze.width - 1 || y != maze.height)
+    {
+        // on cherche une cellule accessible
+        // tant qu'on est dans une boucle
+        while (has_accessible_cells(x, y, visited, maze, dir_acc))
+        {
+            // on va dans une direction aléatoire autre que notre direction d'origine si possible
+            int size = 4;
+            char c = '\0';
+            while (size > 0)
+            { // tant qu'il reste des directions possibles
+                char dir[4] = {'R', 'D', 'L', 'U'}; // tableau des directions possibles
+                size = 4;
+                while (size > 0) // tant qu'il reste des directions possibles et qu'on n'en a pas tiré de valide
+                {
+                    const int r = rand() % size; // NOLINT(*-msc50-cpp)
+                    c = dir[r];
+                    if (r == old_dir)
+                    {
+                        break;
+                    }
+                    if (c == 'R' && x + 1 < maze.width && !has_wall_right(maze, x + 1, y)) // si on a tiré la direction droite et qu'on peut y aller
+                    {
+                        x++; // on se déplace
+                        old_dir = 2;
+                        break;
+                    }
+                    if (c == 'L' && x > 0 && !has_wall_left(maze, x - 1, y)) // si on a tiré la direction gauche et qu'on peut y aller
+                    {
+                        x--; // on se déplace
+                        old_dir = 0;
+                        break;
+                    }
+                    if (c == 'D' && y + 1 < maze.height && !has_wall_down(maze, x, y + 1)) // si on a tiré la direction bas et qu'on peut y aller
+                    {
+                        y++; // on se déplace
+                        old_dir = 3;
+                        break;
+                    }
+                    if (y > 0 && !has_wall_up(maze, x, y)) // il ne reste plus que la direction haut, on regarde si on peut y aller
+                    {
+                        y--; // on se déplace
+                        old_dir = 1;
+                        break;
+                    }
+                    // sinon on supprime la direction prise du tableau
+                    {
+                        for (int i = r; i < size - 1; i++)
+                        {
+                            dir[i] = dir[i + 1];
+                        }
+                        size--;
+                    }
+                }
+                if (size == 0) // la seule direction possible est la direction de là ou on vient
+                {
+                    if (old_dir == 0)
+                    {
+                        x++;
+                        old_dir = 2;
+                    }
+                    else if (old_dir == 1)
+                    {
+                        y++;
+                        old_dir = 3;
+                    }
+                    else if (old_dir == 2)
+                    {
+                        x--;
+                        old_dir = 0;
+                    }
+                    else if (old_dir == 3)
+                    {
+                        y--;
+                        old_dir = 1;
+                    }
+                    break;
+                }
+                set_true(visited, x, y);
+            }
+        }
+        // tant qu'on a des cellules adjacentes non visitées
+        // on essaie d'aller à droite, puis en bas, puis à gauche, puis en haut
+        while (has_accessible_cells(x, y, visited, maze, dir_acc))
+        {
+            int i = 0;
+            while (dir_acc[i] == 0)
+            {
+                i++;
+            }
+            if (i == 0)
+            {
+                x++;
+                old_dir = 2;
+            }
+            else if (i == 1)
+            {
+                y++;
+                old_dir = 3;
+            }
+            else if (i == 2)
+            {
+                x--;
+                old_dir = 0;
+            }
+            else if (i == 3)
+            {
+                y--;
+                old_dir = 1;
+            }
+        }
+    }
+    free_booltab(visited);
+    free(dir_acc);
 }
