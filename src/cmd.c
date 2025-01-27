@@ -401,6 +401,10 @@ void cmd(char* argv[], const int argc)
             {
                 exit_type = 2;
             }
+            else if(!strcmp(argv[i], "hunt_kill"))
+            {
+                exit_type = 3;
+            }
         }
         else
         {
@@ -730,6 +734,9 @@ void cmd(char* argv[], const int argc)
         else if (exit_type == 2)
         {
             cheat_escape(maze, x, y);
+        }
+        else if (exit_type == 3){
+            hunt_kill_escape(maze, x, y);
         }
         else // théoriquement impossible
         {
