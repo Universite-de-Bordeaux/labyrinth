@@ -1,6 +1,6 @@
 # Define the minimum CMake version and the project
 cmake_minimum_required(VERSION 3.3)
-project(main)
+project(main C)
 
 # Set the compilation flags
 set(CMAKE_C_FLAGS "-std=c99 -g -Wall")
