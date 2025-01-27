@@ -735,12 +735,8 @@ void cmd(char* argv[], const int argc)
         {
             cheat_escape(maze, x, y);
         }
-        else if (exit_type == 3){
+        else{
             hunt_kill_escape(maze, x, y);
-        }
-        else // théoriquement impossible
-        {
-            printf("Error : -ex <type> : %d is not a valid type\n", exit_type);
         }
     }
     if (is_maze)
