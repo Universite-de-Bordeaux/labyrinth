@@ -658,22 +658,29 @@ void hunt_kill_escape(maze_t maze, int x, int y)
     free(dir_acc);
 }
 
+enum direction
+{
+    EAST = 0,
+    SUD,
+    OUEST,
+    NORD
+};
+
 // Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-// 0 pour EST, 1 pour SUD, 2 pour OUEST, 3 pour NORD
 static bool can_go(int x, int y, maze_t maze, char dir)
 {
     switch (dir)
     {
-    case 0:
+    case EAST:
         return (!has_wall_right(maze, x, y));
-    case 1:
+    case SUD:
         return (!has_wall_down(maze, x, y));
-    case 2:
+    case OUEST:
         return (!has_wall_left(maze, x, y));
-    case 3:
+    case NORD:
         return (!has_wall_up(maze, x, y));
     default:
-        fprintf(stderr, "Error in can_go, dir must be within 0 and 3\n");
+        fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
         exit(EXIT_FAILURE);
     }
 }
@@ -682,20 +689,20 @@ static void go(int* x, int* y, char dir)
 {
     switch (dir)
     {
-    case 0:
+    case EAST:
         (*x)++;
         break;
-    case 1:
+    case SUD:
         (*y)++;
         break;
-    case 2:
+    case OUEST:
         (*x)--;
         break;
-    case 3:
+    case NORD:
         (*y)--;
         break;
     default:
-        fprintf(stderr, "Error in go, dir must be within 0 and 3\n");
+        fprintf(stderr, "Error in go, dir must be within 0 and 3, received %d\n", dir);
         exit(EXIT_FAILURE);
     }
 }
@@ -797,7 +804,7 @@ void right_hand_random(const maze_t maze, int x, int y)
     SDL_RenderPresent(renderer); // on affiche la position actuelle
 
     // Variables à déclarer avant la boucle
-    char dir = rand() % 4; // on commence par aller à droite
+    char dir = rand() % 4; // on commence par une direction aléatoire
     char count = 0;
     bool_tab visited = create_booltab(maze.width, maze.height);
 
