@@ -338,7 +338,7 @@ void set_true(const bool_tab tab, const int x, const int y)
         return;
     }
     const int nx = x / 8;
-    tab.tab[y][nx] |= 1 << (x % 8); // set the bit to 1 NOLINT(*-narrowing-conversions)
+    tab.tab[y][nx] |= 1 << x % 8; // set the bit to 1 NOLINT(*-narrowing-conversions)
 }
 
 void set_false(const bool_tab tab, const int x, const int y)
@@ -352,7 +352,7 @@ void set_false(const bool_tab tab, const int x, const int y)
         return;
     }
     const int nx = x / 8;
-    tab.tab[y][nx] &= ~(1 << (x % 8)); // set the bit to 0 NOLINT(*-narrowing-conversions)
+    tab.tab[y][nx] &= ~(1 << x % 8); // set the bit to 0 NOLINT(*-narrowing-conversions)
 }
 
 bool get_bool(const bool_tab tab, const int x, const int y)
@@ -367,7 +367,7 @@ bool get_bool(const bool_tab tab, const int x, const int y)
     }
     const int nx = x / 8;
     const char temp = tab.tab[y][nx];
-    return (temp >> (x % 8)) & 1;
+    return temp >> x % 8 & 1;
 }
 
 

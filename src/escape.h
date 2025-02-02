@@ -42,7 +42,7 @@ void hunt_kill_escape(maze_t maze, int x, int y);
 // stop when the exit is found or the corresponding command is entered
 // maze : the maze
 // x, y : the coordinates of the starting point
-void right_hand(const maze_t maze, int x, int y);
+void right_hand(maze_t maze, int x, int y);
 
 // function to find the exit of the maze using the right hand and sometimes random function
 // visualize the progression of the solver

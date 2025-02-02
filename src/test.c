@@ -88,10 +88,10 @@ int evaluate_mazemaker(const func_ptr f)
 
 int evaluate_time(const func_ptr f, char* name)
 {
-    int score1 = 50;
-    int score2 = 10;
-    int score3 = 15;
-    int score4 = 25;
+    long score1 = 50;
+    long int score2 = 10;
+    long int score3 = 15;
+    long int score4 = 25;
     clock_t start = clock();
     const maze_t t_maze = create_basic_maze(1000, 10);
     const clock_t temp = 2 * (clock() - start); // temps moyen pour générer un labyrinthe vide de 1000x10
@@ -179,10 +179,11 @@ int evaluate_time(const func_ptr f, char* name)
         score4 = 0;
     }
     printf("The %s has been evaluated\n", name);
-    printf("\tStandard generation score : %d/50\n", score1);
-    printf("\tLine/Column generation score : %d/10\n", score2);
-    printf("\t4x4 maze generation score : %d/15\n", score3);
-    printf("\t100x100 maze generation score : %d/25\n", score4);
-    printf("\tTotal score : %d/100\n", score1 + score2 + score3 + score4);
-    return score1 + score2 + score3 + score4;
+    printf("\tStandard generation score : %ld/50\n", score1);
+    printf("\tLine/Column generation score : %ld/10\n", score2);
+    printf("\t4x4 maze generation score : %ld/15\n", score3);
+    printf("\t100x100 maze generation score : %ld/25\n", score4);
+    printf("\tTotal score : %ld/100\n", score1 + score2 + score3 + score4);
+    const int score = (int)(score1 + score2 + score3 + score4);
+    return score;
 }

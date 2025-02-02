@@ -204,7 +204,7 @@ way* best_exit_deep_seeker(const maze_t maze)
         {
             continue;
         }
-        const int l = length_waytab(ways, x, y) + 1;
+        const unsigned int l = length_waytab(ways, x, y) + 1;
         if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
@@ -873,7 +873,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
     // partant de l'entrée il nous permettra d'éviter les cycle (la taille du cycle serait plus grande) et de relier des
     // fragments de chemin plutôt que de tout recalculer
     int frame_count = 0;
-    int reach = maze.width * maze.height / 100; // on affichera un frame tous les 1% du labyrinthe
+    unsigned int reach = maze.width * maze.height / 100; // on affichera un frame tous les 1% du labyrinthe
     if (reach == 0)
     {
         reach = 1;
@@ -912,7 +912,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
         {
             continue;
         }
-        const int l = length_waytab(ways, x, y) + 1;
+        const unsigned int l = length_waytab(ways, x, y) + 1;
         if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
@@ -1529,7 +1529,7 @@ int show_best_exit_breadth_seeker(const maze_t maze)
         }
         SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // on dessine un rectangle dans la case
         SDL_RenderFillRect(renderer, &rect);
-        const int l = length_waytab(ways, x, y) + 1;
+        const unsigned int l = length_waytab(ways, x, y) + 1;
         if (!has_wall_up(maze, x, y)) // si on peut aller en haut
         {
             SDL_RenderDrawLine(renderer, x * dw + 1, y * dh, (x + 1) * dw - 2,

@@ -1,8 +1,6 @@
 #include "outside.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "struct.h"
 
 maze_t maze_from_file(const char* filename)
 {
@@ -105,7 +103,6 @@ void maze_to_file(const maze_t maze, const char* filename)
         }
     }
     fclose(fp); // fermeture du fichier
-    return;
 }
 
 // fonction auxiliaire pour way_from_file

@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/random.h>
-#include <time.h>
-#include "outside.h"
-#include "struct.h"
 
 // Auxiliary functions
 // update the connexity of the maze by adding a connexion to the cell (dx, dy) if it is connected to the cell (0, 0)
@@ -756,7 +753,7 @@ maze_t hunt_kill_maze(const int width, const int height)
 
 #define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
 
-static int can_move_dir(const maze_t* maze, int* x, int* y, const bool_tab tab_visited, int dir)
+static int can_move_dir(const maze_t* maze, const int* x, const int* y, const bool_tab tab_visited, int const dir)
 {
     switch (dir)
     {
@@ -785,7 +782,7 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
     // tant qu'il nous reste des directions
     int choice = rand() % 4; // choix d'une direction NOLINT(*-msc50-cpp)
     while (!can_move_dir(maze, x, y, tab_visited, choice)) // si notre direction n'est pas possible, on passe à la suivante
-        choice = rand() % (4);
+        choice = rand() % 4;
     switch (choice)
     {
     case 0:
@@ -812,9 +809,8 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
         fprintf(stderr, "Problem in the switch case in lbp_path_move");
         exit(EXIT_FAILURE);
     }
-
-    return false;
 }
+
 // Auxiliary functions for lab_by_path
 // function to create a path in the maze by adding walls
 void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
@@ -1087,7 +1083,7 @@ void tear(const maze_t maze, const unsigned int prop)
         for (int j = 0; j < maze.height; j++)
         {
             getrandom(&r, sizeof(r), 0);
-            const bool tear = (r % 100) < prop;
+            const bool tear = r % 100 < prop;
             const bool wd = has_wall_down(maze, i, j) && j < maze.height - 1;
             const bool wr = has_wall_right(maze, i, j) && i < maze.width - 1;
             if (tear && wd && wr)
