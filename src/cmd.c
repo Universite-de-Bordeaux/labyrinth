@@ -401,9 +401,17 @@ void cmd(char* argv[], const int argc)
             {
                 exit_type = 2;
             }
-            else if(!strcmp(argv[i], "hunt_kill"))
+            else if (!strcmp(argv[i], "right_hand"))
             {
                 exit_type = 3;
+            }
+            else if (!strcmp(argv[i], "right_hand_random"))
+            {
+                exit_type = 4;
+            }
+            else if(!strcmp(argv[i], "hunt_kill"))
+            {
+                exit_type = 5;
             }
         }
         else
@@ -734,6 +742,14 @@ void cmd(char* argv[], const int argc)
         else if (exit_type == 2)
         {
             cheat_escape(maze, x, y);
+        }
+        else if(exit_type == 3)
+        {
+            right_hand(maze, x, y);
+        }
+        else if (exit_type == 4)
+        {
+            right_hand_random(maze, x, y);
         }
         else{
             hunt_kill_escape(maze, x, y);
