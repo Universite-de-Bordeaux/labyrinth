@@ -1,3 +1,19 @@
+# Labyrinth
+
+Le projet Labyrinth est organisé dans les fichiers suivants :
+
+struct.c : définition des structures de données et de leurs primitives.
+mazemaker.c : fonctions de génération de labyrinthes.
+test.c : fonctions d'évaluation de labyrinthes.
+solveur.c : fonctions de résolution de labyrinthes.
+outside.c : fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
+cmd.c : fonctions de gestion de la ligne de commande de l'exécutable principal.
+testing.c : fonctions de gestion de la ligne de commande de l'exécutable de tests.
+
+le CMakeLists.txt est utilisé pour compiler les fichiers sources en deux exécutables :
+- maze : exécutable principal (creation, résolution, affichage, écriture et lecture de labyrinthes)
+- test_interne : exécutable de tests (à usage interne, pour tester les fonctions de génération de labyrinthes)
+
 ## Fichier " struct.c " :
 
 Ce fichier contient la définition de l'ensemble des structures de données utilisées ainsi que leurs primitives.
@@ -232,10 +248,6 @@ x, y : les coordonnées de la case
 
 ### Primitives `way`
 
-
-
-
-
 A completer
 
 
@@ -317,7 +329,25 @@ Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction
 
 ## Fichier " test.c "
 Ce fichiers contient des fonctions d'évaluation de labyrinthes, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
-Il est à usage interne et n'est pas compilé dans le programme final.
+Il est à usage interne.
+
+### Fonctions
+
+do_made_solvable_maze(const func_ptr f, const int x, const int y)
+Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
+
+do_made_connected_maze(const func_ptr f, const int x, const int y)
+Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est connexe.
+
+do_made_perfect_maze(const func_ptr f, const int x, const int y)
+Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
+
+evaluate_mazemaker(const func_ptr f)
+Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant si ils sont solvables, connexes ou parfaits.
+
+evaluate_time(const func_ptr f, char* name)
+Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
+
 
 ## Fichier " solveur.c "
 Ce fichier contient les fonctions de résolution de labyrinthes.
@@ -486,11 +516,5 @@ Interprète les commandes passées en argument du programme et appelle les fonct
 
 `argc` : nombre d'arguments.
 
-## Fichier " main.c " :
-
-ne fait actuellement rien d'autre qu'appeler cmd...
-
 ## Fichier " testing.c " :
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de tests.
-
-Ne sera pas compilé dans le programme final.
