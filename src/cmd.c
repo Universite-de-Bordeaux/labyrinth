@@ -655,29 +655,34 @@ int main(const int argc, char* argv[])
         getrandom(&y, sizeof(y), 0);
         y = abs(y) % maze.height;
 
+        int step = 0;
         switch (exit_type)
         {
         case 1:
-            try_direction(maze, x, y);
+            step = try_direction(maze, x, y);
             break;
         case 2:
-            cheat_escape(maze, x, y);
+            step = cheat_escape(maze, x, y);
             break;
         case 3:
-            right_hand(maze, x, y);
+            step = right_hand(maze, x, y);
             break;
         case 4:
-            right_hand_random(maze, x, y);
+            step = right_hand_random(maze, x, y);
             break;
         case 5:
-            hunt_kill_escape(maze, x, y);
+            step = hunt_kill_escape(maze, x, y);
             break;
         case 6:
-            right_hand_random_pond(maze, x, y);
+            step = right_hand_random_pond(maze, x, y);
             break;
         default: //inclue 0
-            random_escape(maze, x, y);
+            step = random_escape(maze, x, y);
             break;
+        }
+        if (step != -1)
+        {
+            printf("The exit has been found in %d steps\n", step);
         }
     }
     if (is_maze)
