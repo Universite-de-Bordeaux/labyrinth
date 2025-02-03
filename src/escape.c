@@ -164,6 +164,7 @@ int random_escape(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate);
         SDL_RenderPresent(renderer);
+        steps++;
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
@@ -439,6 +440,7 @@ int try_direction(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
+        steps++;
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
@@ -511,6 +513,7 @@ int cheat_escape(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
+        steps++;
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
@@ -789,6 +792,7 @@ int right_hand(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
+        steps++;
     }
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
@@ -917,6 +921,7 @@ int right_hand_random(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
+        steps++;
     }
     free_booltab(visited);
     SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -1063,6 +1068,7 @@ int right_hand_random_pond(const maze_t maze, int x, int y)
         SDL_RenderFillRect(renderer, &rect);
         SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
         SDL_RenderPresent(renderer);
+        steps++;
     }
 
     // Supression des tableaux
