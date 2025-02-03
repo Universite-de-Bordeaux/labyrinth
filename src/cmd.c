@@ -416,10 +416,6 @@ int main(const int argc, char* argv[])
             {
                 exit_type = 6;
             }
-            else if (!strcmp(argv[i], "no_dead_end"))
-            {
-                exit_type = 7;
-            }
             else
             {
                 fprintf(stderr, "Error : -ex <type> : %s is not a valid type\n", argv[i]);
@@ -679,8 +675,6 @@ int main(const int argc, char* argv[])
         case 6:
             right_hand_random_pond(maze, x, y);
             break;
-        case 7:
-            no_dead_end(maze, x, y);
         default: //inclue 0
             random_escape(maze, x, y);
             break;

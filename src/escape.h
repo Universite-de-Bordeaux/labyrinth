@@ -53,10 +53,4 @@ void right_hand_random(maze_t maze, int x, int y);
 
 void right_hand_random_pond(const maze_t maze, int x, int y);
 
-// function to find the exit of the maze without retrying a dead end
-// visualize the progression of the solver
-// stop when the exit is found or the corresponding command is entered
-// maze : the maze
-// x, y : the coordinates of the starting point
-void no_dead_end(const maze_t maze, int x, int y);
 #endif // ESCAPE_H
