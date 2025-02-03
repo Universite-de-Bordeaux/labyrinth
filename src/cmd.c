@@ -28,8 +28,8 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
-#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size nb x nb"
-#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size 10x10"
+#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size nb x nb"
+#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
 #define READ_WAY "-rw <filename> : read way from file"
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
@@ -100,17 +100,6 @@ int main(const int argc, char* argv[])
         fprintf(stderr, "Error : argv is NULL\n");
         return EXIT_FAILURE;
     }
-    //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cmr
-    //-r <filename> -> read maze
-    //-slv <inspection> <solver> : said if the maze (inspection) isp, isc, he, she with the (solver)
-    //-w <filename> -> write maze in file (if maze)
-    //-sh -> show maze
-    //-sh <inspection> <SOLVEUR> : show ifthe maze (inspection) isp, isc, he, she with the (solver)
-    //-ww <filename> -> write way in file (if way)
-    //-rw <filename> -> read way in file (if way)
-    //-shw -> show way (if way & maze)
-    //-h -> help (only if no other command)
-    //-t <nb> -> tear the maze by removing nb% of the walls (if maze)
 
     // initialisation des variables
     bool generate = false; // -g
