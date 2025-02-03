@@ -1,4 +1,3 @@
-#include "cmd.h"
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -86,7 +85,7 @@ static void print_cmd_help(char* namefile)
     printf("See the README for more informations\n");
 }
 
-void cmd(char* argv[], const int argc)
+int main(const int argc, char* argv[])
 {
     if (argc < 2)
     {
@@ -94,12 +93,12 @@ void cmd(char* argv[], const int argc)
         {
             print_cmd_help(argv[0]);
         }
-        return;
+        return EXIT_SUCCESS;
     }
     if (argv == NULL)
     {
         fprintf(stderr, "Error : argv is NULL\n");
-        return;
+        return EXIT_FAILURE;
     }
     //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cmr
     //-r <filename> -> read maze
@@ -169,7 +168,7 @@ void cmd(char* argv[], const int argc)
                 fprintf(stderr, "Error : -g misused, <type> missing\n");
                 printf("usage : %s\n", GENERATE_TYPE);
                 printf("usage : %s\n", GENERATE_TYPE_NB);
-                return;
+                return EXIT_FAILURE;
             }
 
             if (i < argc - 1 && safe_atoi(argv[i + 1], &width))
@@ -203,7 +202,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -r misused, <filename> missing\n");
                 printf("usage : %s\n", READ_MAZE);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-t"))
@@ -244,7 +243,7 @@ void cmd(char* argv[], const int argc)
                     fprintf(stderr, "Error : -slv <inspection> : %s is not a valid inspection\n", argv[i + 1]);
                     printf("usage : %s\n", SOLVEUR);
                     printf("usage : %s\n", SOLVEUR_DEFAULT);
-                    return;
+                    return EXIT_FAILURE;
                 }
             }
             if (i < argc - 2)
@@ -283,7 +282,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -w misused, <filename> missing\n");
                 printf("usage : %s\n", WRITE_MAZE);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-sh"))
@@ -350,7 +349,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -ww misused, <filename> missing\n");
                 printf("usage : %s\n", WRITE_WAY);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-rw"))
@@ -365,7 +364,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -rw misused, <filename> missing\n");
                 printf("usage : %s\n", READ_WAY);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-shw"))
@@ -379,7 +378,7 @@ void cmd(char* argv[], const int argc)
                 fprintf(stderr, "Warning : -h will override any other command\n");
             }
             print_cmd_help(argv[0]);
-            return;
+            return EXIT_SUCCESS;
         }
         else if (!strcmp(argv[i], "-ex"))
         {
@@ -466,7 +465,7 @@ void cmd(char* argv[], const int argc)
             fprintf(stderr, "Error : -g <type> : %s is not a valid type\n", generator);
             printf("usage : %s\n", GENERATE_TYPE);
             printf("usage : %s\n", GENERATE_TYPE_NB);
-            return;
+            return EXIT_FAILURE;
         }
         is_maze = true;
         printf("Maze generated\n");
@@ -476,7 +475,7 @@ void cmd(char* argv[], const int argc)
         if (is_maze)
         {
             fprintf(stderr, "Error : -r <filename> & -g <type> superposition : only one maze can be generated or read\n");
-            return;
+            return EXIT_FAILURE;
         }
         maze = maze_from_file(filename);
         is_maze = true;
@@ -493,7 +492,7 @@ void cmd(char* argv[], const int argc)
         else
         {
             fprintf(stderr, "Error : -t <nb> : no maze to tear\n");
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (read_way)
@@ -507,7 +506,7 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -slv <nb> : no maze to solve\n");
-            return;
+            return EXIT_FAILURE;
         }
         if (solve_type == 1 || solve_type == -1)
         {
@@ -615,7 +614,7 @@ void cmd(char* argv[], const int argc)
             fprintf(stderr, "Error : -slv misused, <inspection> <solver> : %d is not a valid type\n", solve_type);
             printf("usage : %s\n", SOLVEUR);
             printf("usage : %s\n", SOLVEUR_DEFAULT);
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (write)
@@ -623,7 +622,7 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -w <filename> : no maze to write\n");
-            return;
+            return EXIT_FAILURE;
         }
         // ReSharper disable once CppLocalVariableMightNotBeInitialized
         maze_to_file(maze, filename_write);
@@ -634,7 +633,7 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -sh <nb> : no maze to show\n");
-            return;
+            return EXIT_FAILURE;
         }
         if (type_show == 0)
         {
@@ -688,7 +687,7 @@ void cmd(char* argv[], const int argc)
             printf("usage : %s\n", SHOW_DEFAULT);
             printf("usage : %s\n", SHOW_ARG);
             printf("usage : %s\n", SHOW_ARG_DEFAULT);
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (write_way)
@@ -696,7 +695,7 @@ void cmd(char* argv[], const int argc)
         if (!is_way)
         {
             fprintf(stderr, "Error : -ww <filename> : no way to write\n");
-            return;
+            return EXIT_FAILURE;
         }
         // ReSharper disable once CppLocalVariableMightNotBeInitialized
         way_to_file(w, filename_write_way);
@@ -707,12 +706,12 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -shw : no maze to show way\n");
-            return;
+            return EXIT_FAILURE;
         }
         if (!is_way)
         {
             fprintf(stderr, "Error : -shw : no way to show\n");
-            return;
+            return EXIT_FAILURE;
         }
         // ReSharper disable twice CppLocalVariableMightNotBeInitialized
         show_the_way(maze, w);
@@ -722,7 +721,7 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -ex : no maze to exit\n");
-            return;
+            return EXIT_FAILURE;
         }
 
         int x, y;
@@ -763,4 +762,5 @@ void cmd(char* argv[], const int argc)
     {
         free_way(w);
     }
+    return EXIT_SUCCESS;
 }
