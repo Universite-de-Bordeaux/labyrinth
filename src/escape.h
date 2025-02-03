@@ -50,4 +50,6 @@ void right_hand(maze_t maze, int x, int y);
 // maze : the maze
 // x, y : the coordinates of the starting point
 void right_hand_random(maze_t maze, int x, int y);
+
+void right_hand_random_pond(const maze_t maze, int x, int y);
 #endif // ESCAPE_H
