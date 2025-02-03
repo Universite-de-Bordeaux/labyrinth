@@ -3,11 +3,17 @@
 Le projet Labyrinth est organisé dans les fichiers suivants :
 
 struct.c : définition des structures de données et de leurs primitives.
+
 mazemaker.c : fonctions de génération de labyrinthes.
+
 test.c : fonctions d'évaluation de labyrinthes.
+
 solveur.c : fonctions de résolution de labyrinthes.
+
 outside.c : fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
+
 cmd.c : fonctions de gestion de la ligne de commande de l'exécutable principal.
+
 testing.c : fonctions de gestion de la ligne de commande de l'exécutable de tests.
 
 le CMakeLists.txt est utilisé pour compiler les fichiers sources en deux exécutables :
