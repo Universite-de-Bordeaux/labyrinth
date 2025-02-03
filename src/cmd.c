@@ -412,6 +412,10 @@ int main(const int argc, char* argv[])
             {
                 exit_type = 5;
             }
+            else if (!strcmp(argv[i], "right_hand_random_pond"))
+            {
+                exit_type = 6;
+            }
         }
         else
         {
@@ -750,8 +754,18 @@ int main(const int argc, char* argv[])
         {
             right_hand_random(maze, x, y);
         }
-        else{
+        else if (exit_type == 5)
+        {
             hunt_kill_escape(maze, x, y);
+        }
+        else if (exit_type == 6)
+        {
+            right_hand_random_pond(maze, x, y);
+        }
+        else
+        {
+            fprintf(stderr, "Error : -ex <type> : %d is not a valid type\n", exit_type);
+            return EXIT_FAILURE;
         }
     }
     if (is_maze)
