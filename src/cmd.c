@@ -512,108 +512,37 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -slv <nb> : no maze to solve\n");
             return EXIT_FAILURE;
         }
-        if (solve_type == 1 || solve_type == -1)
+        switch (solve_type)
         {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_perfect_deep_inspector(maze))
-            {
-                printf("The maze is perfect\n");
-            }
-            else
-            {
-                printf("The maze is not perfect\n");
-            }
-        }
-        else if (solve_type == 2 || solve_type == -2)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_connexe_deep_inspector(maze))
-            {
-                printf("The maze is connected\n");
-            }
-            else
-            {
-                printf("The maze is not connected\n");
-            }
-        }
-        else if (solve_type == 3 || solve_type == -3)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (has_exit_deep_seeker(maze))
-            {
-                printf("The maze has an exit\n");
-            }
-            else
-            {
-                printf("The maze has no exit\n");
-            }
-        }
-        else if (solve_type == 4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            w = best_exit_deep_seeker(maze);
-            if (is_empty(w))
-            {
-                printf("The maze has no exit\n");
-            }
-            else
-            {
-                is_way = true;
-                printf("way found and saved\n");
-            }
-        }
-        else if (solve_type == 5)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_perfect_breadth_inspector(maze))
-            {
-                printf("The maze is perfect\n");
-            }
-            else
-            {
-                printf("The maze is not perfect\n");
-            }
-        }
-        else if (solve_type == 6)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_connexe_breadth_inspector(maze))
-            {
-                printf("The maze is connected\n");
-            }
-            else
-            {
-                printf("The maze is not connected\n");
-            }
-        }
-        else if (solve_type == 7)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (has_exit_breadth_seeker(maze))
-            {
-                printf("The maze has an exit\n");
-            }
-            else
-            {
-                printf("The maze has no exit\n");
-            }
-        }
-        else if (solve_type == 8 || solve_type == -4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            w = best_exit_breadth_seeker(maze);
-            if (is_empty(w))
-            {
-                printf("The maze has no exit\n");
-            }
-            else
-            {
-                is_way = true;
-                printf("way found and saved\n");
-            }
-        }
-        else
-        {
+        case 1:
+        case -1:
+            is_perfect_deep_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 2:
+        case -2:
+            is_connexe_deep_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 3:
+        case -3:
+            has_exit_deep_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            break;
+        case 4:
+            best_exit_deep_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            break;
+        case 5:
+            is_perfect_breadth_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 6:
+            is_connexe_breadth_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 7:
+            has_exit_breadth_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            break;
+        case 8:
+        case -4:
+            best_exit_breadth_seeker(maze);
+            break;
+        default:
             // théoriquement impossible
             fprintf(stderr, "Error : -slv misused, <inspection> <solver> : %d is not a valid type\n", solve_type);
             printf("usage : %s\n", SOLVEUR);
@@ -639,55 +568,41 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -sh <nb> : no maze to show\n");
             return EXIT_FAILURE;
         }
-        if (type_show == 0)
+        switch (type_show)
         {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+        case 0:
             print_maze(maze);
-        }
-        else if (type_show == 1 || type_show == -1)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 1:
+        case -1:
             show_is_perfect_deep_inspector(maze);
-        }
-        else if (type_show == 2 || type_show == -2)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 2:
+        case -2:
             show_is_connexe_deep_inspector(maze);
-        }
-        else if (type_show == 3 || type_show == -3)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 3:
+        case -3:
             show_has_exit_deep_seeker(maze);
-        }
-        else if (type_show == 4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 4:
             show_best_exit_deep_seeker(maze);
-        }
-        else if (type_show == 5)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 5:
             show_is_perfect_breadth_inspector(maze);
-        }
-        else if (type_show == 6)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 6:
             show_is_connexe_breadth_inspector(maze);
-        }
-        else if (type_show == 7)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+        case 7:
             show_has_exit_breadth_seeker(maze);
-        }
-        else if (type_show == 8 || type_show == -4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 8:
+        case -4:
             show_best_exit_breadth_seeker(maze);
-        }
-        else
-        {
+            break;
+        default:
             // théoriquement impossible
-            fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n", type_show);
+                fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n", type_show);
             printf("usage : %s\n", SHOW_DEFAULT);
             printf("usage : %s\n", SHOW_ARG);
             printf("usage : %s\n", SHOW_ARG_DEFAULT);
@@ -734,38 +649,29 @@ int main(const int argc, char* argv[])
         getrandom(&y, sizeof(y), 0);
         y = abs(y) % maze.height;
 
-        if (exit_type == 0)
+        switch (exit_type)
         {
-            random_escape(maze, x, y);
-        }
-        else if (exit_type == 1)
-        {
+        case 1:
             try_direction(maze, x, y);
-        }
-        else if (exit_type == 2)
-        {
+            break;
+        case 2:
             cheat_escape(maze, x, y);
-        }
-        else if(exit_type == 3)
-        {
+            break;
+        case 3:
             right_hand(maze, x, y);
-        }
-        else if (exit_type == 4)
-        {
+            break;
+        case 4:
             right_hand_random(maze, x, y);
-        }
-        else if (exit_type == 5)
-        {
+            break;
+        case 5:
             hunt_kill_escape(maze, x, y);
-        }
-        else if (exit_type == 6)
-        {
+            break;
+        case 6:
             right_hand_random_pond(maze, x, y);
-        }
-        else
-        {
-            fprintf(stderr, "Error : -ex <type> : %d is not a valid type\n", exit_type);
-            return EXIT_FAILURE;
+            break;
+        default: //inclue 0
+            random_escape(maze, x, y);
+            break;
         }
     }
     if (is_maze)
