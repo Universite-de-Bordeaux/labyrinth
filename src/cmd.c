@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "escape.h"
 #include "mazemaker.h"
 #include "outside.h"
-#include "escape.h"
 
 #include <sys/random.h>
 
@@ -406,7 +406,7 @@ int main(const int argc, char* argv[])
             {
                 exit_type = 4;
             }
-            else if(!strcmp(argv[i], "hunt_kill"))
+            else if (!strcmp(argv[i], "hunt_kill"))
             {
                 exit_type = 5;
             }
@@ -672,7 +672,7 @@ int main(const int argc, char* argv[])
             break;
         default:
             // théoriquement impossible
-                fprintf(stderr, "Error : -sh <type> : %d is no reconized as type\n", type_show);
+            fprintf(stderr, "Error : -sh <type> : %d is no reconized as type\n", type_show);
             printf("usage : %s\n", SHOW_DEFAULT);
             printf("usage : %s\n", SHOW_ARG);
             printf("usage : %s\n", SHOW_ARG_DEFAULT);
@@ -740,7 +740,7 @@ int main(const int argc, char* argv[])
         case 6:
             step = right_hand_random_pond(maze, x, y);
             break;
-        default: //inclue 0
+        default: // inclue 0
             step = random_escape(maze, x, y);
             break;
         }

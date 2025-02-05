@@ -188,7 +188,7 @@ way* best_exit_deep_seeker(const maze_t maze)
     const waytab ways = create_waytab(maze.width,
                                       maze.height); // ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
     const bool_tab dead_end = create_booltab(maze.width, maze.height); // ce tableau nous permettra de savoir si une case est un
-                                                                 // cul-de-sac, pour éviter de recalculer le chemin
+                                                                       // cul-de-sac, pour éviter de recalculer le chemin
     stack* s = create_stack(); // cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); // on commence par l'entrée
     int x, y;
@@ -205,7 +205,7 @@ way* best_exit_deep_seeker(const maze_t maze)
         {
             continue;
         }
-        if (!has_wall_up(maze, x, y) &&  !get_bool(dead_end, x, y - 1))
+        if (!has_wall_up(maze, x, y) && !get_bool(dead_end, x, y - 1))
         {
             count++;
             if (l < length_waytab(ways, x, y - 1)) // si on peut aller en haut et que le chemin est plus court
@@ -682,7 +682,7 @@ way* best_exit_draw_seeker(const maze_t maze)
     const waytab ways = create_waytab(maze.width,
                                       maze.height); // ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
     const bool_tab dead_end = create_booltab(maze.width, maze.height); // ce tableau nous permettra de savoir si une case est un
-                                                                 // cul-de-sac, pour éviter de recalculer le chemin
+                                                                       // cul-de-sac, pour éviter de recalculer le chemin
     stack* s = create_stack(); // cette pile contiendra les coordonnées des cases à visiter
     push(0, 0, s); // on commence par l'entrée
     int x, y;
@@ -1168,7 +1168,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
     const waytab ways = create_waytab(maze.width,
                                       maze.height); // ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
     const bool_tab dead_end = create_booltab(maze.width, maze.height); // ce tableau nous permettra de savoir si une case est un
-                                                                 // cul-de-sac, pour éviter de recalculer le chemin
+                                                                       // cul-de-sac, pour éviter de recalculer le chemin
     stack* s = create_stack(); // cette pile contiendra les coordonnées des cases à visiter
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
@@ -1210,7 +1210,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
             SDL_RenderPresent(renderer);
         }
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255); // on dessine en bleu
-        if (x == maze.width - 1 && y == maze.height - 1) //si on est à la sortie, on s'arrête
+        if (x == maze.width - 1 && y == maze.height - 1) // si on est à la sortie, on s'arrête
         {
             continue;
         }
@@ -1278,7 +1278,7 @@ int show_best_exit_deep_seeker(const maze_t maze)
         }
     }
     way* w = copy_way(get_way(ways, maze.width - 1,
-                                    maze.height - 1)); // on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
+                              maze.height - 1)); // on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
     free_waytab(ways);
     free_stack(s);
     free_booltab(dead_end);
@@ -2417,7 +2417,7 @@ int show_best_exit_draw_seeker(const maze_t maze)
         }
     }
     way* w = copy_way(get_way(ways, maze.width - 1,
-                                    maze.height - 1)); // on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
+                              maze.height - 1)); // on récupère le chemin pour arriver à la sortie (on le copie car on va libérer le tableau ways)
     free_waytab(ways);
     free_stack(s);
     free_booltab(dead_ends);
