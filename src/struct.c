@@ -817,6 +817,7 @@ void rpop(stack* s, int* x, int* y)
         dequeue(q, &a, &b);
         push(a, b, s);
     }
+    free_queue(q);
 }
 
 void push(const int x, const int y, stack* s)
