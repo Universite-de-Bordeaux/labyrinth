@@ -256,6 +256,13 @@ x, y : les coordonnées de la case
 
 A completer
 
+### Primitives `queue`
+
+A completer
+
+### Primitives `stack`
+
+A completer
 
 ## Fichier " mazemaker.c "
 Ce fichier contient les fonctions de génération de labyrinthes, ainsi que les fonctions auxilliaires nécessaires à leur création.
