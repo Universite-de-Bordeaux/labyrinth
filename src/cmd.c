@@ -237,7 +237,6 @@ int main(const int argc, char* argv[])
             }
             if (i < argc - 2)
             {
-                printf("i < argc - 2 : %d %d\n", i, argc - 2);
                 if (!strcmp(argv[i + 2], "deep"))
                 {
                     i += 2;
@@ -544,7 +543,7 @@ int main(const int argc, char* argv[])
             }
             else
             {
-                printf("Way found\n");
+                printf("Way found in %d steps\n", length_way(w));
                 is_way = true;
             }
             break;
@@ -571,9 +570,10 @@ int main(const int argc, char* argv[])
             }
             else
             {
-                printf("Way found\n");
+                printf("Way found in %d steps\n", length_way(w));
                 is_way = true;
             }
+            break;
         case 9:
             is_perfect_draw_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
             break;
@@ -595,7 +595,7 @@ int main(const int argc, char* argv[])
             }
             else
             {
-                printf("Way found\n");
+                printf("Way found in %d steps\n", length_way(w));
                 is_way = true;
             }
             break;
@@ -625,8 +625,6 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -sh <type> : no maze to show\n");
             return EXIT_FAILURE;
         }
-        wall_left(maze, maze.width -1, maze.height - 1);
-        wall_up(maze, maze.width -1, maze.height - 1);
         switch (type_show)
         {
         case 0:
@@ -652,6 +650,7 @@ int main(const int argc, char* argv[])
             break;
         case 6:
             show_is_connexe_breadth_inspector(maze);
+            break;
         case 7:
             show_has_exit_breadth_seeker(maze);
             break;

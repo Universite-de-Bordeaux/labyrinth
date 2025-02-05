@@ -530,6 +530,10 @@ way* copy_way(const way* w)
 
 void free_way(way* w)
 {
+    if (!w)
+    {
+        return;
+    }
     if (w->dad != NULL)
     {
         free_way(w->dad);
