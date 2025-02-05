@@ -109,6 +109,7 @@ int random_escape(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     unsigned char choix; // la direction qu'on va suivre le plus possible
     getrandom(&choix, sizeof(char), 0);
@@ -122,20 +123,27 @@ int random_escape(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                {
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         switch (choix)
         {
@@ -174,20 +182,23 @@ int random_escape(const maze_t maze, int x, int y)
         getrandom(&choix, sizeof(char), 0);
         choix %= 4;
 
-
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate);
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
+            }
         steps++;
     }
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
 
@@ -208,6 +219,7 @@ int try_direction(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     unsigned char tendance = 0; // la direction qu'on va suivre le plus possible
     const int CONF = 50; // le nombre de fois qu'on va conserver la tendance si elle n'est pas possible
@@ -221,20 +233,27 @@ int try_direction(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                {
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         switch (tendance)
         {
@@ -450,21 +469,23 @@ int try_direction(const maze_t maze, int x, int y)
             getrandom(&confiance, sizeof(int), 0);
             confiance = abs(confiance) % CONF;
         }
-
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
         steps++;
     }
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
 
@@ -485,6 +506,7 @@ int cheat_escape(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -494,20 +516,27 @@ int cheat_escape(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                {
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         // le corps de l'algorithme
         // votre déplacement
@@ -524,19 +553,23 @@ int cheat_escape(const maze_t maze, int x, int y)
             x++;
         }
 
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
         steps++;
     }
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
 
@@ -755,6 +788,7 @@ int right_hand(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     // vos variables à déclarer avant la boucle
     char dir = 1; // on commence par aller à droite
@@ -767,20 +801,26 @@ int right_hand(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE){
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         // le corps de l'algorithme
         // votre déplacement
 
@@ -803,19 +843,23 @@ int right_hand(const maze_t maze, int x, int y)
         go(&x, &y, dir);
 
 
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
         steps++;
     }
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
 
@@ -836,6 +880,7 @@ int right_hand_random(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     // Variables à déclarer avant la boucle
     char dir = rand() % 4; // on commence par une direction aléatoire
@@ -850,20 +895,26 @@ int right_hand_random(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE){
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
 
         // Boucle de l'algo
 
@@ -932,20 +983,24 @@ int right_hand_random(const maze_t maze, int x, int y)
         go(&x, &y, dir);
 
 
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
         steps++;
     }
     free_booltab(visited);
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
 
@@ -966,6 +1021,7 @@ int right_hand_random_pond(const maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     // Variables à déclarer avant la boucle
     char dir = rand() % 4; // on commence par une direction aléatoire
@@ -992,16 +1048,25 @@ int right_hand_random_pond(const maze_t maze, int x, int y)
     int steps = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return -1;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE){
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
 
         // Boucle de l'algo
@@ -1076,11 +1141,13 @@ int right_hand_random_pond(const maze_t maze, int x, int y)
         visited[x][y] += 1;
         go(&x, &y, dir);
 
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if(show){
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
         steps++;
     }
 
@@ -1091,11 +1158,13 @@ int right_hand_random_pond(const maze_t maze, int x, int y)
     }
     free(visited);
 
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
+    if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
     return steps;
 }
