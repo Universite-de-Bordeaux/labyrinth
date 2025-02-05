@@ -37,13 +37,13 @@ static bool safe_atoi(const char* str, int* out)
 #define SOLVEUR_DEFAULT "-slv <inspection> : said if the maze is perfect (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SOLVEUR                                                                                                                                                                    \
     "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
-    "breadth) algorithm"
+    "breadth, draw) algorithm"
 #define WRITE_MAZE "-w <filename> : write maze in file (if maze)"
 #define WRITE_WAY "-ww <filename> : write way in file (if way)"
 #define SHOW_DEFAULT "-sh : show maze (if maze)"
 #define SHOW_ARG                                                                                                                                                                   \
     "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
-    "breadth) algorithm"
+    "breadth, draw) algorithm"
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"
 #define HELP "-h : help (will override any other command)"
@@ -247,6 +247,11 @@ int main(const int argc, char* argv[])
                     solve_type += 4;
                     i += 2;
                 }
+                else if (!strcmp(argv[i + 2], "draw"))
+                {
+                    solve_type += 8;
+                    i += 2;
+                }
                 else
                 {
                     solve_type = -solve_type;
@@ -311,6 +316,11 @@ int main(const int argc, char* argv[])
                     else if (!strcmp(argv[i + 2], "breadth"))
                     {
                         type_show += 4;
+                        i += 2;
+                    }
+                    else if (!strcmp(argv[i + 2], "draw"))
+                    {
+                        type_show += 8;
                         i += 2;
                     }
                     else
@@ -522,7 +532,21 @@ int main(const int argc, char* argv[])
             has_exit_deep_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
             break;
         case 4:
-            best_exit_deep_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            if (is_way)
+            {
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
+            }
+            w = best_exit_deep_seeker(maze);
+            if (is_empty(w))
+            {
+                printf("No way found\n");
+            }
+            else
+            {
+                printf("Way found\n");
+                is_way = true;
+            }
             break;
         case 5:
             is_perfect_breadth_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
@@ -535,7 +559,45 @@ int main(const int argc, char* argv[])
             break;
         case 8:
         case -4:
-            best_exit_breadth_seeker(maze);
+            if (is_way)
+            {
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
+            }
+            w = best_exit_breadth_seeker(maze);
+            if (is_empty(w))
+            {
+                printf("No way found\n");
+            }
+            else
+            {
+                printf("Way found\n");
+                is_way = true;
+            }
+        case 9:
+            is_perfect_draw_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 10:
+            is_connexe_draw_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 11:
+            has_exit_draw_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+        case 12:
+            if (is_way)
+            {
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
+            }
+            w = best_exit_draw_seeker(maze);
+            if (is_empty(w))
+            {
+                printf("No way found\n");
+            }
+            else
+            {
+                printf("Way found\n");
+                is_way = true;
+            }
             break;
         default:
             // théoriquement impossible
@@ -560,9 +622,11 @@ int main(const int argc, char* argv[])
     {
         if (!is_maze)
         {
-            fprintf(stderr, "Error : -sh <nb> : no maze to show\n");
+            fprintf(stderr, "Error : -sh <type> : no maze to show\n");
             return EXIT_FAILURE;
         }
+        wall_left(maze, maze.width -1, maze.height - 1);
+        wall_up(maze, maze.width -1, maze.height - 1);
         switch (type_show)
         {
         case 0:
@@ -595,9 +659,21 @@ int main(const int argc, char* argv[])
         case -4:
             show_best_exit_breadth_seeker(maze);
             break;
+        case 9:
+            show_is_perfect_draw_inspector(maze);
+            break;
+        case 10:
+            show_is_connexe_draw_inspector(maze);
+            break;
+        case 11:
+            show_has_exit_draw_seeker(maze);
+            break;
+        case 12:
+            show_best_exit_draw_seeker(maze);
+            break;
         default:
             // théoriquement impossible
-                fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n", type_show);
+                fprintf(stderr, "Error : -sh <type> : %d is no reconized as type\n", type_show);
             printf("usage : %s\n", SHOW_DEFAULT);
             printf("usage : %s\n", SHOW_ARG);
             printf("usage : %s\n", SHOW_ARG_DEFAULT);
