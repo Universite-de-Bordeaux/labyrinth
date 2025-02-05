@@ -806,7 +806,7 @@ void rpop(stack* s, int* x, int* y)
     getrandom(&tirage, sizeof(unsigned int), 0);
     tirage = tirage % (s->size_stack / 2);
     int a, b;
-    for (int i = 0; i < tirage - 1; i++)
+    for (int i = 1; i < tirage; i++)
     {
         pop(s, &a, &b);
         enqueue(a, b, q);
