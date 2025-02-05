@@ -420,9 +420,17 @@ int size_stack(const stack* s);
 // Displays an error message and stops the program in case of error.
 void pop(stack* s, int* x, int* y);
 
+// Returns a coordinate from somewhere (random) in the stack and removes it.
+// x, y : addresses of the variables that will receive the coordinates.
+// s : address of the stack.
+// display an error message and stop the program in case of error.
+// this function sucks, it's just here for fun (and facilitate the maze solving)
+void rpop(stack* s, int* x, int* y);
+
 // Add a coordinate to the stack.
 // x, y : coordinates to add.
 // s : address of the stack.
 void push(int x, int y, stack* s);
+
 
 #endif // CASE_H

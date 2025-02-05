@@ -1,5 +1,7 @@
 #include "struct.h"
 
+#include <sys/random.h>
+
 // --- MAZE FUNCTIONS ---
 
 maze_t create_basic_maze(const int width, const int height)
@@ -789,6 +791,31 @@ void pop(stack* s, int* x, int* y)
     if (s->size_stack <= s->size_array / 4 && s->size_array > 1)
     {
         shrink_stack(s);
+    }
+}
+
+void rpop(stack* s, int* x, int* y)
+{
+    if (s->size_stack == 0)
+    {
+        fprintf(stderr, "Error : try to pop en empty pill\n");
+        exit(1);
+    }
+    queue* q = create_queue();
+    unsigned int tirage;
+    getrandom(&tirage, sizeof(unsigned int), 0);
+    tirage = tirage % (s->size_stack / 2);
+    int a, b;
+    for (int i = 0; i < tirage - 1; i++)
+    {
+        pop(s, &a, &b);
+        enqueue(a, b, q);
+    }
+    pop(s, x, y);
+    while (!isempty_queue(q))
+    {
+        dequeue(q, &a, &b);
+        push(a, b, s);
     }
 }
 
