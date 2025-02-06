@@ -28,21 +28,28 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
-#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size nb x nb"
+#define GENERATE_TYPE_NB "-g <type> <width> <height> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size width x height"
 #define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
 #define READ_WAY "-rw <filename> : read way from file"
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
 #define TEAR_DEFAULT "-t : (if maze) tear the maze by removing 4%% of the walls"
 #define SOLVEUR_DEFAULT "-slv <inspection> : said if the maze is perfect (inspection : isp, isc, he, she) with the best algorithm we have"
-#define SOLVEUR                                                                                                                                                                    \
-    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
+#define SOLVEUR                                                                                                                                                                     \
+    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
     "breadth, draw) algorithm"
+#define ESCAPE "-ex <type> : escape the maze (type : random, try_direction, cheat, right_hand, right_hand_random, "                                                                 \
+    "hunt_kill, right_hand_random_pond) from a random position"
+#define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
+#define ESCAPE_POSITION "-ex <type> <x> <y> : escape the maze (type : random, try_direction, cheat, right_hand, "                                                                   \
+    "right_hand_random, hunt_kill, right_hand_random_pond) from the position x y"
+#define ESCAPE_WARNING "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                            \
+    "always use visualisation, use the space key to disable it"
 #define WRITE_MAZE "-w <filename> : write maze in file (if maze)"
 #define WRITE_WAY "-ww <filename> : write way in file (if way)"
 #define SHOW_DEFAULT "-sh : show maze (if maze)"
-#define SHOW_ARG                                                                                                                                                                   \
-    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
+#define SHOW_ARG                                                                                                                                                                    \
+    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
     "breadth, draw) algorithm"
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"
@@ -66,6 +73,12 @@ static void print_cmd_help(char* namefile)
     printf("\n\tTo analyse a maze : (a maze must be initilazed)\n");
     printf("\t%s\n", SOLVEUR);
     printf("\t%s\n", SOLVEUR_DEFAULT);
+
+    printf("\nTo escape a maze : (a maze must be initilazed)\n");
+    printf("\t%s\n", ESCAPE);
+    printf("\t%s\n", ESCAPE_DEFAULT);
+    printf("\t%s\n", ESCAPE_POSITION);
+    printf("\t%s\n", ESCAPE_WARNING);
 
     printf("\nTo write: \n");
     printf("\t%s\n", WRITE_MAZE);
@@ -138,6 +151,8 @@ int main(const int argc, char* argv[])
 
     bool exit = false; // -ex
     int exit_type = 0; // <type>
+    int x = -1;
+    int y = -1;
 
 
     // tri des arguments
@@ -168,9 +183,10 @@ int main(const int argc, char* argv[])
                 }
                 else
                 {
-                    fprintf(stderr, "Error : -g <type> <nb1> <nb2> : <nb2> hasn't been found or is not an integer\n");
+                    fprintf(stderr, "Error : -g <type> <width> <height> : <height> hasn't been found or is not an integer\n");
                     printf("Default height applied\n");
                     height = 10;
+                    i++;
                 }
             }
             else
@@ -417,8 +433,24 @@ int main(const int argc, char* argv[])
             else
             {
                 fprintf(stderr, "Error : -ex <type> : %s is not a valid type\n", argv[i]);
-                printf("usage : -ex <type> : random, try_direction, cheat, right_hand, right_hand_random, hunt_kill, right_hand_random_pond, no_dead_end\n");
+                printf("usage : %s\n", ESCAPE);
+                printf("usage : %s\n", ESCAPE_DEFAULT);
+                printf("usage : %s\n", ESCAPE_POSITION);
+                printf("\t%s\n", ESCAPE_WARNING);
                 return EXIT_FAILURE;
+            }
+            if (i < argc - 1 && safe_atoi(argv[i + 1], &x))
+            {
+                if (i < argc - 2 && safe_atoi(argv[i + 2], &y))
+                {
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error : -ex <type> <x> <y> : <y> hasn't been found or is not an integer\n");
+                    printf("Random y applied\n");
+                    i++;
+                }
             }
         }
         else
@@ -513,7 +545,7 @@ int main(const int argc, char* argv[])
     {
         if (!is_maze)
         {
-            fprintf(stderr, "Error : -slv <nb> : no maze to solve\n");
+            fprintf(stderr, "Error : -slv : no maze to solve\n");
             return EXIT_FAILURE;
         }
         switch (solve_type)
@@ -614,7 +646,6 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -w <filename> : no maze to write\n");
             return EXIT_FAILURE;
         }
-        // ReSharper disable once CppLocalVariableMightNotBeInitialized
         maze_to_file(maze, filename_write);
         printf("Maze written in %s\n", filename_write);
     }
@@ -702,7 +733,6 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -shw : no way to show\n");
             return EXIT_FAILURE;
         }
-        // ReSharper disable twice CppLocalVariableMightNotBeInitialized
         show_the_way(maze, w);
     }
     if (exit)
@@ -712,13 +742,30 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -ex : no maze to exit\n");
             return EXIT_FAILURE;
         }
-
-        int x, y;
-        getrandom(&x, sizeof(x), 0);
-        x = abs(x) % maze.width;
-        getrandom(&y, sizeof(y), 0);
-        y = abs(y) % maze.height;
-
+        if (x == -1)
+        {
+            getrandom(&x, sizeof(x), 0);
+            x = abs(x) % maze.width;
+        }
+        if (y == -1)
+        {
+            getrandom(&y, sizeof(y), 0);
+            y = abs(y) % maze.height;
+        }
+        if (x < 0 || x > maze.width)
+        {
+            fprintf(stdout, "Warning : x must be between 0 and %d, detected value : %d\n", maze.width - 1, x);
+            printf("random x applied\n");
+            getrandom(&x, sizeof(x), 0);
+            x = abs(x) % maze.width;
+        }
+        if (y < 0 || y > maze.height)
+        {
+            fprintf(stdout, "Warning : y must be between 0 and %d, detected value : %d\n", maze.height - 1, y);
+            printf("random y applied\n");
+            getrandom(&y, sizeof(y), 0);
+            y = abs(y) % maze.height;
+        }
         int step = 0;
         switch (exit_type)
         {
