@@ -661,46 +661,44 @@ static void go(int* x, int* y, char dir)
 // elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante
 static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char dir)
 {
-    bool ans = false;
     switch (dir)
     {
     case EAST:
-        if (x < maze.width - 1 && !has_wall_right(maze, x, y))
+        if (!has_wall_right(maze, x, y))
         {
             *x_next = x + 1;
             *y_next = y;
-            ans = true;
+            return true;
         }
-        break;
+        return false;
     case SUD:
-        if (y < maze.height - 1 && !has_wall_down(maze, x, y))
+        if (!has_wall_down(maze, x, y))
         {
             *x_next = x;
             *y_next = y + 1;
-            ans = true;
+            return true;
         }
-        break;
+        return false;
     case OUEST:
-        if (x > 0 && !has_wall_left(maze, x, y))
+        if (!has_wall_left(maze, x, y))
         {
             *x_next = x - 1;
             *y_next = y;
-            ans = true;
+            return true;
         }
-        break;
+        return false;
     case NORD:
-        if (y > 0 && !has_wall_up(maze, x, y))
+        if (!has_wall_up(maze, x, y))
         {
             *x_next = x;
             *y_next = y - 1;
-            ans = true;
+            return true;
         }
-        break;
+        return false;
     default:
         fprintf(stderr, "Error in get_adj, dir must be within 0 and 3, received %d\n", dir);
         exit(EXIT_FAILURE);
     }
-    return ans;
 }
 int hunt_kill_escape(maze_t maze, int x, int y)
 {
@@ -708,9 +706,10 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
+    int step = 0;
     if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
-        return;
+        return - 1;
     }
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
@@ -720,6 +719,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     SDL_RenderFillRect(renderer, &rect);
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
 
     // on crée un bool_tab pour stocker les cellules visitées
     // on marque la cellule actuelle comme visitée
@@ -735,20 +735,28 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+        if(show){
+            while (SDL_PollEvent(&event))
             {
-                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                destroy_print_maze(renderer, window);
-                return;
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                {
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
             }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        step++;
 
         // toutes les cellules accessibles ont été visitées
         if (!has_accessible_cells(x, y, visited, maze))
@@ -781,19 +789,26 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         }
         set_true(visited, x, y);
 
-        rect.x = x * dw + 1;
-        rect.y = y * dh + 1;
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-        SDL_RenderPresent(renderer);
+        if (show)
+        {
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
     }
-    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_SetWindowTitle(window, "escaped");
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer);
-    wait_and_destroy_print_maze(renderer, window);
     free_booltab(visited);
+    if (show)
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
+    return step;
 }
 
 static int visited_value(int** visited, int x, int y, int dir)
@@ -815,7 +830,6 @@ static int visited_value(int** visited, int x, int y, int dir)
 }
 
 int right_hand(const maze_t maze, int x, int y)
->>>>>>> 5462a2d9e5b155b0379c76f111b97f7cec96551f
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -912,7 +926,7 @@ int right_hand(const maze_t maze, int x, int y)
     return steps;
 }
 
-// A MODIFIER
+//TODO A MODIFIER
 int right_hand_random(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
