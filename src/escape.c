@@ -749,6 +749,7 @@ static bool can_go(int x, int y, maze_t maze, char dir)
     }
 }
 
+// Fonction change les valeurs de x et y en fonction de la direction donnée
 static void go(int* x, int* y, char dir)
 {
     switch (dir)
@@ -771,6 +772,7 @@ static void go(int* x, int* y, char dir)
     }
 }
 
+// Fonction qui retourne la valeur de la case adjacente dans une direction donnée
 static int visited_value(int** visited, int x, int y, int dir)
 {
     switch (dir)
@@ -789,6 +791,7 @@ static int visited_value(int** visited, int x, int y, int dir)
     }
 }
 
+// Algorithme de résolution main droite
 int right_hand(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
@@ -881,6 +884,7 @@ int right_hand(const maze_t maze, int x, int y)
     return steps;
 }
 
+// Algorithme de résolution main droite quand le terrain n'est pas connu sinon des déplacements aléatoires
 // A MODIFIER
 int right_hand_random(const maze_t maze, int x, int y)
 {
