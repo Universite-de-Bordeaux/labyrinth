@@ -184,6 +184,6 @@ int evaluate_time(const func_ptr f, char* name)
     printf("\t4x4 maze generation score : %ld/15\n", score3);
     printf("\t100x100 maze generation score : %ld/25\n", score4);
     printf("\tTotal score : %ld/100\n", score1 + score2 + score3 + score4);
-    const int score = (int)(score1 + score2 + score3 + score4);
+    const int score = score1 + score2 + score3 + score4;
     return score;
 }

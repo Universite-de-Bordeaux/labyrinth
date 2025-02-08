@@ -27,7 +27,6 @@ way* best_exit_deep_seeker(const maze_t maze);
 
 // --- solveurs en largeur ---
 
-
 // return true if the maze is solvable, false otherwise
 // maze : the maze
 // breadth search (less memory efficient and slower than deep search in average)
@@ -49,6 +48,28 @@ bool is_perfect_breadth_inspector(maze_t maze);
 // breadth search (more memory efficient and faster than deep search in average)
 way* best_exit_breadth_seeker(const maze_t maze);
 
+// --- solveurs en tirage---
+
+// return true if the maze is solvable, false otherwise
+// maze : the maze
+// draw search
+bool has_exit_draw_seeker(maze_t maze);
+
+// return true if the maze is connexe, false otherwise
+// maze : the maze
+// draw search
+bool is_connexe_draw_inspector(maze_t maze);
+
+// return true if the maze is perfect, false otherwise
+// maze : the maze
+// draw search
+bool is_perfect_draw_inspector(maze_t maze);
+
+// return the shortest way to exit the maze
+// maze : the maze
+// return an empty way if the maze is not solvable
+// draw search
+way* best_exit_draw_seeker(const maze_t maze);
 
 // --- visualisation ---
 
@@ -91,6 +112,31 @@ int show_is_perfect_breadth_inspector(maze_t maze);
 // return -1 in case of error, 1 otherwise
 // maze : the maze
 int show_best_exit_breadth_seeker(maze_t maze);
+
+// function to visualize the maze and the progression of the solver
+// return -1 in case of error, 1 otherwise
+// maze : the maze
+int show_best_exit_deep_seeker(maze_t maze);
+
+// function to visualize the maze and the progression of the solver
+// return -1 in case of error, 1 otherwise
+// maze : the maze
+int show_has_exit_draw_seeker(maze_t maze);
+
+// function to visualize the maze and the progression of the solver
+// return -1 in case of error, 1 otherwise
+// maze : the maze
+int show_is_connexe_draw_inspector(maze_t maze);
+
+// function to visualize the maze and the progression of the solver
+// return -1 in case of error, 1 otherwise
+// maze : the maze
+int show_is_perfect_draw_inspector(maze_t maze);
+
+// function to visualize the maze and the progression of the solver
+// return -1 in case of error, 1 otherwise
+// maze : the maze
+int show_best_exit_draw_seeker(maze_t maze);
 
 // function to visualize the maze and the progression of the solver
 // return -1 in case of error, 1 otherwise

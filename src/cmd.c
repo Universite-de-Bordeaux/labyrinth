@@ -1,12 +1,11 @@
-#include "cmd.h"
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "escape.h"
 #include "mazemaker.h"
 #include "outside.h"
-#include "escape.h"
 
 #include <sys/random.h>
 
@@ -29,22 +28,29 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
-#define GENERATE_TYPE_NB "-g <type> <nb> <nb> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size nb x nb"
-#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, sym) of size 10x10"
+#define GENERATE_TYPE_NB "-g <type> <width> <height> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size width x height"
+#define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
 #define READ_WAY "-rw <filename> : read way from file"
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
 #define TEAR_DEFAULT "-t : (if maze) tear the maze by removing 4%% of the walls"
 #define SOLVEUR_DEFAULT "-slv <inspection> : said if the maze is perfect (inspection : isp, isc, he, she) with the best algorithm we have"
-#define SOLVEUR                                                                                                                                                                    \
-    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
-    "breadth) algorithm"
+#define SOLVEUR                                                                                                                                                                     \
+    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
+    "breadth, draw) algorithm"
+#define ESCAPE "-ex <type> : escape the maze (type : random, try_direction, cheat, right_hand, right_hand_random, "                                                                 \
+    "hunt_kill, right_hand_random_pond) from a random position"
+#define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
+#define ESCAPE_POSITION "-ex <type> <x> <y> : escape the maze (type : random, try_direction, cheat, right_hand, "                                                                   \
+    "right_hand_random, hunt_kill, right_hand_random_pond) from the position x y"
+#define ESCAPE_WARNING "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                            \
+    "always use visualisation, use the space key to disable it"
 #define WRITE_MAZE "-w <filename> : write maze in file (if maze)"
 #define WRITE_WAY "-ww <filename> : write way in file (if way)"
 #define SHOW_DEFAULT "-sh : show maze (if maze)"
-#define SHOW_ARG                                                                                                                                                                   \
-    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
-    "breadth) algorithm"
+#define SHOW_ARG                                                                                                                                                                    \
+    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
+    "breadth, draw) algorithm"
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"
 #define HELP "-h : help (will override any other command)"
@@ -68,6 +74,12 @@ static void print_cmd_help(char* namefile)
     printf("\t%s\n", SOLVEUR);
     printf("\t%s\n", SOLVEUR_DEFAULT);
 
+    printf("\nTo escape a maze : (a maze must be initilazed)\n");
+    printf("\t%s\n", ESCAPE);
+    printf("\t%s\n", ESCAPE_DEFAULT);
+    printf("\t%s\n", ESCAPE_POSITION);
+    printf("\t%s\n", ESCAPE_WARNING);
+
     printf("\nTo write: \n");
     printf("\t%s\n", WRITE_MAZE);
     printf("\t%s\n", WRITE_WAY);
@@ -86,7 +98,7 @@ static void print_cmd_help(char* namefile)
     printf("See the README for more informations\n");
 }
 
-void cmd(char* argv[], const int argc)
+int main(const int argc, char* argv[])
 {
     if (argc < 2)
     {
@@ -94,24 +106,13 @@ void cmd(char* argv[], const int argc)
         {
             print_cmd_help(argv[0]);
         }
-        return;
+        return EXIT_SUCCESS;
     }
     if (argv == NULL)
     {
         fprintf(stderr, "Error : argv is NULL\n");
-        return;
+        return EXIT_FAILURE;
     }
-    //-g <type> -> generate maze (if type) powm, iowm, hkm, bpm, lm, cmr
-    //-r <filename> -> read maze
-    //-slv <inspection> <solver> : said if the maze (inspection) isp, isc, he, she with the (solver)
-    //-w <filename> -> write maze in file (if maze)
-    //-sh -> show maze
-    //-sh <inspection> <SOLVEUR> : show ifthe maze (inspection) isp, isc, he, she with the (solver)
-    //-ww <filename> -> write way in file (if way)
-    //-rw <filename> -> read way in file (if way)
-    //-shw -> show way (if way & maze)
-    //-h -> help (only if no other command)
-    //-t <nb> -> tear the maze by removing nb% of the walls (if maze)
 
     // initialisation des variables
     bool generate = false; // -g
@@ -150,6 +151,8 @@ void cmd(char* argv[], const int argc)
 
     bool exit = false; // -ex
     int exit_type = 0; // <type>
+    int x = -1;
+    int y = -1;
 
 
     // tri des arguments
@@ -169,7 +172,7 @@ void cmd(char* argv[], const int argc)
                 fprintf(stderr, "Error : -g misused, <type> missing\n");
                 printf("usage : %s\n", GENERATE_TYPE);
                 printf("usage : %s\n", GENERATE_TYPE_NB);
-                return;
+                return EXIT_FAILURE;
             }
 
             if (i < argc - 1 && safe_atoi(argv[i + 1], &width))
@@ -180,9 +183,10 @@ void cmd(char* argv[], const int argc)
                 }
                 else
                 {
-                    fprintf(stderr, "Error : -g <type> <nb1> <nb2> : <nb2> hasn't been found or is not an integer\n");
+                    fprintf(stderr, "Error : -g <type> <width> <height> : <height> hasn't been found or is not an integer\n");
                     printf("Default height applied\n");
                     height = 10;
+                    i++;
                 }
             }
             else
@@ -203,7 +207,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -r misused, <filename> missing\n");
                 printf("usage : %s\n", READ_MAZE);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-t"))
@@ -244,12 +248,11 @@ void cmd(char* argv[], const int argc)
                     fprintf(stderr, "Error : -slv <inspection> : %s is not a valid inspection\n", argv[i + 1]);
                     printf("usage : %s\n", SOLVEUR);
                     printf("usage : %s\n", SOLVEUR_DEFAULT);
-                    return;
+                    return EXIT_FAILURE;
                 }
             }
             if (i < argc - 2)
             {
-                printf("i < argc - 2 : %d %d\n", i, argc - 2);
                 if (!strcmp(argv[i + 2], "deep"))
                 {
                     i += 2;
@@ -257,6 +260,11 @@ void cmd(char* argv[], const int argc)
                 else if (!strcmp(argv[i + 2], "breadth"))
                 {
                     solve_type += 4;
+                    i += 2;
+                }
+                else if (!strcmp(argv[i + 2], "draw"))
+                {
+                    solve_type += 8;
                     i += 2;
                 }
                 else
@@ -283,7 +291,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -w misused, <filename> missing\n");
                 printf("usage : %s\n", WRITE_MAZE);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-sh"))
@@ -325,6 +333,11 @@ void cmd(char* argv[], const int argc)
                         type_show += 4;
                         i += 2;
                     }
+                    else if (!strcmp(argv[i + 2], "draw"))
+                    {
+                        type_show += 8;
+                        i += 2;
+                    }
                     else
                     {
                         type_show = -type_show;
@@ -350,7 +363,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -ww misused, <filename> missing\n");
                 printf("usage : %s\n", WRITE_WAY);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-rw"))
@@ -365,7 +378,7 @@ void cmd(char* argv[], const int argc)
             {
                 fprintf(stderr, "Error : -rw misused, <filename> missing\n");
                 printf("usage : %s\n", READ_WAY);
-                return;
+                return EXIT_FAILURE;
             }
         }
         else if (!strcmp(argv[i], "-shw"))
@@ -379,7 +392,7 @@ void cmd(char* argv[], const int argc)
                 fprintf(stderr, "Warning : -h will override any other command\n");
             }
             print_cmd_help(argv[0]);
-            return;
+            return EXIT_SUCCESS;
         }
         else if (!strcmp(argv[i], "-ex"))
         {
@@ -409,9 +422,35 @@ void cmd(char* argv[], const int argc)
             {
                 exit_type = 4;
             }
-            else if(!strcmp(argv[i], "hunt_kill"))
+            else if (!strcmp(argv[i], "hunt_kill"))
             {
                 exit_type = 5;
+            }
+            else if (!strcmp(argv[i], "right_hand_random_pond"))
+            {
+                exit_type = 6;
+            }
+            else
+            {
+                fprintf(stderr, "Error : -ex <type> : %s is not a valid type\n", argv[i]);
+                printf("usage : %s\n", ESCAPE);
+                printf("usage : %s\n", ESCAPE_DEFAULT);
+                printf("usage : %s\n", ESCAPE_POSITION);
+                printf("\t%s\n", ESCAPE_WARNING);
+                return EXIT_FAILURE;
+            }
+            if (i < argc - 1 && safe_atoi(argv[i + 1], &x))
+            {
+                if (i < argc - 2 && safe_atoi(argv[i + 2], &y))
+                {
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error : -ex <type> <x> <y> : <y> hasn't been found or is not an integer\n");
+                    printf("Random y applied\n");
+                    i++;
+                }
             }
         }
         else
@@ -466,7 +505,7 @@ void cmd(char* argv[], const int argc)
             fprintf(stderr, "Error : -g <type> : %s is not a valid type\n", generator);
             printf("usage : %s\n", GENERATE_TYPE);
             printf("usage : %s\n", GENERATE_TYPE_NB);
-            return;
+            return EXIT_FAILURE;
         }
         is_maze = true;
         printf("Maze generated\n");
@@ -476,7 +515,7 @@ void cmd(char* argv[], const int argc)
         if (is_maze)
         {
             fprintf(stderr, "Error : -r <filename> & -g <type> superposition : only one maze can be generated or read\n");
-            return;
+            return EXIT_FAILURE;
         }
         maze = maze_from_file(filename);
         is_maze = true;
@@ -493,7 +532,7 @@ void cmd(char* argv[], const int argc)
         else
         {
             fprintf(stderr, "Error : -t <nb> : no maze to tear\n");
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (read_way)
@@ -506,116 +545,98 @@ void cmd(char* argv[], const int argc)
     {
         if (!is_maze)
         {
-            fprintf(stderr, "Error : -slv <nb> : no maze to solve\n");
-            return;
+            fprintf(stderr, "Error : -slv : no maze to solve\n");
+            return EXIT_FAILURE;
         }
-        if (solve_type == 1 || solve_type == -1)
+        switch (solve_type)
         {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_perfect_deep_inspector(maze))
+        case 1:
+        case -1:
+            is_perfect_deep_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 2:
+        case -2:
+            is_connexe_deep_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 3:
+        case -3:
+            has_exit_deep_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            break;
+        case 4:
+            if (is_way)
             {
-                printf("The maze is perfect\n");
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
             }
-            else
-            {
-                printf("The maze is not perfect\n");
-            }
-        }
-        else if (solve_type == 2 || solve_type == -2)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_connexe_deep_inspector(maze))
-            {
-                printf("The maze is connected\n");
-            }
-            else
-            {
-                printf("The maze is not connected\n");
-            }
-        }
-        else if (solve_type == 3 || solve_type == -3)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (has_exit_deep_seeker(maze))
-            {
-                printf("The maze has an exit\n");
-            }
-            else
-            {
-                printf("The maze has no exit\n");
-            }
-        }
-        else if (solve_type == 4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
             w = best_exit_deep_seeker(maze);
             if (is_empty(w))
             {
-                printf("The maze has no exit\n");
+                printf("No way found\n");
             }
             else
             {
+                printf("Way found in %d steps\n", length_way(w));
                 is_way = true;
-                printf("way found and saved\n");
             }
-        }
-        else if (solve_type == 5)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_perfect_breadth_inspector(maze))
+            break;
+        case 5:
+            is_perfect_breadth_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 6:
+            is_connexe_breadth_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 7:
+            has_exit_breadth_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+            break;
+        case 8:
+        case -4:
+            if (is_way)
             {
-                printf("The maze is perfect\n");
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
             }
-            else
-            {
-                printf("The maze is not perfect\n");
-            }
-        }
-        else if (solve_type == 6)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (is_connexe_breadth_inspector(maze))
-            {
-                printf("The maze is connected\n");
-            }
-            else
-            {
-                printf("The maze is not connected\n");
-            }
-        }
-        else if (solve_type == 7)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
-            if (has_exit_breadth_seeker(maze))
-            {
-                printf("The maze has an exit\n");
-            }
-            else
-            {
-                printf("The maze has no exit\n");
-            }
-        }
-        else if (solve_type == 8 || solve_type == -4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
             w = best_exit_breadth_seeker(maze);
             if (is_empty(w))
             {
-                printf("The maze has no exit\n");
+                printf("No way found\n");
             }
             else
             {
+                printf("Way found in %d steps\n", length_way(w));
                 is_way = true;
-                printf("way found and saved\n");
             }
-        }
-        else
-        {
+            break;
+        case 9:
+            is_perfect_draw_inspector(maze) ? printf("The maze is perfect\n") : printf("The maze is not perfect\n");
+            break;
+        case 10:
+            is_connexe_draw_inspector(maze) ? printf("The maze is connexe\n") : printf("The maze is not connexe\n");
+            break;
+        case 11:
+            has_exit_draw_seeker(maze) ? printf("The maze has an exit\n") : printf("The maze has no exit\n");
+        case 12:
+            if (is_way)
+            {
+                fprintf(stderr, "Error : -rw <filename> & -slv she supperposition : only one way can be read or generated\n");
+                return EXIT_FAILURE;
+            }
+            w = best_exit_draw_seeker(maze);
+            if (is_empty(w))
+            {
+                printf("No way found\n");
+            }
+            else
+            {
+                printf("Way found in %d steps\n", length_way(w));
+                is_way = true;
+            }
+            break;
+        default:
             // théoriquement impossible
             fprintf(stderr, "Error : -slv misused, <inspection> <solver> : %d is not a valid type\n", solve_type);
             printf("usage : %s\n", SOLVEUR);
             printf("usage : %s\n", SOLVEUR_DEFAULT);
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (write)
@@ -623,9 +644,8 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -w <filename> : no maze to write\n");
-            return;
+            return EXIT_FAILURE;
         }
-        // ReSharper disable once CppLocalVariableMightNotBeInitialized
         maze_to_file(maze, filename_write);
         printf("Maze written in %s\n", filename_write);
     }
@@ -633,62 +653,61 @@ void cmd(char* argv[], const int argc)
     {
         if (!is_maze)
         {
-            fprintf(stderr, "Error : -sh <nb> : no maze to show\n");
-            return;
+            fprintf(stderr, "Error : -sh <type> : no maze to show\n");
+            return EXIT_FAILURE;
         }
-        if (type_show == 0)
+        switch (type_show)
         {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+        case 0:
             print_maze(maze);
-        }
-        else if (type_show == 1 || type_show == -1)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 1:
+        case -1:
             show_is_perfect_deep_inspector(maze);
-        }
-        else if (type_show == 2 || type_show == -2)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 2:
+        case -2:
             show_is_connexe_deep_inspector(maze);
-        }
-        else if (type_show == 3 || type_show == -3)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 3:
+        case -3:
             show_has_exit_deep_seeker(maze);
-        }
-        else if (type_show == 4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 4:
             show_best_exit_deep_seeker(maze);
-        }
-        else if (type_show == 5)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 5:
             show_is_perfect_breadth_inspector(maze);
-        }
-        else if (type_show == 6)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 6:
             show_is_connexe_breadth_inspector(maze);
-        }
-        else if (type_show == 7)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 7:
             show_has_exit_breadth_seeker(maze);
-        }
-        else if (type_show == 8 || type_show == -4)
-        {
-            // ReSharper disable once CppLocalVariableMightNotBeInitialized
+            break;
+        case 8:
+        case -4:
             show_best_exit_breadth_seeker(maze);
-        }
-        else
-        {
+            break;
+        case 9:
+            show_is_perfect_draw_inspector(maze);
+            break;
+        case 10:
+            show_is_connexe_draw_inspector(maze);
+            break;
+        case 11:
+            show_has_exit_draw_seeker(maze);
+            break;
+        case 12:
+            show_best_exit_draw_seeker(maze);
+            break;
+        default:
             // théoriquement impossible
-            fprintf(stderr, "Error : -sh <nb> : %d is no reconized as type\n", type_show);
+            fprintf(stderr, "Error : -sh <type> : %d is no reconized as type\n", type_show);
             printf("usage : %s\n", SHOW_DEFAULT);
             printf("usage : %s\n", SHOW_ARG);
             printf("usage : %s\n", SHOW_ARG_DEFAULT);
-            return;
+            return EXIT_FAILURE;
         }
     }
     if (write_way)
@@ -696,7 +715,7 @@ void cmd(char* argv[], const int argc)
         if (!is_way)
         {
             fprintf(stderr, "Error : -ww <filename> : no way to write\n");
-            return;
+            return EXIT_FAILURE;
         }
         // ReSharper disable once CppLocalVariableMightNotBeInitialized
         way_to_file(w, filename_write_way);
@@ -707,14 +726,13 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -shw : no maze to show way\n");
-            return;
+            return EXIT_FAILURE;
         }
         if (!is_way)
         {
             fprintf(stderr, "Error : -shw : no way to show\n");
-            return;
+            return EXIT_FAILURE;
         }
-        // ReSharper disable twice CppLocalVariableMightNotBeInitialized
         show_the_way(maze, w);
     }
     if (exit)
@@ -722,37 +740,60 @@ void cmd(char* argv[], const int argc)
         if (!is_maze)
         {
             fprintf(stderr, "Error : -ex : no maze to exit\n");
-            return;
+            return EXIT_FAILURE;
         }
-
-        int x, y;
-        getrandom(&x, sizeof(x), 0);
-        x = abs(x) % maze.width;
-        getrandom(&y, sizeof(y), 0);
-        y = abs(y) % maze.height;
-
-        if (exit_type == 0)
+        if (x == -1)
         {
-            random_escape(maze, x, y);
+            getrandom(&x, sizeof(x), 0);
+            x = abs(x) % maze.width;
         }
-        else if (exit_type == 1)
+        if (y == -1)
         {
-            try_direction(maze, x, y);
+            getrandom(&y, sizeof(y), 0);
+            y = abs(y) % maze.height;
         }
-        else if (exit_type == 2)
+        if (x < 0 || x > maze.width)
         {
-            cheat_escape(maze, x, y);
+            fprintf(stdout, "Warning : x must be between 0 and %d, detected value : %d\n", maze.width - 1, x);
+            printf("random x applied\n");
+            getrandom(&x, sizeof(x), 0);
+            x = abs(x) % maze.width;
         }
-        else if(exit_type == 3)
+        if (y < 0 || y > maze.height)
         {
-            right_hand(maze, x, y);
+            fprintf(stdout, "Warning : y must be between 0 and %d, detected value : %d\n", maze.height - 1, y);
+            printf("random y applied\n");
+            getrandom(&y, sizeof(y), 0);
+            y = abs(y) % maze.height;
         }
-        else if (exit_type == 4)
+        int step = 0;
+        switch (exit_type)
         {
-            right_hand_random(maze, x, y);
+        case 1:
+            step = try_direction(maze, x, y);
+            break;
+        case 2:
+            step = cheat_escape(maze, x, y);
+            break;
+        case 3:
+            step = right_hand(maze, x, y);
+            break;
+        case 4:
+            step = right_hand_random(maze, x, y);
+            break;
+        case 5:
+            step = hunt_kill_escape(maze, x, y);
+            break;
+        case 6:
+            step = right_hand_random_pond(maze, x, y);
+            break;
+        default: // inclue 0
+            step = random_escape(maze, x, y);
+            break;
         }
-        else{
-            hunt_kill_escape(maze, x, y);
+        if (step != -1)
+        {
+            printf("The exit has been found in %d steps\n", step);
         }
     }
     if (is_maze)
@@ -763,4 +804,5 @@ void cmd(char* argv[], const int argc)
     {
         free_way(w);
     }
+    return EXIT_SUCCESS;
 }
