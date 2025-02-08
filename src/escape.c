@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/random.h>
+#include <threads.h>
 #include "limits.h"
 #include "struct.h"
 
@@ -888,7 +889,6 @@ int right_hand(const maze_t maze, int x, int y)
 }
 
 // Algorithme de résolution main droite quand le terrain n'est pas connu sinon des déplacements aléatoires
-// A MODIFIER
 int right_hand_random(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
@@ -909,9 +909,22 @@ int right_hand_random(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    char dir = rand() % 4; // on commence par une direction aléatoire
-    char count = 0;
-    bool_tab visited = create_booltab(maze.width, maze.height);
+    int dir = rand() % 4; // on commence par une direction aléatoire
+    int count = 0; // Compteur de direction disponibles
+    int min = 0; // Valeur de la cellule avec la valeur plus basse disponible ajdacente à la cellule actuelle
+    // Création d'un tableau de taille width.height pour savoir si on est déjà passé par une case initialisé à 0
+    int** visited = malloc(maze.width * sizeof(int*));
+    for (int i = 0; i < maze.width; i++)
+    {
+        visited[i] = malloc(maze.height * sizeof(int));
+    }
+    for (int i = 0; i < maze.width; i++)
+    {
+        for (int j = 0; j < maze.height; j++)
+        {
+            visited[i][j] = 0;
+        }
+    }
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -943,22 +956,26 @@ int right_hand_random(const maze_t maze, int x, int y)
         }
 
         // Boucle de l'algo
-
-        if (get_bool(visited, x, y))
+        if (visited[x][y])
         {
+            // Algorithme aléatoire dans le cas où on est déjà passé par une case
+            // On choisira de préférence les cellules adjacentes sur lesquelles nous ne sommes jamais allés
             int possible_dirs[4] = {0, 0, 0, 0};
-            count = 0;
+            count = 0, min = 0;
             for (int i = 0; i < 4; i++) // Vérifier toutes les directions
             {
                 if (can_go(x, y, maze, i))
                 {
-                    go(&x, &y, i);
-                    if (!get_bool(visited, x, y))
+                    if (min > visited_value(visited, x, y, i) || count == 0)
                     {
-                        possible_dirs[i] = 1;
-                        count += 1;
+                        min = visited_value(visited, x, y, i); //min vaudra donc la valeur la plus petite des cellules adjacentes
                     }
-                    go(&x, &y, (i + 2) % 4);
+                    possible_dirs[i] = visited_value(visited, x, y, i);
+                    count += 1;
+                }
+                else // Si une case n'est pas dispo
+                {
+                    possible_dirs[i] = -1;
                 }
             }
             if (count > 0) // Si une case est dispo
@@ -967,27 +984,12 @@ int right_hand_random(const maze_t maze, int x, int y)
                 {
                     dir = rand() % 4;
                 }
-                while (!possible_dirs[(int)dir]);
+                while (possible_dirs[dir] != min); // on choisit une des cellules avec le moins de passages
             }
         }
-        if (count == 0)
+        else
         {
-            int possible_dirs[4] = {0, 0, 0, 0};
-            for (int i = 0; i < 4; i++) // Vérifier toutes les directions
-            {
-                if (can_go(x, y, maze, i))
-                {
-                    possible_dirs[i] = 1;
-                }
-            }
-            do
-            {
-                dir = rand() % 4;
-            }
-            while (!possible_dirs[(int)dir]);
-        }
-        if (!get_bool(visited, x, y))
-        {
+            // Algorithme de main droite le cas échéant
             if (can_go(x, y, maze, (dir + 1) % 4)) // Déplacement à droite
             {
                 dir = (dir + 1) % 4;
@@ -1005,7 +1007,7 @@ int right_hand_random(const maze_t maze, int x, int y)
                 dir = (dir + 2) % 4;
             }
         }
-        set_true(visited, x, y);
+        visited[x][y] = 1; // On marque la case actuelle comme visitée
         go(&x, &y, dir);
 
 
@@ -1018,7 +1020,15 @@ int right_hand_random(const maze_t maze, int x, int y)
         }
         steps++;
     }
-    free_booltab(visited);
+
+    // On désaloue notre double tableau
+    for (int i = 0; i < maze.width; i++)
+    {
+        free(visited[i]);
+    }
+    free(visited);
+
+
     if(show){
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
         SDL_RenderFillRect(renderer, &rect);
