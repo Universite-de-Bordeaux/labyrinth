@@ -733,6 +733,7 @@ enum direction
 // Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
 static bool can_go(int x, int y, maze_t maze, char dir)
 {
+    // On renvoie faux si il y a un mur dans la direction donnée
     switch (dir)
     {
     case EAST:
@@ -752,6 +753,7 @@ static bool can_go(int x, int y, maze_t maze, char dir)
 // Fonction change les valeurs de x et y en fonction de la direction donnée
 static void go(int* x, int* y, char dir)
 {
+    // On incrémente ou décrémente x ou y en fonction de la direction donnée
     switch (dir)
     {
     case EAST:
@@ -775,6 +777,7 @@ static void go(int* x, int* y, char dir)
 // Fonction qui retourne la valeur de la case adjacente dans une direction donnée
 static int visited_value(int** visited, int x, int y, int dir)
 {
+    // On renvoie la valeur de la case adjacente dans la direction donnée
     switch (dir)
     {
     case EAST:
