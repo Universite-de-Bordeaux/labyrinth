@@ -617,47 +617,6 @@ enum direction
 };
 
 // Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-static bool can_go(int x, int y, maze_t maze, char dir)
-{
-    switch (dir)
-    {
-    case EAST:
-        return (!has_wall_right(maze, x, y));
-    case SUD:
-        return (!has_wall_down(maze, x, y));
-    case OUEST:
-        return (!has_wall_left(maze, x, y));
-    case NORD:
-        return (!has_wall_up(maze, x, y));
-    default:
-        fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
-}
-
-static void go(int* x, int* y, char dir)
-{
-    switch (dir)
-    {
-    case EAST:
-        (*x)++;
-        break;
-    case SUD:
-        (*y)++;
-        break;
-    case OUEST:
-        (*x)--;
-        break;
-    case NORD:
-        (*y)--;
-        break;
-    default:
-        fprintf(stderr, "Error in go, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
 // elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante
 static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char dir)
 {
@@ -700,6 +659,48 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
         exit(EXIT_FAILURE);
     }
 }
+
+// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
+static bool can_go(int x, int y, maze_t maze, char dir)
+{
+    switch (dir)
+    {
+    case EAST:
+        return (!has_wall_right(maze, x, y));
+    case SUD:
+        return (!has_wall_down(maze, x, y));
+    case OUEST:
+        return (!has_wall_left(maze, x, y));
+    case NORD:
+        return (!has_wall_up(maze, x, y));
+    default:
+        fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
+static void go(int* x, int* y, char dir)
+{
+    switch (dir)
+    {
+    case EAST:
+        (*x)++;
+        break;
+    case SUD:
+        (*y)++;
+        break;
+    case OUEST:
+        (*x)--;
+        break;
+    case NORD:
+        (*y)--;
+        break;
+    default:
+        fprintf(stderr, "Error in go, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
 int hunt_kill_escape(maze_t maze, int x, int y)
 {
     printf("hey\n");
@@ -709,7 +710,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     int step = 0;
     if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
-        return - 1;
+        return -1;
     }
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
@@ -727,6 +728,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     set_true(visited, x, y);
     int x_next = x;
     int y_next = y;
+    int old_dir = -1;
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -735,18 +737,20 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     }
     while (x != maze.width - 1 || y != maze.height - 1)
     {
-        if(show){
+        if (show)
+        {
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                     (event.type == SDL_KEYUP &&
-                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                      event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
                 {
                     printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                     destroy_print_maze(renderer, window);
                     return -1;
                 }
-                else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
                 {
                     show = false;
                     destroy_print_maze(renderer, window);
@@ -759,24 +763,38 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         step++;
 
         // toutes les cellules accessibles ont été visitées
+        // HUNT
         if (!has_accessible_cells(x, y, visited, maze))
         {
-            // on cherche a se déplacer dans toutes les directions.
-            // on essaye les directions dans le sens des aiguilles d'une montre à partir de la direction inverse à d'où on vient
-            char dir = rand() % 4;
-            while (!can_go(x, y, maze, dir))
+            char dir;
+            int nb_entry = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (can_go(x, y, maze, i))
+                {
+                    nb_entry++;
+                }
+            }
+            if (nb_entry == 1)
+            {
+                go(&x, &y, (old_dir + 2) % 4);
+                old_dir = (old_dir + 2) % 4;
+            }
+            else
             {
                 dir = rand() % 4;
-                while (!get_adj(x, y, &x_next, &y_next, maze, dir))
+                while (dir == (old_dir + 2) % 4 || !get_adj(x, y, &x_next, &y_next, maze, dir))
                 {
                     dir = rand() % 4;
                 }
                 x = x_next;
                 y = y_next;
+                old_dir = dir;
             }
         }
         // tant qu'on a des cellules adjacentes non visitées
         // on en choisit une aléatoirement
+        // KILL
         else
         {
             char dir = rand() % 4;
@@ -786,8 +804,9 @@ int hunt_kill_escape(maze_t maze, int x, int y)
             }
             x = x_next;
             y = y_next;
+            old_dir = dir;
+            set_true(visited, x, y);
         }
-        set_true(visited, x, y);
 
         if (show)
         {
@@ -926,7 +945,7 @@ int right_hand(const maze_t maze, int x, int y)
     return steps;
 }
 
-//TODO A MODIFIER
+// TODO A MODIFIER
 int right_hand_random(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
