@@ -732,7 +732,7 @@ enum direction
 };
 
 // Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-static bool can_go(int x, int y, maze_t maze, char dir)
+static bool can_go(int x, int y, maze_t maze, int dir)
 {
     // On renvoie faux si il y a un mur dans la direction donnée
     switch (dir)
@@ -752,7 +752,7 @@ static bool can_go(int x, int y, maze_t maze, char dir)
 }
 
 // Fonction change les valeurs de x et y en fonction de la direction donnée
-static void go(int* x, int* y, char dir)
+static void go(int* x, int* y, int dir)
 {
     // On incrémente ou décrémente x ou y en fonction de la direction donnée
     switch (dir)
@@ -816,7 +816,7 @@ int right_hand(const maze_t maze, int x, int y)
     bool show = true;
 
     // vos variables à déclarer avant la boucle
-    char dir = 1; // on commence par aller à droite
+    int dir = 1; // on commence par aller à droite
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -960,7 +960,6 @@ int right_hand_random(const maze_t maze, int x, int y)
         {
             // Algorithme aléatoire dans le cas où on est déjà passé par une case
             // On choisira de préférence les cellules adjacentes sur lesquelles nous ne sommes jamais allés
-            int possible_dirs[4] = {0, 0, 0, 0};
             count = 0, min = 0;
             for (int i = 0; i < 4; i++) // Vérifier toutes les directions
             {
@@ -970,12 +969,7 @@ int right_hand_random(const maze_t maze, int x, int y)
                     {
                         min = visited_value(visited, x, y, i); //min vaudra donc la valeur la plus petite des cellules adjacentes
                     }
-                    possible_dirs[i] = visited_value(visited, x, y, i);
                     count += 1;
-                }
-                else // Si une case n'est pas dispo
-                {
-                    possible_dirs[i] = -1;
                 }
             }
             if (count > 0) // Si une case est dispo
@@ -984,7 +978,7 @@ int right_hand_random(const maze_t maze, int x, int y)
                 {
                     dir = rand() % 4;
                 }
-                while (possible_dirs[dir] != min); // on choisit une des cellules avec le moins de passages
+                while ((visited_value(visited, x, y, dir) != min) || !can_go(x, y, maze, dir)); // on choisit une des cellules avec le moins de passages
             }
         }
         else
@@ -1030,6 +1024,139 @@ int right_hand_random(const maze_t maze, int x, int y)
 
 
     if(show){
+        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_SetWindowTitle(window, "escaped");
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+        wait_and_destroy_print_maze(renderer, window);
+    }
+    return steps;
+}
+
+int right_hand_pond(const maze_t maze, int x, int y)
+{
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+    int dw, dh;
+    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    {
+        return -1;
+    }
+    SDL_SetWindowTitle(window, "escaping");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); // couleur customisable
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
+    bool show = true;
+
+    // Variables à déclarer avant la boucle
+    int dir = rand() % 4; // on commence par une direction aléatoire
+    int count = 0;
+    int** visited = malloc(maze.width * sizeof(int*));
+    int min = 0;
+    for (int i = 0; i < maze.width; i++)
+    {
+        visited[i] = malloc(maze.height * sizeof(int));
+    }
+    for (int i = 0; i < maze.width; i++)
+    {
+        for (int j = 0; j < maze.height; j++)
+        {
+            visited[i][j] = 0;
+        }
+    }
+
+    SDL_Event event = {0}; // on crée un event vide
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
+    }
+    int steps = 0;
+    while (x != maze.width - 1 || y != maze.height - 1)
+    {
+        if (show)
+        {
+            while (SDL_PollEvent(&event))
+            {
+                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                    (event.type == SDL_KEYUP &&
+                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                      event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                {
+                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                    destroy_print_maze(renderer, window);
+                    return -1;
+                }
+                else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
+                {
+                    show = false;
+                    destroy_print_maze(renderer, window);
+                }
+            }
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        }
+
+        // Boucle de l'algo
+        count = 0, min = 0;
+        for (int i = 0; i < 4; i++) // Vérifier toutes les directions
+        {
+            if (can_go(x, y, maze, i))
+            {
+                go(&x, &y, i);
+                if (min > visited[x][y] || count == 0)
+                {
+                    min = visited[x][y];
+                }
+                count += 1;
+                go(&x, &y, (i + 2) % 4);
+            }
+        }
+
+        if (can_go(x, y, maze, (dir + 1) % 4) && visited_value(visited, x, y, (dir + 1) % 4) == min) // Déplacement à droite
+        {
+            dir = (dir + 1) % 4;
+        }
+        else if (can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) == min) // Déplacement en face
+        {
+            // On ne change pas dir
+        }
+        else if (can_go(x, y, maze, (dir + 3) % 4) && visited_value(visited, x, y, (dir + 3) % 4) == min) // Déplacement à gauche
+        {
+            dir = (dir + 3) % 4;
+        }
+        else if (can_go(x, y, maze, (dir + 2) % 4) && visited_value(visited, x, y, (dir + 2) % 4) == min) // Déplacement en arrière
+        {
+            dir = (dir + 2) % 4;
+        }
+        visited[x][y] += 1;
+        go(&x, &y, dir);
+
+        if (show)
+        {
+            rect.x = x * dw + 1;
+            rect.y = y * dh + 1;
+            SDL_RenderFillRect(renderer, &rect);
+            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
+            SDL_RenderPresent(renderer);
+        }
+        steps++;
+    }
+
+    // Supression des tableaux
+    for (int i = 0; i < maze.width; i++)
+    {
+        free(visited[i]);
+    }
+    free(visited);
+
+    if (show)
+    {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetWindowTitle(window, "escaped");
