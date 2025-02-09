@@ -60,6 +60,8 @@ int right_hand_random(maze_t maze, int x, int y);
 
 
 int right_hand_pond(maze_t maze, int x, int y);
+int right_hand_dead_end(const maze_t maze, int x, int y);
+int right_hand_pond_dead_end(const maze_t maze, int x, int y);
 
 int random_escape_pond(const maze_t maze, int x, int y);
 int random_escape_dead_end(const maze_t maze, int x, int y);
