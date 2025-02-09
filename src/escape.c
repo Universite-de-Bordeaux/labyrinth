@@ -1038,7 +1038,7 @@ int right_hand_random(const maze_t maze, int x, int y)
                 {
                     dir = rand() % 4;
                 }
-                while (!(can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) == min)); // on choisit une des cellules avec le moins de passages
+                while ((visited_value(visited, x, y, dir) != min) || !can_go(x, y, maze, dir)); // on choisit une des cellules avec le moins de passages
             }
         }
         else
