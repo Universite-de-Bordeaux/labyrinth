@@ -1109,13 +1109,11 @@ int right_hand_pond(const maze_t maze, int x, int y)
         {
             if (can_go(x, y, maze, i))
             {
-                go(&x, &y, i);
-                if (min > visited[x][y] || count == 0)
+                if (min > visited_value(visited, x, y, i) || count == 0)
                 {
-                    min = visited[x][y];
+                    min = visited_value(visited, x, y, i);
                 }
                 count += 1;
-                go(&x, &y, (i + 2) % 4);
             }
         }
 
@@ -1243,13 +1241,11 @@ int random_escape_pond(const maze_t maze, int x, int y)
         {
             if (can_go(x, y, maze, i))
             {
-                go(&x, &y, i);
-                if (min > visited[x][y] || count == 0)
+                if (min > visited_value(visited, x, y, i) || count == 0)
                 {
-                    min = visited[x][y];
+                    min = visited_value(visited, x, y, i);
                 }
                 count += 1;
-                go(&x, &y, (i + 2) % 4);
             }
         }
 
@@ -1357,12 +1353,10 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
         {
             if (can_go(x, y, maze, i))
             {
-                go(&x, &y, i);
-                if (visited[x][y] != INT_MAX)
+                if (visited_value(visited, x, y, i) != INT_MAX)
                 {
                     count += 1;
                 }
-                go(&x, &y, (i + 2) % 4);
             }
         }
 
