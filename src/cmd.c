@@ -28,6 +28,7 @@ static bool safe_atoi(const char* str, int* out)
     *out = (int)val;
     return true;
 }
+
 #define GENERATE_TYPE_NB "-g <type> <width> <height> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size width x height"
 #define GENERATE_TYPE "-g <type> : generate maze (type : cbm, owm, ocm, hkm, bpm, crm, stm) of size 10x10"
 #define READ_MAZE "-r <filename> : read maze from file"
@@ -39,12 +40,13 @@ static bool safe_atoi(const char* str, int* out)
     "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth, draw) algorithm"
 #define ESCAPE                                                                                                                                                                     \
-    "-ex <type> : escape the maze (type : random, try_direction, cheat, right_hand, right_hand_random, "                                                                           \
-    "hunt_kill, right_hand_random_pond) from a random position"
+    "-ex <type> : escape the maze (type : random, cheat, right_hand, right_hand_random, hunt_kill, right_hand_pond, "                                                             \
+    "right_hand_dead_end, right_hand_pond_dead_end, random_escape_pond, random_escape_dead_end, random_escape_pond_dead_end) from the random position"
 #define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
 #define ESCAPE_POSITION                                                                                                                                                            \
-    "-ex <type> <x> <y> : escape the maze (type : random, try_direction, cheat, right_hand, "                                                                                      \
-    "right_hand_random, hunt_kill, right_hand_random_pond) from the position x y"
+    "-ex <type> <x> <y> : escape the maze (type : random, cheat, right_hand, right_hand_random, hunt_kill, "                                                                       \
+    "right_hand_pond, right_hand_dead_end, right_hand_pond_dead_end, random_escape_pond, random_escape_dead_end, "                                                                \
+    "random_escape_pond_dead_end) from the position x y"
 #define ESCAPE_WARNING                                                                                                                                                             \
     "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                                              \
     "always use visualisation, use the space key to disable it"
@@ -405,38 +407,13 @@ int main(const int argc, char* argv[])
             {
                 continue;
             }
-            if (!strcmp(argv[i], "random"))
+            for (int j = 0; j < SIZE; j++)
             {
-                exit_type = 0;
-            }
-            else if (!strcmp(argv[i], "try_direction"))
-            {
-                exit_type = 1;
-            }
-            else if (!strcmp(argv[i], "cheat"))
-            {
-                exit_type = 2;
-            }
-            else if (!strcmp(argv[i], "right_hand"))
-            {
-                exit_type = 3;
-            }
-            else if (!strcmp(argv[i], "right_hand_random"))
-            {
-                exit_type = 4;
-            }
-            else if (!strcmp(argv[i], "hunt_kill"))
-            {
-                exit_type = 5;
-            }
-            else
-            {
-                fprintf(stderr, "Error : -ex <type> : %s is not a valid type\n", argv[i]);
-                printf("usage : %s\n", ESCAPE);
-                printf("usage : %s\n", ESCAPE_DEFAULT);
-                printf("usage : %s\n", ESCAPE_POSITION);
-                printf("\t%s\n", ESCAPE_WARNING);
-                return EXIT_FAILURE;
+                if (!strcmp(argv[i], escape_name[j]))
+                {
+                    exit_type = j;
+                    break;
+                }
             }
             if (i < argc - 1 && safe_atoi(argv[i + 1], &x))
             {
@@ -766,27 +743,7 @@ int main(const int argc, char* argv[])
             y = abs(y) % maze.height;
         }
         int step = 0;
-        switch (exit_type)
-        {
-        case 1:
-            step = try_direction(maze, x, y);
-            break;
-        case 2:
-            step = cheat_escape(maze, x, y);
-            break;
-        case 3:
-            step = right_hand(maze, x, y);
-            break;
-        case 4:
-            step = right_hand_random(maze, x, y);
-            break;
-        case 5:
-            step = hunt_kill_escape(maze, x, y);
-            break;
-        default: // inclue 0
-            step = random_escape(maze, x, y);
-            break;
-        }
+        step = (*escape[exit_type]) (maze, x, y);
         if (step != -1)
         {
             printf("The exit has been found in %d steps\n", step);
