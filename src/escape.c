@@ -703,7 +703,6 @@ static void go(int* x, int* y, char dir)
 
 int hunt_kill_escape(maze_t maze, int x, int y)
 {
-    printf("hey\n");
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -725,10 +724,11 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     // on crée un bool_tab pour stocker les cellules visitées
     // on marque la cellule actuelle comme visitée
     bool_tab visited = create_booltab(maze.width, maze.height);
-    set_true(visited, x, y);
+    bool_tab dead_end = create_booltab(maze.width, maze.height);
     int x_next = x;
     int y_next = y;
-    int old_dir = -1;
+    int not_go;
+    char dir;
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -762,51 +762,43 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         }
         step++;
 
+        set_true(visited, x, y);
         // toutes les cellules accessibles ont été visitées
         // HUNT
         if (!has_accessible_cells(x, y, visited, maze))
         {
-            char dir;
             int nb_entry = 0;
             for (int i = 0; i < 4; i++)
             {
-                if (can_go(x, y, maze, i))
+                // on compte le nombre de cellules adjacentes accessibles
+                if (get_adj(x, y, &x_next, &y_next, maze, i) && !get_bool(dead_end, x_next, y_next))
                 {
                     nb_entry++;
                 }
             }
             if (nb_entry == 1)
             {
-                go(&x, &y, (old_dir + 2) % 4);
-                old_dir = (old_dir + 2) % 4;
+                set_true(dead_end, x, y);
+                not_go = -1;
             }
             else
             {
-                dir = rand() % 4;
-                while (dir == (old_dir + 2) % 4 || !get_adj(x, y, &x_next, &y_next, maze, dir))
-                {
-                    dir = rand() % 4;
-                }
-                x = x_next;
-                y = y_next;
-                old_dir = dir;
+                not_go = (dir + 2) % 4;
             }
+            do{
+                dir = rand() % 4;
+            }while (dir == not_go || !get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(dead_end, x_next, y_next));
         }
         // tant qu'on a des cellules adjacentes non visitées
         // on en choisit une aléatoirement
         // KILL
         else
         {
-            char dir = rand() % 4;
-            while (!get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(visited, x_next, y_next))
-            {
+            do{
                 dir = rand() % 4;
-            }
-            x = x_next;
-            y = y_next;
-            old_dir = dir;
-            set_true(visited, x, y);
+            } while (!get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(visited, x_next, y_next));
         }
+        go(&x, &y, dir);
 
         if (show)
         {
@@ -818,6 +810,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         }
     }
     free_booltab(visited);
+    free_booltab(dead_end);
     if (show)
     {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
