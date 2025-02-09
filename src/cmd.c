@@ -35,21 +35,24 @@ static bool safe_atoi(const char* str, int* out)
 #define TEAR "-t <nb> : (if maze) tear the maze by removing nb%% of the walls"
 #define TEAR_DEFAULT "-t : (if maze) tear the maze by removing 4%% of the walls"
 #define SOLVEUR_DEFAULT "-slv <inspection> : said if the maze is perfect (inspection : isp, isc, he, she) with the best algorithm we have"
-#define SOLVEUR                                                                                                                                                                     \
-    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
+#define SOLVEUR                                                                                                                                                                    \
+    "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth, draw) algorithm"
-#define ESCAPE "-ex <type> : escape the maze (type : random, try_direction, cheat, right_hand, right_hand_random, "                                                                 \
+#define ESCAPE                                                                                                                                                                     \
+    "-ex <type> : escape the maze (type : random, try_direction, cheat, right_hand, right_hand_random, "                                                                           \
     "hunt_kill, right_hand_random_pond) from a random position"
 #define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
-#define ESCAPE_POSITION "-ex <type> <x> <y> : escape the maze (type : random, try_direction, cheat, right_hand, "                                                                   \
+#define ESCAPE_POSITION                                                                                                                                                            \
+    "-ex <type> <x> <y> : escape the maze (type : random, try_direction, cheat, right_hand, "                                                                                      \
     "right_hand_random, hunt_kill, right_hand_random_pond) from the position x y"
-#define ESCAPE_WARNING "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                            \
+#define ESCAPE_WARNING                                                                                                                                                             \
+    "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                                              \
     "always use visualisation, use the space key to disable it"
 #define WRITE_MAZE "-w <filename> : write maze in file (if maze)"
 #define WRITE_WAY "-ww <filename> : write way in file (if way)"
 #define SHOW_DEFAULT "-sh : show maze (if maze)"
-#define SHOW_ARG                                                                                                                                                                    \
-    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                      \
+#define SHOW_ARG                                                                                                                                                                   \
+    "-sh <inspection> <solveur> : show if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth, draw) algorithm"
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"

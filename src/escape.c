@@ -789,18 +789,22 @@ int hunt_kill_escape(maze_t maze, int x, int y)
             {
                 not_go = (dir + 2) % 4;
             }
-            do{
+            do
+            {
                 dir = rand() % 4;
-            }while (dir == not_go || !get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(dead_end, x_next, y_next));
+            }
+            while (dir == not_go || !get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(dead_end, x_next, y_next));
         }
         // tant qu'on a des cellules adjacentes non visitées
         // on en choisit une aléatoirement
         // KILL
         else
         {
-            do{
+            do
+            {
                 dir = rand() % 4;
-            } while (!get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(visited, x_next, y_next));
+            }
+            while (!get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(visited, x_next, y_next));
         }
         go(&x, &y, dir);
 
@@ -1027,7 +1031,7 @@ int right_hand_random(const maze_t maze, int x, int y)
                 {
                     if (min > visited_value(visited, x, y, i) || count == 0)
                     {
-                        min = visited_value(visited, x, y, i); //min vaudra donc la valeur la plus petite des cellules adjacentes
+                        min = visited_value(visited, x, y, i); // min vaudra donc la valeur la plus petite des cellules adjacentes
                     }
                     count += 1;
                 }
@@ -1084,7 +1088,8 @@ int right_hand_random(const maze_t maze, int x, int y)
     free(visited);
 
 
-    if(show){
+    if (show)
+    {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
         SDL_RenderFillRect(renderer, &rect);
         SDL_SetWindowTitle(window, "escaped");
@@ -1305,7 +1310,8 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
             }
         }
 
-        if (count == 1){
+        if (count == 1)
+        {
             visited[x][y] = INT_MAX;
         }
 
@@ -1440,7 +1446,8 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
             }
         }
 
-        if (count == 1){
+        if (count == 1)
+        {
             visited[x][y] = INT_MAX;
         }
 
@@ -1460,7 +1467,8 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
         {
             dir = (dir + 2) % 4;
         }
-        if (visited[x][y] != INT_MAX) visited[x][y] += 1;
+        if (visited[x][y] != INT_MAX)
+            visited[x][y] += 1;
         go(&x, &y, dir);
 
         if (show)
@@ -1721,7 +1729,8 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
 }
 
 // Algorithme random avec pondération sur les cul de sac et le nombre de passage sur une cellule
-int random_escape_pond_dead_end(const maze_t maze, int x, int y){
+int random_escape_pond_dead_end(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -1814,7 +1823,8 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y){
             dir = rand() % 4;
         }
         while (!(can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) == min));
-        if (visited[x][y] != INT_MAX) visited[x][y] += 1;
+        if (visited[x][y] != INT_MAX)
+            visited[x][y] += 1;
         go(&x, &y, dir);
 
         if (show)
