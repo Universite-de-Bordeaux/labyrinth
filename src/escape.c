@@ -1602,6 +1602,14 @@ int random_escape_pond(const maze_t maze, int x, int y)
         }
         steps++;
     }
+
+    // Supression des tableaux
+    for (int i = 0; i < maze.width; i++)
+    {
+        free(visited[i]);
+    }
+    free(visited);
+
     if (show)
     {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -1716,6 +1724,14 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
         }
         steps++;
     }
+
+    // Supression des tableaux
+    for (int i = 0; i < maze.width; i++)
+    {
+        free(visited[i]);
+    }
+    free(visited);
+
     if (show)
     {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
@@ -1837,6 +1853,14 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
         }
         steps++;
     }
+
+    // Supression des tableaux
+    for (int i = 0; i < maze.width; i++)
+    {
+        free(visited[i]);
+    }
+    free(visited);
+
     if (show)
     {
         SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
