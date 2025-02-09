@@ -610,10 +610,10 @@ static bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze)
 
 enum direction
 {
-    EAST = 0,
-    SUD,
-    OUEST,
-    NORD
+    DROITE = 0,
+    BAS,
+    GAUCHE,
+    HAUT
 };
 
 // Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
@@ -622,7 +622,7 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
 {
     switch (dir)
     {
-    case EAST:
+    case DROITE:
         if (!has_wall_right(maze, x, y))
         {
             *x_next = x + 1;
@@ -630,7 +630,7 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
             return true;
         }
         return false;
-    case SUD:
+    case BAS:
         if (!has_wall_down(maze, x, y))
         {
             *x_next = x;
@@ -638,7 +638,7 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
             return true;
         }
         return false;
-    case OUEST:
+    case GAUCHE:
         if (!has_wall_left(maze, x, y))
         {
             *x_next = x - 1;
@@ -646,7 +646,7 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
             return true;
         }
         return false;
-    case NORD:
+    case HAUT:
         if (!has_wall_up(maze, x, y))
         {
             *x_next = x;
@@ -665,13 +665,13 @@ static bool can_go(int x, int y, maze_t maze, char dir)
 {
     switch (dir)
     {
-    case EAST:
+    case DROITE:
         return (!has_wall_right(maze, x, y));
-    case SUD:
+    case BAS:
         return (!has_wall_down(maze, x, y));
-    case OUEST:
+    case GAUCHE:
         return (!has_wall_left(maze, x, y));
-    case NORD:
+    case HAUT:
         return (!has_wall_up(maze, x, y));
     default:
         fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
@@ -683,16 +683,16 @@ static void go(int* x, int* y, char dir)
 {
     switch (dir)
     {
-    case EAST:
+    case DROITE:
         (*x)++;
         break;
-    case SUD:
+    case BAS:
         (*y)++;
         break;
-    case OUEST:
+    case GAUCHE:
         (*x)--;
         break;
-    case NORD:
+    case HAUT:
         (*y)--;
         break;
     default:
@@ -827,13 +827,13 @@ static int visited_value(int** visited, int x, int y, int dir)
 {
     switch (dir)
     {
-    case EAST:
+    case DROITE:
         return visited[x + 1][y];
-    case SUD:
+    case BAS:
         return visited[x][y + 1];
-    case OUEST:
+    case GAUCHE:
         return visited[x - 1][y];
-    case NORD:
+    case HAUT:
         return visited[x][y - 1];
     default:
         fprintf(stderr, "Error in visited_value, dir must be within 0 and 3, received %d\n", dir);
