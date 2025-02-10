@@ -214,6 +214,19 @@ int print_maze(maze_t maze);
 // the walls of the entrance are in blue, the walls of the exit in green
 // the size of each cell is automatically adjusted to fill the window if possible (may not be possible if the maze is
 // too large)
+//do not print interieur of the maze
+int pre_print_maze(maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh);
+
+// display the maze, returns -1 in case of error, 1 otherwise
+// assigns the renderer and window to the pointers renderer and window
+// maze : the maze to display
+// renderer : the renderer to use
+// window : the window to use
+// dw : the width of each cell
+// dh : the height of each cell
+// the walls of the entrance are in blue, the walls of the exit in green
+// the size of each cell is automatically adjusted to fill the window if possible (may not be possible if the maze is
+// too large)
 int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh);
 
 // free the memory allocated for the maze display and close the window

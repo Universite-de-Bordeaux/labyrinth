@@ -841,7 +841,7 @@ void push(const int x, const int y, stack* s)
 
 // --- MAZE PRINTING ---
 
-int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh)
+int pre_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh)
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) // initilisation de la SDL avec l'image et les events (comprends des malloc)
     {
@@ -855,7 +855,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
     { // on obtient le mode d'affichage de l'écran
         fprintf(stderr, "Erreur lors de l'obtention du mode d'affichage : %s\n", SDL_GetError());
         SDL_Quit();
-        return 1;
+        return -1;
     }
 
     int d_h = (displayMode.h - 40) / maze.height;
@@ -873,7 +873,6 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
         d_h = 3;
     }
 
-    // ReSharper disable once CppDFANullDereference
     *window = SDL_CreateWindow("maze", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, maze.width * d_w, maze.height * d_h, SDL_WINDOW_SHOWN); // creation d'une fenetre
     if (*window == NULL)
     {
@@ -882,7 +881,6 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
         return -1;
     }
 
-    // ReSharper disable once CppDFANullDereference
     *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED); // creation d'un renderer
     if (*renderer == NULL)
     {
@@ -898,24 +896,10 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
 
     SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
 
-    for (int x = 0; x < maze.width; x++)
-    {
-        for (int y = 0; y < maze.height; y++)
-        {
-            if (has_wall_down(maze, x, y))
-            {
-                SDL_RenderDrawLine(*renderer, x * d_w, (y + 1) * d_h - 1, (x + 1) * d_w - 1,
-                                   (y + 1) * d_h - 1); // on dessine un mur en bas
-            }
-            if (has_wall_right(maze, x, y))
-            {
-                SDL_RenderDrawLine(*renderer, (x + 1) * d_w - 1, y * d_h, (x + 1) * d_w - 1,
-                                   (y + 1) * d_h - 1); // on dessine un mur à droite
-            }
-        }
-    }
-    SDL_RenderDrawLine(*renderer, 0, 0, 0, maze.height * d_h); // on dessine les murs de la bordure gauche
-    SDL_RenderDrawLine(*renderer, 0, 0, maze.width * d_w, 0); // on dessine les murs de la bordure haute
+    SDL_RenderDrawLine(*renderer, 0, 0, 0, (maze.height * d_h) - 1); // on dessine les murs de la bordure gauche
+    SDL_RenderDrawLine(*renderer, 0, 0, (maze.width * d_w) - 1, 0); // on dessine les murs de la bordure haute
+    SDL_RenderDrawLine(*renderer, (maze.width * d_w) - 1, 0, (maze.width * d_w) - 1, (maze.height * d_h) - 1); // on dessine les murs de la bordure droite
+    SDL_RenderDrawLine(*renderer, 0, (maze.height * d_h) - 1, (maze.width * d_w) - 1, maze.height * d_h - 1); // on dessine les murs de la bordure basse
 
     SDL_SetRenderDrawColor(*renderer, 0, 50, 255, 255); // on définit la couleur en bleu
     SDL_RenderDrawLine(*renderer, 0, 0, d_w, 0); // on dessine l'entrée
@@ -933,6 +917,47 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
     // ReSharper disable twice CppDFANullDereference
     *dw = d_w;
     *dh = d_h;
+    return 1;
+}
+
+int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh)
+{
+    if (pre_print_maze(maze, renderer, window, dw, dh) == -1)
+    {
+        return -1;
+    }
+
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0)
+    { // on obtient le mode d'affichage de l'écran
+        fprintf(stderr, "Erreur lors de l'obtention du mode d'affichage : %s\n", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_SetRenderDrawColor(*renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+    for (int x = 0; x < maze.width; x++)
+    {
+        for (int y = 0; y < maze.height; y++)
+        {
+            if ((x == 0 && y == 0) || (x == maze.width - 1 && y == maze.height - 1))
+            {
+                continue;
+            }
+            if (has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(*renderer, x * *dw, (y + 1) * *dh - 1, (x + 1) * *dw - 1,
+                                   (y + 1) * *dh - 1); // on dessine un mur en bas
+            }
+            if (has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(*renderer, (x + 1) * *dw - 1, y * *dh, (x + 1) * *dw - 1,
+                                   (y + 1) * *dh - 1); // on dessine un mur à droite
+            }
+        }
+    }
+    SDL_Delay(displayMode.refresh_rate); // pause pour laisser aux données le temps de s'afficher
+    SDL_RenderPresent(*renderer); // on met à jour l'affichage
     return 1;
 }
 
