@@ -40,13 +40,12 @@ static bool safe_atoi(const char* str, int* out)
     "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth, draw) algorithm"
 #define ESCAPE                                                                                                                                                                     \
-    "-ex <type> : escape the maze (type : random, cheat, right_hand, right_hand_random, hunt_kill, right_hand_pond, "                                                             \
-    "right_hand_dead_end, right_hand_pond_dead_end, random_escape_pond, random_escape_dead_end, random_escape_pond_dead_end) from the random position"
+    "-ex <type> : escape the maze (type : random, cheat, right_hand, right_hand_r, hunt_kill, right_hand_p, "                                                                      \
+    "right_hand_de, right_hand_p_de, random_p, random_de, random_p_de) from the random position"
 #define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
 #define ESCAPE_POSITION                                                                                                                                                            \
-    "-ex <type> <x> <y> : escape the maze (type : random, cheat, right_hand, right_hand_random, hunt_kill, "                                                                       \
-    "right_hand_pond, right_hand_dead_end, right_hand_pond_dead_end, random_escape_pond, random_escape_dead_end, "                                                                \
-    "random_escape_pond_dead_end) from the position x y"
+    "-ex <type> <x> <y> : escape the maze (type : random, cheat, right_hand, right_hand_r, hunt_kill, right_hand_p, "                                                              \
+    "right_hand_de, right_hand_p_de, random_p, random_de, random_p_de) from the position x y"
 #define ESCAPE_WARNING                                                                                                                                                             \
     "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                                              \
     "always use visualisation, use the space key to disable it"
@@ -743,7 +742,7 @@ int main(const int argc, char* argv[])
             y = abs(y) % maze.height;
         }
         int step = 0;
-        step = (*escape[exit_type]) (maze, x, y);
+        step = (*escape[exit_type])(maze, x, y);
         if (step != -1)
         {
             printf("The exit has been found in %d steps\n", step);
