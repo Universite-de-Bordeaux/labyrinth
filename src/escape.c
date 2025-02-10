@@ -7,29 +7,11 @@
 #include "limits.h"
 #include "struct.h"
 
-int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape,
-                                                  &cheat_escape,
-                                                  &right_hand,
-                                                  &right_hand_random,
-                                                  &hunt_kill_escape,
-                                                  &right_hand_pond,
-                                                  &right_hand_dead_end,
-                                                  &right_hand_pond_dead_end,
-                                                  &random_escape_pond,
-                                                  &random_escape_dead_end,
-                                                  &random_escape_pond_dead_end};
+int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape, &cheat_escape,    &right_hand, &right_hand_r, &hunt_kill_escape, &right_hand_p,
+                                                  &right_hand_de, &right_hand_p_de, &random_p,   &random_de,    &random_p_de};
 
-const char *escape_name[SIZE] = {"random",
-                                   "cheat",
-                                   "right_hand",
-                                   "right_hand_random",
-                                   "hunt_kill",
-                                   "right_hand_pond",
-                                   "right_hand_dead_end",
-                                   "right_hand_pond_dead_end",
-                                   "random_escape_pond",
-                                   "random_escape_dead_end",
-                                   "random_escape_pond_dead_end"};
+const char* escape_name[SIZE] = {"random",        "cheat",           "right_hand", "right_hand_r", "hunt_kill",  "right_hand_p",
+                                 "right_hand_de", "right_hand_p_de", "random_p",   "random_de",    "random_p_de"};
 
 int ESCAPE_TYPE(const maze_t maze, int x, int y)
 {
@@ -479,23 +461,23 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -704,7 +686,7 @@ int right_hand(const maze_t maze, int x, int y)
 
 
 // Algorithme de résolution main droite quand le terrain n'est pas connu sinon des déplacements aléatoires
-int right_hand_random(const maze_t maze, int x, int y)
+int right_hand_r(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -855,7 +837,7 @@ int right_hand_random(const maze_t maze, int x, int y)
 }
 
 // Algorithme de résolution main droite avec pondération sur le nombre de passage sur une cellule
-int right_hand_pond(const maze_t maze, int x, int y)
+int right_hand_p(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -902,23 +884,23 @@ int right_hand_pond(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -1006,7 +988,7 @@ int right_hand_pond(const maze_t maze, int x, int y)
 }
 
 // Algorithme de résolution main droite avec pondération sur les cul de sac
-int right_hand_dead_end(const maze_t maze, int x, int y)
+int right_hand_de(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -1052,23 +1034,23 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -1156,7 +1138,7 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
 }
 
 // Algorithme de résolution main droite avec pondération sur le nombre de passage sur une cellule et les cul de sac
-int right_hand_pond_dead_end(const maze_t maze, int x, int y)
+int right_hand_p_de(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -1203,23 +1185,23 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -1313,7 +1295,7 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
 }
 
 // Algorithme random avec pondération sur le nombre de passage sur une cellule
-int random_escape_pond(const maze_t maze, int x, int y)
+int random_p(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -1360,23 +1342,23 @@ int random_escape_pond(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -1453,7 +1435,7 @@ int random_escape_pond(const maze_t maze, int x, int y)
 }
 
 // Algorithme random avec pondération sur les cul de sac
-int random_escape_dead_end(const maze_t maze, int x, int y)
+int random_de(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -1500,23 +1482,23 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
@@ -1583,7 +1565,7 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
 }
 
 // Algorithme random avec pondération sur les cul de sac et le nombre de passage sur une cellule
-int random_escape_pond_dead_end(const maze_t maze, int x, int y)
+int random_p_de(const maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -1631,23 +1613,23 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
         if (show)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
-            if(has_wall_up(maze, x, y))
+            if (has_wall_up(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
             }
-            if(has_wall_down(maze, x, y))
+            if (has_wall_down(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
             }
-            if(has_wall_left(maze, x, y))
+            if (has_wall_left(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
             }
-            if(has_wall_right(maze, x, y))
+            if (has_wall_right(maze, x, y))
             {
                 SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
             }
-    		SDL_Delay(dm.refresh_rate);
+            SDL_Delay(dm.refresh_rate);
             SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {

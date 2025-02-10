@@ -52,14 +52,14 @@ int right_hand(maze_t maze, int x, int y);
 // maze : the maze
 // x, y : the coordinates of the starting point
 // return the number of steps
-int right_hand_random(maze_t maze, int x, int y);
+int right_hand_r(maze_t maze, int x, int y);
 
 
-int right_hand_pond(maze_t maze, int x, int y);
-int right_hand_dead_end(const maze_t maze, int x, int y);
-int right_hand_pond_dead_end(const maze_t maze, int x, int y);
+int right_hand_p(maze_t maze, int x, int y);
+int right_hand_de(const maze_t maze, int x, int y);
+int right_hand_p_de(const maze_t maze, int x, int y);
 
-int random_escape_pond(const maze_t maze, int x, int y);
-int random_escape_dead_end(const maze_t maze, int x, int y);
-int random_escape_pond_dead_end(const maze_t maze, int x, int y);
+int random_p(const maze_t maze, int x, int y);
+int random_de(const maze_t maze, int x, int y);
+int random_p_de(const maze_t maze, int x, int y);
 #endif // ESCAPE_H
