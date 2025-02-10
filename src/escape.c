@@ -444,10 +444,11 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     SDL_Window* window;
     int dw, dh;
     int step = 0;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
+
     SDL_SetWindowTitle(window, "escaping");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
@@ -457,6 +458,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     SDL_Delay(dm.refresh_rate);
     SDL_RenderPresent(renderer); // on affiche la position actuelle
     bool show = true;
+
 
     // on crée un bool_tab pour stocker les cellules visitées
     // on marque la cellule actuelle comme visitée
@@ -476,6 +478,25 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -493,7 +514,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
@@ -839,7 +860,7 @@ int right_hand_pond(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -875,11 +896,30 @@ int right_hand_pond(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -897,10 +937,11 @@ int right_hand_pond(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
+        step++;
 
         // Boucle de l'algo
         count = 0, min = 0;
@@ -943,7 +984,6 @@ int right_hand_pond(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -962,7 +1002,7 @@ int right_hand_pond(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
 
 // Algorithme de résolution main droite avec pondération sur les cul de sac
@@ -971,7 +1011,7 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -1006,11 +1046,30 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -1028,10 +1087,11 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
+        step++;
 
         // Boucle de l'algo
         count = 0;
@@ -1074,7 +1134,6 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -1093,7 +1152,7 @@ int right_hand_dead_end(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
 
 // Algorithme de résolution main droite avec pondération sur le nombre de passage sur une cellule et les cul de sac
@@ -1102,7 +1161,7 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -1138,11 +1197,30 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -1160,10 +1238,11 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
+        step++;
 
         // Boucle de l'algo
         count = 0, min = 0;
@@ -1212,7 +1291,6 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -1231,7 +1309,7 @@ int right_hand_pond_dead_end(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
 
 // Algorithme random avec pondération sur le nombre de passage sur une cellule
@@ -1240,7 +1318,7 @@ int random_escape_pond(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -1276,11 +1354,30 @@ int random_escape_pond(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -1298,10 +1395,11 @@ int random_escape_pond(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
+        step++;
 
         // La boucle
         count = 0, min = 0;
@@ -1333,7 +1431,6 @@ int random_escape_pond(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -1352,7 +1449,7 @@ int random_escape_pond(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
 
 // Algorithme random avec pondération sur les cul de sac
@@ -1361,7 +1458,7 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -1397,11 +1494,30 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -1419,21 +1535,11 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
-        count = 0;
-        for (int i = 0; i < 4; i++) // Vérifier toutes les directions
-        {
-            if (can_go(x, y, maze, i))
-            {
-                if (visited_value(visited, x, y, i) != INT_MAX)
-                {
-                    count += 1;
-                }
-            }
-        }
+        step++;
 
         if (count == 1)
         {
@@ -1455,7 +1561,6 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -1474,7 +1579,7 @@ int random_escape_dead_end(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
 
 // Algorithme random avec pondération sur les cul de sac et le nombre de passage sur une cellule
@@ -1483,7 +1588,7 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
     {
         return -1;
     }
@@ -1520,11 +1625,30 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
     {
         // on vide la file d'attente des événements
     }
-    int steps = 0;
+    int step = 0;
     while (x != maze.width - 1 || y != maze.height - 1)
     {
         if (show)
         {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on définit la couleur de fond en blanc
+            if(has_wall_up(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw, y * dh);
+            }
+            if(has_wall_down(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+            if(has_wall_left(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh);
+            }
+            if(has_wall_right(maze, x, y))
+            {
+                SDL_RenderDrawLine(renderer, (x + 1) * dw, y * dh, (x + 1) * dw, (y + 1) * dh);
+            }
+    		SDL_Delay(dm.refresh_rate);
+            SDL_RenderPresent(renderer);
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
@@ -1542,10 +1666,11 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
                     destroy_print_maze(renderer, window);
                 }
             }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255); // on efface la position actuelle
             SDL_RenderFillRect(renderer, &rect);
             SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         }
+        step++;
 
         // La boucle
         count = 0, min = 0;
@@ -1584,7 +1709,6 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
             SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
             SDL_RenderPresent(renderer);
         }
-        steps++;
     }
 
     // Supression des tableaux
@@ -1603,5 +1727,5 @@ int random_escape_pond_dead_end(const maze_t maze, int x, int y)
         SDL_RenderPresent(renderer);
         wait_and_destroy_print_maze(renderer, window);
     }
-    return steps;
+    return step;
 }
