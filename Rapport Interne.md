@@ -61,7 +61,7 @@ Fonction qui ajoute un mur dans la direction donnée de la case `(x, y)`.
 ### **void unwall_up(down/left/right)(maze_t maze, int x, int y)**
 Fonction qui retire un mur dans la direction donnée de la case `(x, y)`.
 
-### **bool has_wall_up(down/left/right)(const maze_t maze, int x, int y)**
+### **bool has_wall_up(down/left/right)(maze_t maze, int x, int y)**
 Fonction qui renvoie `true` si la case `(x, y)` a un mur dans la directoin donnée, `false` sinon.
 
 ## Primitives affichage
@@ -82,7 +82,7 @@ Les murs de l'entrée sont bleus, les murs de la sortie sont verts.
 La taille de chaque cellule est automatiquement ajustée en fonction de la taille de la fenêtre, si la taille du labyrinthe est trop grande, l'affichage peut ne pas fonctionner correctement.
 Le programme s'arrête quand quand la fenêtre est fermée (en pressant `ESCAPE` ou `ENTER`).
 
-### **int initial_print_maze(const maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
+### **int initial_print_maze(maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
 Fonction pour afficher le labyrinth et ses murs dans une fenêtre SDL.
 Initialise les données nécessaires pour l'affichage et sa modification.
 Renvoie 1 en cas de succès, un nombre négatif en cas d'échec.
@@ -168,38 +168,34 @@ x, y : les coordonnées de la case
 ### **way\* create_way()**
 Fonction qui crée et renvoie un chemin vide.
 
-### **void print_way(const way\* w)**
+### **void print_way(way\* w)**
 Fonction qui affiche le chemin `w`.
 
-### **unsigned int length_way(const way\* w)**
+### **unsigned int length_way(way\* w)**
 Fonction qui renvoie la longueur du chemin `w`.
-
-@vincent -> // the way can teleport to a cost of L_TP ???
+Si le chemin n'est pas défini, la fonction renvoie L_TP (actuellement 3000000000).
 
 ### **void new_dad(way\* son, way\* dad)**
 Fonction qui connecte le chemin `son` à un nouveau père `dad`.
 Elle ne vérifie pas si le chemin est valide.
 
-### **way\* copy_way(const way\* w)**
+### **way\* copy_way(way\* w)**
 Fonction qui copie un chemin `w` et renvoie la copie.
 
 ### **void free_way(way\* w)**
 Fonction qui libère la mémoire allouée pour un chemin `w`.
+Cette fonction ne doit jamais être utilisée sur un chemin issu d'un tableau de chemins.
 
-@Vincent -> on s'en fout de ça non? // DO NOT USE THIS FUNCTION IN A WAYTAB
-
-### **bool is_empty(const way\* w)**
+### **bool is_empty(way\* w)**
 Fonction qui renvoie `true` si le chemin `w` est vide, `false` sinon.
 
-### **way\* get_dad(const way\* w)**
-Fonction qui renvoie le père du chemin `w` ou `NULL` si le chemin est vide.
+### **way\* get_dad(way\* w)**
+Fonction qui renvoie le père du chemin `w` ou `NULL` si le chemin n'a pas de père.
 
-@Vincent -> elle retourne null quand??
-
-### **int get_x(y)(const way\* w)**
+### **int get_x(y)(way\* w)**
 Fontion qui renvoie les coordonnées x (respectivement y) du chemin `w`.
 
-### **bool is_origin(const way\* w)**
+### **bool is_origin(way\* w)**
 Fonction qui renvoie `true` si le chemin `w` est issu de l'origine (0, 0), `false` sinon.
 
 ### **void fix_size(way\* w)**
@@ -209,18 +205,16 @@ Fonction qui corrige la longueur du chemin `w` et de ses ancêtres.
 
 ### **queue\* create_queue(void)**
 Fonction qui crée et renvoie une file vide.
-
-@Vincent -> // Free the memory allocated for the queue.???
+Des allocations de mémoire sont effectuées pour la file.
 
 ### **void free_queue(queue\* q)**
 Fonction qui libère la mémoire allouée pour une file `q`.
 
-### **int size_queue(const queue\* q)**
+### **int size_queue(queue\* q)**
 Fonction qui renvoie le nombre d'éléments (coordonnées*2) dans la file `q`.
+note : coordonnées*2 car chaque coordonnée est un couple de deux entiers.
 
-@Vincent pourquoi coordonnées*2?
-
-### **bool isempty_queue(const queue\* q)**
+### **bool isempty_queue(queue\* q)**
 Fonction qui renvoie `true` si la file `q` est vide, `false` sinon.
 
 ### **void enqueue(int x, int y, queue\* q)**
@@ -230,11 +224,11 @@ Fonction qui ajoute les coordonnées `(x, y)` à la file `q`.
 Fonction qui renvoie les coordonnées en tête de la file `q` et les retire de la liste.
 Les coordonnées sont stockées dans `x` et `y`.
 
-### **void get_queue(const queue\* q, int\* x, int\* y, int pos)**
+### **void get_queue(queue\* q, int\* x, int\* y, int pos)**
 Fonction qui renvoie les coordonnées à la position donnée dans la file `q` et les retire de la liste.
 Les coordonnées sont stockées dans `x` et `y`.
 
-### **void print_queue(const queue\* q)**
+### **void print_queue(queue\* q)**
 Fonction qui affiche la file `q`.
 
 ## Primitives `stack`
@@ -245,13 +239,12 @@ Fonction qui crée et renvoie une pile vide.
 ### **void free_stack(stack\* s)**
 Fonction qui libère la mémoire allouée pour une pile `s`.
 
-### **bool isempty_stack(const stack\* s)**
+### **bool isempty_stack(stack\* s)**
 Fonction qui renvoie `true` si la pile `s` est vide, `false` sinon.
 
-### **int size_stack(const stack\* s)**
+### **int size_stack(stack\* s)**
 Fonction qui renvoie le nombre d'éléments (coordonnées*2) dans la pile `s`.
-
-@Vincent pourquoi coordonnées\*2?
+note : coordonnées*2 car chaque coordonnée est un couple de deux entiers.
 
 ### **void pop(stack\* s, int\* x, int\* y)**
 Fonction qui renvoie les coordonnées en tête de la pile `s` et les retire de la liste.
@@ -261,8 +254,6 @@ Les coordonnées sont stockées dans `x` et `y`.
 Fonction qui renvoie les coordonnées d'une case aléatoire de la pile `s` et les retire de la liste.
 Les coordonnées sont stockées dans `x` et `y`.
 
-@bah vincent // this function sucks, it's just here for fun (and facilitate the maze solving)
-
 ### **void push(int x, int y, stack\* s)**
 Fonction qui ajoute les coordonnées `(x, y)` à la pile `s`.
 
@@ -271,11 +262,9 @@ Ce fichier contient les fonctions de génération de labyrinthes, ainsi que les 
 
 ## Fonctions auxilliaires
 
-@Vincent je laisse les statics????
-
-### int set_connexion(const maze_t maze, const bool_tab is_connexe, const int dx, const int dy)
+### int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)
 Fonction qui met à jour le tableau `is_connexe` en ajourant les cases connexes à la case `(dx, dy)`.
-Retourne le nombre de cases mise à jour.
+Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 
 maze : labyrinthe
 
@@ -285,16 +274,13 @@ dx : abscisse de la case
 
 dy : ordonnée de la case
 
-### bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
-@micky
-
-### void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
+### int can_move_dir(maze_t* maze, int* x, int* y, bool_tab tab_visited, int dir)
 @micky
 
 ## Fonctions principales
 Toutes les fonctions de générations de labyrinthes suivent la déclarations suivante :
 
-```maze_t *nom_de_la_fonction(const int width, const int height)```
+```maze_t *nom_de_la_fonction(int width, int height)```
 où `width` et `height` sont les dimensions du labyrinthe à générer.
 
 ### column_maze
@@ -335,7 +321,7 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 
 ## Autres fonctions
 
-### void tear(const maze_t maze, const unsigned int prop)
+### void tear(maze_t maze, unsigned int prop)
 Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction de la proportion `prop` (en pourcentage) afin de créer des boucles.
 
 # Fichier " test.c " JE SUIS LÀ
@@ -344,32 +330,32 @@ Il est à usage interne.
 
 ## Fonctions
 
-do_made_solvable_maze(const func_ptr f, const int x, const int y)
+do_made_solvable_maze(func_ptr f, int x, int y)
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
 
-do_made_connected_maze(const func_ptr f, const int x, const int y)
+do_made_connected_maze(func_ptr f, int x, int y)
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est connexe.
 
-do_made_perfect_maze(const func_ptr f, const int x, const int y)
+do_made_perfect_maze(func_ptr f, int x, int y)
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
 
-evaluate_mazemaker(const func_ptr f)
+evaluate_mazemaker(func_ptr f)
 Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant si ils sont solvables, connexes ou parfaits.
 
-evaluate_time(const func_ptr f, char* name)
+evaluate_time(func_ptr f, char* name)
 Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
 
 
 # Fichier " solveur.c "
 Ce fichier contient les fonctions de résolution de labyrinthes.
 
-### bool do_made_solvable_maze(const func_ptr f, const int x, const int y)
+### bool do_made_solvable_maze(func_ptr f, int x, int y)
 Fonction qui analyse si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
 
-### bool do_made_perfect_maze(const func_ptr f, const int x, const int y)
+### bool do_made_perfect_maze(func_ptr f, int x, int y)
 Fonction qui analyse si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
 
-### int evaluate_mazemaker(const func_ptr f)
+### int evaluate_mazemaker(func_ptr f)
 Fonction qui évalue les labyrinthes générés par la fonction `f` de dimension inférieure ou égale à `x` par `y`.
 la fonction renvoie :
 - 3 si le labyrinthe est parfait
@@ -379,7 +365,7 @@ la fonction renvoie :
 
 Cette fonction est utilisée par la macro `EVALUATE_MAZEMAKER` afin de rendre un résultat plus lisible.
 
-### int evaluate_time(const func_ptr f, char* name)
+### int evaluate_time(func_ptr f, char* name)
 Fonction qui renvoie un score en fonction du temps de génération d'un labyrinthe par la fonction `f`.
 Les quatres critères de notation sont :
 - la durée de création de labyrinthes "standard" de dimension k x t avec k et t de 1 à 100. (/50)
@@ -396,7 +382,7 @@ les critères sont évidemment ajustables et sujet à contextualisation.
 ## Fonctions de résolution
 Toutes les fonctions de résolution de labyrinthes suivent la déclarations suivante :
 
-```*nom_de_la_fonction(const maze_t maze)```
+```*nom_de_la_fonction(maze_t maze)```
 où `maze` est le labyrinthe à résoudre.
 
 ### bool has_exit_deep_seeker
@@ -428,7 +414,7 @@ Généralement plus rapide que la recherche en profondeur.
 ## Fonctions de visualisation
 La majorité des fonctions de visualisation suivent la déclarations suivante :
 
-```int nom_de_la_fonction(const maze_t maze)```
+```int nom_de_la_fonction(maze_t maze)```
 où `maze` est le labyrinthe à visualiser.
 la sortie est un entier relatif au type d'erreur rencontré si la visualisation a échouée.
 
@@ -457,7 +443,7 @@ Fonction qui illustre la fonction `is_perfect_breadth_inspector`.
 ### show_best_exit_breadth_seeker
 Fonction qui illustre la fonction `best_exit_breadth_seeker`.
 
-### int show_the_way(const maze_t maze, const way* w)
+### int show_the_way(maze_t maze, way* w)
 La seule fonction de visualisation à ne pas se baser sur un algorithme de résolution, elle illustre le chemin `way` dans le labyrinthe `maze`.
 Attention, cette fonction ne vérifie pas si le chemin est bien issu du labyrinthe donné.
 
@@ -466,13 +452,13 @@ Ce fichiers contient les fonctions d'écritures et de lectures de nos structures
 
 ## Fonctions auxilliaires
 
-### void way_to_file_aux(const way* w, FILE* file)
+### void way_to_file_aux(way* w, FILE* file)
 Permets d'inverser l'ordre des cases d'un chemin pour l'écriture dans un fichier.
 (les données de la structures sont écrites dans l'ordre inverse de leur lecture)
 
 ## Fonctions d'écriture
 
-### void maze_to_file(const maze_t maze, const char* filename)
+### void maze_to_file(maze_t maze, char* filename)
 Fonction qui écrit un labyrinthe dans un fichier.
 Ecrase le fichier si il existe déjà.
 
@@ -480,7 +466,7 @@ Ecrase le fichier si il existe déjà.
 
 `filename` : nom du fichier à écrire.
 
-### void way_to_file(const way* w, const char* filename)
+### void way_to_file(way* w, char* filename)
 Fonction qui écrit un chemin dans un fichier.
 
 `w` : chemin à écrire.
@@ -489,12 +475,12 @@ Fonction qui écrit un chemin dans un fichier.
 
 ## Fonctions de lecture
 
-### maze_t maze_from_file(const char* filename)
+### maze_t maze_from_file(char* filename)
 Fonction qui lit un labyrinthe depuis un fichier et le renvoie.
 
 `filename` : nom du fichier à lire.
 
-### way* way_from_file(const char* filename)
+### way* way_from_file(char* filename)
 Fonction qui lit un chemin depuis un fichier et le renvoie.
 
 `filename` : nom du fichier à lire.
@@ -504,7 +490,7 @@ Fichier contenant les fonctions de gestion de la ligne de commande.
 
 ## Fonctions auxilliaires
 
-### bool safe_atoi(const char* str, int* out)
+### bool safe_atoi(char* str, int* out)
 Fonction pour convertir en entier une chaine de caractères.
 La chaines de caractères, si elle est valide, est convertie puis stockée dans `out`.
 La fonction renvoie `true` si la conversion a réussie, `false` sinon.
@@ -520,7 +506,7 @@ Fonction qui affiche l'aide de la ligne de commande.
 
 ## Fonction principale
 
-### void cmd(char* argv[], const int argc)
+### void cmd(char* argv[], int argc)
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes.
 
 `argv` : tableau des arguments.
