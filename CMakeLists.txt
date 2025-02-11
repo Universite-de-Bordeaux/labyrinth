@@ -14,13 +14,13 @@ set(MAZE_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/escape.c src/out
 set(TEST_SOURCES src/struct.c src/mazemaker.c src/solveur.c src/test.c)
 
 # Create libraries
-add_library(maze ${MAZE_SOURCES})
+add_library(main ${MAZE_SOURCES})
 add_library(test_interne ${TEST_SOURCES})
 
 # Define executables
-add_executable(main src/cmd.c)
+add_executable(maze src/cmd.c)
 add_executable(test src/testing.c)
 
 # Link libraries to executables
-target_link_libraries(main maze ${SDL2_LIBRARIES})
+target_link_libraries(maze main ${SDL2_LIBRARIES})
 target_link_libraries(test test_interne ${SDL2_LIBRARIES})
