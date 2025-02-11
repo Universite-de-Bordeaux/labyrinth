@@ -15,7 +15,7 @@ Utiliser cette commande pour télécharger et installer les dépendances
 Ce positionner à la source du dépot puis entrer la commande suivante :
 ````mkdir build && cd build && cmake .. && make````  
 Cette commande crée un exécutable "main" dans le dossier build à la source du dépot.
-Il suffit de faire ````./main [arg, ...]```` pour l'exécuter.
+Il suffit de faire ````./maze [arg, ...]```` pour l'exécuter.
 
 ## Utilisation
 
@@ -50,14 +50,15 @@ On peut préciser les dimensions "nb1" x "nb2" :
 <span style="color:green">-g</span> <span style="color:red">type</span> <span style="color:blue">nb1</span> <span style="color:blue">nb2</span>
 
 
-<span style="color:red">type</span> : générateur de labyrinthe parmis ceux de cette liste [<span style="color:red">owm</span>, <span style="color:red">cbm</span>, <span style="color:red">hkm</span>, <span style="color:red">bpm</span>, <span style="color:red">sm</span>, <span style="color:red">cm</span>]  
+<span style="color:red">type</span> : générateur de labyrinthe parmis ceux de cette liste [<span style="color:red">owm</span>, <span style="color:red">cbm</span>, <span style="color:red">hkm</span>, <span style="color:red">bpm</span>, <span style="color:red">stm</span>, <span style="color:red">crm</span>, <span style="color:red">ocm</span>]  
 <span style="color:blue">nb1</span>, <span style="color:blue">nb2</span> : couple de valeurs strictement positives, la valeur par défaut, ou en cas d'erreur, est 10 10
 
 ### Lire un labyrinthe à partir d'un fichier
 
 Extraire un labyrinthe depuis un fichier :  
-<span style="color:green">-r</span> <span style="color:blue">filename
-filename</span> : le nom du fichier
+<span style="color:green">-r</span> <span style="color:blue">filename</span>
+
+<span style="color:blue">filename</span> : le nom du fichier
 
 ### Arguments suivant la génération d'un labyrinthe
 
@@ -89,7 +90,7 @@ On peut préciser le solveur "solver" :
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>, <span style="color:red">draw</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
 
 
 
@@ -120,7 +121,7 @@ On peut préciser le solveur "solver" :
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
-<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
+<span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>, <span style="color:red">draw</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
 
 
 Afficher un chemin :  
@@ -130,24 +131,24 @@ Afficher un chemin :
 ## Exemples d'utilisation
 
 Générer un labyrinthe et l'enregistrer dans un fichier  
-./main -g cm -w temp
+./maze -g cm -w temp
 
 
 Récupérer le labyrinthe avant de l'afficher  
-./main -r temp -sh
+./maze -r temp -sh
 
 
 Afficher l'analyse du labyrinthe  
-./main -r temp -sh isp deep
+./maze -r temp -sh isp deep
 
 
 Sans passer par un fichier temporaire  
-./main -g cm -w temp -sh isp deep
+./maze -g cm -w temp -sh isp deep
 
 
 Enregistrer un labyrinthe et écrire le chemin le plus court pour le résoudre et les enregistrer dans des fichiers  
-./main -g bpm -w temp -ww temp_c -slv she breadth
+./maze -g bpm -w temp -ww temp_c -slv she
 
 
-Afficher le chemin dans le labyrinthe enregistré  
-./main -r temp -rw temp_c -shw
+Récupérer le labyrinthe et le chemin avant de les afficher
+./maze -r temp -rw temp_c -shw
