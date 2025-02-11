@@ -14,7 +14,7 @@ Utiliser cette commande pour télécharger et installer les dépendances
 ## Pour Compiler et exécuter
 Ce positionner à la source du dépot puis entrer la commande suivante :
 ````mkdir build && cd build && cmake .. && make````  
-Cette commande crée un exécutable "main" dans le dossier build à la source du dépot.
+Cette commande crée un exécutable "maze" dans le dossier build à la source du dépot.
 Il suffit de faire ````./maze [arg, ...]```` pour l'exécuter.
 
 ## Utilisation
