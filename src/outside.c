@@ -2,6 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// --- FONCTIONS AUXILIAIRES ---
+
+// fonction auxiliaire pour way_from_file
+static void way_to_file_aux(const way* w, FILE* file)
+{
+    if (!is_origin(w))
+    {
+        way_to_file_aux(get_dad(w), file);
+    }
+    fprintf(file, "%d %d\n", get_x(w), get_y(w));
+}
+
+// --- FONCTIONS PRINCIPALES ---
+
+// FONCTIONS DE LECTURE
 maze_t maze_from_file(const char* filename)
 {
     FILE* file = fopen(filename, "r");
@@ -105,16 +120,7 @@ void maze_to_file(const maze_t maze, const char* filename)
     fclose(fp); // fermeture du fichier
 }
 
-// fonction auxiliaire pour way_from_file
-static void way_to_file_aux(const way* w, FILE* file)
-{
-    if (!is_origin(w))
-    {
-        way_to_file_aux(get_dad(w), file);
-    }
-    fprintf(file, "%d %d\n", get_x(w), get_y(w));
-}
-
+// FONCTIONS D'ECRITURE
 void way_to_file(const way* w, const char* filename)
 {
     if (w == NULL || is_empty(w))
