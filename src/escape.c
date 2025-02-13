@@ -7,7 +7,7 @@
 #include "limits.h"
 #include "struct.h"
 
-// FONCTIONS AUXILIAIRES
+// --- FONCTIONS AUXILIAIRES ---
 
 // Fonction pour savoir si une cellule a des cellules adjacentes accessibles
 // renvoie true si il y a des cellules accessibles sinon false.
@@ -153,7 +153,7 @@ static int visited_value(int** visited, int x, int y, int dir)
     }
 }
 
-// FONCTIONS PRINCIPALES
+// --- FONCTIONS PRINCIPALES ---
 
 int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape,   &right_hand, &right_hand_r, &hunt_kill_escape, &right_hand_p, &right_hand_de,
                                                   &right_hand_p_de, &random_p,   &random_de,    &random_p_de,      &cheat_escape};
