@@ -233,7 +233,7 @@ Les coordonnées sont stockées dans `x` et `y`.
 Fonction qui ajoute les coordonnées `(x, y)` à la pile `s`.
 
 # Fichier " mazemaker.c "
-Ce fichier contient les fonctions de génération de labyrinthes, ainsi que les fonctions auxilliaires nécessaires à leur création.
+Ce fichier contient les fonctions de génération de labyrinthe, ainsi que les fonctions auxilliaires nécessaires à leur création.
 
 ## Macros
 ### **CAN_MOVE_LEFT (\*x > 0 && !get_bool(tab_visited, \*x - 1, \*y))**
@@ -314,7 +314,7 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction de la proportion `prop` (en pourcentage) afin de créer des boucles.
 
 # Fichier " test.c "
-Ce fichier contient des fonctions d'évaluation de labyrinthes, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
+Ce fichier contient des fonctions d'évaluation de labyrinthe, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
 
 ## Fonctions
 
@@ -350,9 +350,9 @@ les critères sont évidemment ajustables et sujet à contextualisation.
 
 
 # Fichier " solveur.c "
-Ce fichier contient les fonctions de résolution de labyrinthes.
+Ce fichier contient les fonctions de résolution de labyrinthe.
 
-Il y a 3 types de parcours pour la résolution de labyrinthes : en profondeur, en largeur et en tirage.
+Il y a 3 types de parcours pour la résolution de labyrinthe : en profondeur, en largeur et en tirage.
 
 Pour les parcours en profondeur, on utilise `deep` ; pour les parcours en largeur, on utilise `breadth` ; pour les parcours en tirage, on utilise `draw`.
 
@@ -384,7 +384,7 @@ Elle retourne un pointeur sur le chemin trouvé, ou NULL si aucun chemin n'a ét
 La recherche en `largeur` est généralement plus rapide que la recherche en `profondeur`.
 
 ## Fonctions de visualisation
-La majorité des fonctions de visualisation suivent la déclarations suivante :
+La majorité des fonctions de visualisation suivent la déclaration suivante :
 
 ```int nom_de_la_fonction(maze_t maze)```
 où `maze` est le labyrinthe à visualiser.
