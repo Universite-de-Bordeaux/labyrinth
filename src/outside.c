@@ -106,7 +106,7 @@ void maze_to_file(const maze_t maze, const char* filename)
 }
 
 // fonction auxiliaire pour way_from_file
-void way_to_file_aux(const way* w, FILE* file)
+static void way_to_file_aux(const way* w, FILE* file)
 {
     if (!is_origin(w))
     {
