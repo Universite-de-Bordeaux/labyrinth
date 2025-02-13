@@ -9,9 +9,9 @@
 
 // FONCTIONS AUXILIAIRES
 
-// fonction pour savoir si une cellule a des cellules adjacentes accessibles
-// renvoie true si il y a des cellules accessibles sinon false
-// utilisée dans le hunt_kill_escape
+// Fonction pour savoir si une cellule a des cellules adjacentes accessibles
+// renvoie true si il y a des cellules accessibles sinon false.
+// Utilisée dans le hunt_kill_escape.
 static bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze)
 {
     if (!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
@@ -41,9 +41,9 @@ enum direction
     HAUT
 };
 
-// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-// elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante
-// utilisée dans le hunt_kill_escape
+// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée.
+// Elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante.
+// Utilisée dans le hunt_kill_escape.
 static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char dir)
 {
     switch (dir)
@@ -86,8 +86,8 @@ static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char di
     }
 }
 
-// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-// utilisée dans le hunt_kill_escape, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée.
+// Utilisée dans le hunt_kill_escape, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de.
 static bool can_go(int x, int y, maze_t maze, char dir)
 {
     // On renvoie faux si il y a un mur dans la direction donnée
@@ -107,8 +107,8 @@ static bool can_go(int x, int y, maze_t maze, char dir)
     }
 }
 
-// Fonction change les valeurs de x et y en fonction de la direction donnée
-// utilisée dans le hunt_kill_escpae, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+// Fonction change les valeurs de x et y en fonction de la direction donnée.
+// Utilisée dans le hunt_kill_escpae, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de.
 static void go(int* x, int* y, int dir)
 {
     // On incrémente ou décrémente x ou y en fonction de la direction donnée
@@ -133,7 +133,7 @@ static void go(int* x, int* y, int dir)
 }
 
 //@micky
-// utilisée dans le right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+// Utilisée dans le right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de.
 static int visited_value(int** visited, int x, int y, int dir)
 {
     // On renvoie la valeur de la case adjacente dans la direction donnée
@@ -613,7 +613,6 @@ int right_hand(const maze_t maze, int x, int y)
     }
     return steps;
 }
-
 
 // Algorithme de résolution main droite quand le terrain n'est pas connu sinon des déplacements aléatoires
 int right_hand_r(const maze_t maze, int x, int y)
