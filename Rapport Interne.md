@@ -476,8 +476,7 @@ Interprète les commandes passées en argument du programme et appelle les fonct
 `argc` : nombre d'arguments.
 
 # Fichier " testing.c " :
-Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de tests.
-Est avant tout destiné à un usage interne.
+Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de test.
 
 ## Fonctions auxilliaires
 
