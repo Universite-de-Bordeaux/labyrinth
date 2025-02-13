@@ -266,7 +266,7 @@ int cheat_escape(const maze_t maze, int x, int y)
 
         // le corps de l'algorithme
         // votre déplacement
-        unsigned int random_value;
+        unsigned char random_value;
         getrandom(&random_value, sizeof(random_value), 0);
         if (x < maze.width - 1 && random_value % 2 == 0)
         {
