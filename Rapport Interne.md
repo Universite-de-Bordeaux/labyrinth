@@ -260,9 +260,22 @@ Fonction qui ajoute les coordonnées `(x, y)` à la pile `s`.
 # Fichier " mazemaker.c "
 Ce fichier contient les fonctions de génération de labyrinthes, ainsi que les fonctions auxilliaires nécessaires à leur création.
 
+## Macros
+### **CAN_MOVE_LEFT (\*x > 0 && !get_bool(tab_visited, \*x - 1, \*y))**
+Macro qui nous permet de savoir si on peut se déplacer à gauche : si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
+
+### **CAN_MOVE_RIGHT (\*x + 1 < maze->width && !get_bool(tab_visited, \*x + 1, \*y))**
+Macro qui nous permet de savoir si on peut se déplacer à droite : si nous ne somme pas sur le bord droit et que la case n'est pas visitée
+
+### **CAN_MOVE_UP (\*y > 0 && !get_bool(tab_visited, \*x, \*y - 1))**
+Macro qui nous permet de savoir si on peut se déplacer en haut : si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+
+###**CAN_MOVE_DOWN (\*y + 1 < maze->height && !get_bool(tab_visited, \*x, \*y + 1))**
+Macro qui nous permet de savoir si on peut se déplacer en bas : si nous ne somme pas sur le bord bas et que la case n'est pas visitée
+
 ## Fonctions auxilliaires
 
-### int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)
+### **static int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)**
 Fonction qui met à jour le tableau `is_connexe` en ajourant les cases connexes à la case `(dx, dy)`.
 Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 
@@ -274,8 +287,15 @@ dx : abscisse de la case
 
 dy : ordonnée de la case
 
-### int can_move_dir(maze_t* maze, int* x, int* y, bool_tab tab_visited, int dir)
+### **static int can_move_dir(maze_t\* maze, int\* x, int\* y, bool_tab tab_visited, int dir)**
 @micky
+
+### **static bool lbp_path_move(const maze_t\* maze, int\* x, int\* y, const bool_tab tab_visited)**
+@micky
+
+### **static void lbp_path(maze_t\* maze, int\* x, int\* y, int\* x_2, int\* y_2, const bool_tab tab_visited)**
+@micky
+
 
 ## Fonctions principales
 Toutes les fonctions de générations de labyrinthes suivent la déclarations suivante :
@@ -324,7 +344,7 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 ### void tear(maze_t maze, unsigned int prop)
 Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction de la proportion `prop` (en pourcentage) afin de créer des boucles.
 
-# Fichier " test.c " JE SUIS LÀ
+# Fichier " test.c "
 Ce fichiers contient des fonctions d'évaluation de labyrinthes, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
 Il est à usage interne.
 
