@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <sys/random.h>
 
-// Auxiliary functions
+// --- FONCTIONS AUXILIAIRES ---
+
 // update the connexity of the maze by adding a connexion to the cell (dx, dy) if it is connected to the cell (0, 0)
 // return the number of visited cells
 // maze : the maze
@@ -64,6 +65,109 @@ int static set_connexion(const maze_t maze, const bool_tab is_connexe, const int
     free_queue(q);
     return c; // on retourne le nombre de cases visitées
 }
+
+// Auxiliary functions for lab_by_path
+// directions
+#define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, *x - 1, *y)) // si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
+
+#define CAN_MOVE_RIGHT (*x + 1 < maze->width && !get_bool(tab_visited, *x + 1, *y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
+
+#define CAN_MOVE_UP (*y > 0 && !get_bool(tab_visited, *x, *y - 1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+
+#define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
+
+static int can_move_dir(const maze_t* maze, const int* x, const int* y, const bool_tab tab_visited, int const dir)
+{
+    switch (dir)
+    {
+    case 0:
+        return CAN_MOVE_LEFT;
+    case 1:
+        return CAN_MOVE_RIGHT;
+    case 2:
+        return CAN_MOVE_UP;
+    case 3:
+        return CAN_MOVE_DOWN;
+    default:
+        fprintf(stderr, "Problem in the switch case in lbp_path_move");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Auxiliary functions for lab_by_path
+// To apply a random move to the current cell
+static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
+{
+    if (!(CAN_MOVE_LEFT || CAN_MOVE_RIGHT || CAN_MOVE_UP || CAN_MOVE_DOWN))
+    {
+        return false;
+    }
+    // tant qu'il nous reste des directions
+    int choice;
+    getrandom(&choice, sizeof(choice), 0);
+    choice = abs(choice) % 4; // choix d'une direction NOLINT(*-msc50-cpp)
+    while (!can_move_dir(maze, x, y, tab_visited, choice))
+    { // si notre direction n'est pas possible, on passe à la suivante
+        getrandom(&choice, sizeof(choice), 0);
+        choice %= 4;
+    }
+    switch (choice)
+    {
+    case 0:
+        (*x)--;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 1:
+        (*x)++;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 2:
+        (*y)--;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    case 3:
+        (*y)++;
+        set_true(tab_visited, *x, *y);
+        return true;
+
+    default:
+        fprintf(stderr, "Problem in the switch case in lbp_path_move");
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Auxiliary functions for lab_by_path
+// function to create a path in the maze by adding walls
+static void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
+{
+    set_true(tab_visited, *x, *y);
+
+    if (!CAN_MOVE_UP && !has_wall_up(*maze, *x, *y) && *y != *y_2 + 1)
+    {
+        wall_up(*maze, *x, *y);
+    }
+
+    if (!CAN_MOVE_DOWN && !has_wall_down(*maze, *x, *y) && *y != *y_2 - 1)
+    {
+        wall_down(*maze, *x, *y);
+    }
+    if (!CAN_MOVE_LEFT && !has_wall_left(*maze, *x, *y) && *x != *x_2 + 1)
+    {
+        wall_left(*maze, *x, *y);
+    }
+    if (!CAN_MOVE_RIGHT && !has_wall_right(*maze, *x, *y) && *x != *x_2 - 1)
+    {
+        wall_right(*maze, *x, *y);
+    }
+    *x_2 = *x, *y_2 = *y;
+    if (lbp_path_move(maze, x, y, tab_visited)) // mouvement
+        lbp_path(maze, x, y, x_2, y_2, tab_visited);
+}
+
+// --- FONCTIONS PRINCIPALES ---
 
 maze_t line_maze(const int width, const int height)
 {
@@ -749,109 +853,6 @@ maze_t hunt_kill_maze(const int width, const int height)
     }
     free_booltab(visited);
     return maze;
-}
-
-
-// Auxiliary functions for lab_by_path
-// directions
-
-#define CAN_MOVE_LEFT (*x > 0 && !get_bool(tab_visited, *x - 1, *y)) // si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
-
-#define CAN_MOVE_RIGHT (*x + 1 < maze->width && !get_bool(tab_visited, *x + 1, *y)) // si nous ne somme pas sur le bord droit et que la case n'est pas visitée
-
-#define CAN_MOVE_UP (*y > 0 && !get_bool(tab_visited, *x, *y - 1)) // si ne nous somme pas sur le bord haut et que la case n'est pas visitée
-
-#define CAN_MOVE_DOWN (*y + 1 < maze->height && !get_bool(tab_visited, *x, *y + 1)) // si nous ne somme pas sur le bord bas et que la case n'est pas visitée
-
-static int can_move_dir(const maze_t* maze, const int* x, const int* y, const bool_tab tab_visited, int const dir)
-{
-    switch (dir)
-    {
-    case 0:
-        return CAN_MOVE_LEFT;
-    case 1:
-        return CAN_MOVE_RIGHT;
-    case 2:
-        return CAN_MOVE_UP;
-    case 3:
-        return CAN_MOVE_DOWN;
-    default:
-        fprintf(stderr, "Problem in the switch case in lbp_path_move");
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Auxiliary functions for lab_by_path
-// To apply a random move to the current cell
-static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
-{
-    if (!(CAN_MOVE_LEFT || CAN_MOVE_RIGHT || CAN_MOVE_UP || CAN_MOVE_DOWN))
-    {
-        return false;
-    }
-    // tant qu'il nous reste des directions
-    int choice;
-    getrandom(&choice, sizeof(choice), 0);
-    choice = abs(choice) % 4; // choix d'une direction NOLINT(*-msc50-cpp)
-    while (!can_move_dir(maze, x, y, tab_visited, choice))
-    { // si notre direction n'est pas possible, on passe à la suivante
-        getrandom(&choice, sizeof(choice), 0);
-        choice %= 4;
-    }
-    switch (choice)
-    {
-    case 0:
-        (*x)--;
-        set_true(tab_visited, *x, *y);
-        return true;
-
-    case 1:
-        (*x)++;
-        set_true(tab_visited, *x, *y);
-        return true;
-
-    case 2:
-        (*y)--;
-        set_true(tab_visited, *x, *y);
-        return true;
-
-    case 3:
-        (*y)++;
-        set_true(tab_visited, *x, *y);
-        return true;
-
-    default:
-        fprintf(stderr, "Problem in the switch case in lbp_path_move");
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Auxiliary functions for lab_by_path
-// function to create a path in the maze by adding walls
-static void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
-{
-    set_true(tab_visited, *x, *y);
-
-    if (!CAN_MOVE_UP && !has_wall_up(*maze, *x, *y) && *y != *y_2 + 1)
-    {
-        wall_up(*maze, *x, *y);
-    }
-
-    if (!CAN_MOVE_DOWN && !has_wall_down(*maze, *x, *y) && *y != *y_2 - 1)
-    {
-        wall_down(*maze, *x, *y);
-    }
-    if (!CAN_MOVE_LEFT && !has_wall_left(*maze, *x, *y) && *x != *x_2 + 1)
-    {
-        wall_left(*maze, *x, *y);
-    }
-    if (!CAN_MOVE_RIGHT && !has_wall_right(*maze, *x, *y) && *x != *x_2 - 1)
-    {
-        wall_right(*maze, *x, *y);
-    }
-    *x_2 = *x, *y_2 = *y;
-    if (lbp_path_move(maze, x, y, tab_visited)) // mouvement
-        lbp_path(maze, x, y, x_2, y_2, tab_visited);
 }
 
 maze_t by_path_maze(const int width, const int height)
