@@ -301,8 +301,7 @@ Fonction destinée à remplacer `comb_maze` dans le programme final, elle n'a ja
 Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs aléatoirement jusqu'à ce que le labyrinthe soit parfait.
 
 ### by_path_maze
-Fonction qui crée un labyrinthe parfait à partir de la case `(0, 0)` en murant des couloirs puis sélectionne la prochaine case de haut en bas qui créera un couloir.
-@micky
+Fonction qui crée un labyrinthe parfait à partir de la case `(0, 0)` en murant des couloirs puis sélectionne la prochaine case de en partant de la première ligne de gauche à droite puis en changeant de ligne.
 
 ### cross_maze
 Fonction qui crée un labyrinthe parfait en deux étapes :
@@ -315,8 +314,7 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction de la proportion `prop` (en pourcentage) afin de créer des boucles.
 
 # Fichier " test.c "
-Ce fichiers contient des fonctions d'évaluation de labyrinthes, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
-Il est à usage interne.
+Ce fichier contient des fonctions d'évaluation de labyrinthes, ainsi que des fonctions auxilliaires nécessaires à leur évaluation.
 
 ## Fonctions
 
@@ -328,12 +326,6 @@ Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension i
 
 ### **bool do_made_perfect_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
-
-### **int evaluate_mazemaker(func_ptr f)**
-Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant si ils sont solvables, connexes ou parfaits.
-
-### **int evaluate_time(func_ptr f, char\* name)**
-Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
 
 ### **int evaluate_mazemaker(func_ptr f)**
 Fonction qui évalue les labyrinthes générés par la fonction `f` de taille maximale 100 x 100.
