@@ -5,6 +5,8 @@
 
 #include "struct.h"
 
+// --- FONCTIONS SOLVEURS ---
+
 // --- Solveur en profondeur ---
 
 bool has_exit_deep_seeker(const maze_t maze)
@@ -749,7 +751,9 @@ way* best_exit_draw_seeker(const maze_t maze)
     return w;
 }
 
-// --- Visualisation des algorithmes de résolution de labyrinthes ---
+// --- FONCTIONS DE VISUALISATION ---
+
+// --- Solveur en profondeur ---
 
 int show_has_exit_deep_seeker(const maze_t maze)
 {
@@ -1339,6 +1343,8 @@ int show_best_exit_deep_seeker(const maze_t maze)
     return 1;
 }
 
+// --- Solveur en largeur ---
+
 int show_has_exit_breadth_seeker(const maze_t maze)
 {
     int frame_count = 0;
@@ -1894,6 +1900,8 @@ int show_best_exit_breadth_seeker(const maze_t maze)
     free_waytab(ways);
     return 1;
 }
+
+// --- Solveur en tirage ---
 
 int show_has_exit_draw_seeker(const maze_t maze)
 {
