@@ -34,6 +34,11 @@ maze_t one_way_maze(const int width, const int height);
 //  (breadth creation)
 maze_t octopus_maze(const int width, const int height);
 
+// Creates a perfect maze
+// width : width of the maze
+// height : height of the maze
+// every way lead to the same cell
+//  (draw creation)
 maze_t my_octopus_maze(const int width, const int height);
 
 // Creates a perfect maze
@@ -42,6 +47,11 @@ maze_t my_octopus_maze(const int width, const int height);
 // every way only go to the right or down
 maze_t comb_maze(const int width, const int height);
 
+// Creates a perfect maze
+// width : width of the maze
+// height : height of the maze
+// a better version of comb_maze withoun the right or down restriction
+// (prototype unfinished)
 maze_t proto_comb_maze(const int width, const int height);
 
 // Creates a perfect maze (universal generator)
