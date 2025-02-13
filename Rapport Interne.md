@@ -494,7 +494,7 @@ cf `cmd.c`
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes.
 
 # Fichier " escape.c " :
-Ce fichier contient les algorithmes de visite de labyrinthes.
+Ce fichier contient les algorithmes de visite de labyrinthe.
 
 ## Fonctions auxilliaires
 
@@ -520,14 +520,15 @@ Fonction qui déplace les coordonnées `(x, y)` dans la direction `dir`.
 
 ## Fonctions principales
 
-Toutes les fonctions de visites de labyrinthes suivent la déclarations suivante :
+Toutes les fonctions de visites de labyrinthe suivent la déclaration suivante :
 
 ```int *nom_de_la_fonction(maze_t maze, int x, int y)```
-où `maze` est le labyrinth à visiter, `x` et `y` sont les coordonnées de départ.
+où `maze` est le labyrinthe à visiter, `x` et `y` sont les coordonnées de départ.
 
 Elles renvoient le nombre d'étapes nécessaires pour trouver la sortie.
 
-Elles permettent toutes de visualiser le parcours dans le labyrinthe. Elles s'arrêtent quand la sortie est trouvée ou quand @vincent je suis bloquer là je ne sais plus le mot
+Elles permettent toutes de visualiser le parcours dans le labyrinthe.
+Elles s'arrêtent quand la sortie est trouvée ou quand l'utilisateur arrête le programme avec la touche `ESCAPE` ou `ENTER`.
 
 ### random_escape
 Fonction qui visite un labyrinthe en choisissant aléatoirement la direction à suivre à chaque intersection.
