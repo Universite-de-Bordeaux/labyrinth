@@ -2,6 +2,8 @@
 #define SOLVEUR_H
 #include "struct.h"
 
+// --- FONCTIONS SOLVEURS ---
+
 // --- solveurs en profondeur ---
 
 // return true if the maze is solvable, false otherwise
@@ -23,7 +25,6 @@ bool is_perfect_deep_inspector(maze_t maze);
 // return an empty way if the maze is not solvable
 // deep search (less memory efficient and slower than breadth search)
 way* best_exit_deep_seeker(const maze_t maze);
-
 
 // --- solveurs en largeur ---
 
@@ -71,7 +72,9 @@ bool is_perfect_draw_inspector(maze_t maze);
 // draw search
 way* best_exit_draw_seeker(const maze_t maze);
 
-// --- visualisation ---
+// --- FONCTIONS DE VISUALISATION ---
+
+// --- solveurs en profondeur ---
 
 // function to visualize the maze and the progression of the solver
 // return -1 in case of error, 1 otherwise
@@ -93,6 +96,8 @@ int show_is_perfect_deep_inspector(maze_t maze);
 // maze : the maze
 int show_best_exit_deep_seeker(maze_t maze);
 
+// --- solveurs en largeur ---
+
 // function to visualize the maze and the progression of the solver
 // return -1 in case of error, 1 otherwise
 // maze : the maze
@@ -113,10 +118,7 @@ int show_is_perfect_breadth_inspector(maze_t maze);
 // maze : the maze
 int show_best_exit_breadth_seeker(maze_t maze);
 
-// function to visualize the maze and the progression of the solver
-// return -1 in case of error, 1 otherwise
-// maze : the maze
-int show_best_exit_deep_seeker(maze_t maze);
+// --- solveurs en tirage ---
 
 // function to visualize the maze and the progression of the solver
 // return -1 in case of error, 1 otherwise
@@ -137,6 +139,8 @@ int show_is_perfect_draw_inspector(maze_t maze);
 // return -1 in case of error, 1 otherwise
 // maze : the maze
 int show_best_exit_draw_seeker(maze_t maze);
+
+// --- visualisation des chemins ---
 
 // function to visualize the maze and the progression of the solver
 // return -1 in case of error, 1 otherwise
