@@ -366,14 +366,13 @@ Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant s
 Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
 
 ### **int evaluate_mazemaker(func_ptr f)**
-Fonction qui évalue les labyrinthes générés par la fonction `f` de dimension inférieure ou égale à `x` par `y`.
+Fonction qui évalue les labyrinthes générés par la fonction `f` de taille maximale 100 x 100.
 la fonction renvoie :
 - 3 si le labyrinthe est parfait
 - 2 si le labyrinthe est connexe
 - 1 si le labyrinthe est solvable
 - 0 si le labyrinthe n'est pas solvable
 
-@vincent je ne comprends pas le x et y d'ou ils sortent... le programme à changé?
 
 Cette fonction est utilisée par la macro `EVALUATE_MAZEMAKER` afin de rendre un résultat plus lisible.
 
@@ -390,11 +389,6 @@ les critères sont évidemment ajustables et sujet à contextualisation.
 
 # Fichier " solveur.c "
 Ce fichier contient les fonctions de résolution de labyrinthes.
-
-## Fonctions auxilliaires
-
---- aucune pour l'instant ---
-@vincent il n'y en a toujours pas?
 
 Il y a 3 types de parcours pour la résolution de labyrinthes : en profondeur, en largeur et en tirage.
 
@@ -503,7 +497,7 @@ Fonction pour convertir en entier une chaine de caractères.
 La chaines de caractères `str`, si elle est valide, est convertie puis stockée dans `out`.
 La fonction renvoie `true` si la conversion a réussie, `false` sinon.
 
-@vincent tu veux que je mette tous les defines?
+les phrases d'explications des commandes sont stockées dans des macros pour faciliter la modification.
 
 ### **static void print_cmd_help(char\* namefile)**
 Fonction qui affiche l'aide de la ligne de commande.
@@ -521,5 +515,19 @@ Interprète les commandes passées en argument du programme et appelle les fonct
 
 # Fichier " testing.c " :
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de tests.
+Est avant tout destiné à un usage interne.
 
-@vincent ici faut rajouter un truc pour testing?
+## Fonctions auxilliaires
+
+### ** void usage(char* name)**
+Affiche l'aide de la ligne de commande.
+
+`name` : nom de l'exécutable.
+
+### **bool safe_atoi(char* str, int* out)**
+cf `cmd.c`
+
+## Fonction principale
+
+### **int main (char* argv[], int argc)**
+Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes.
