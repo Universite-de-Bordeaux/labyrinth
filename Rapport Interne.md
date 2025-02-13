@@ -460,13 +460,13 @@ Ce fichiers contient les fonctions d'écritures et de lectures de nos structures
 
 ## Fonctions auxilliaires
 
-### void way_to_file_aux(way* w, FILE* file)
+### **void way_to_file_aux(way\* w, FILE\* file)**
 Permets d'inverser l'ordre des cases d'un chemin pour l'écriture dans un fichier.
 (les données de la structures sont écrites dans l'ordre inverse de leur lecture)
 
 ## Fonctions d'écriture
 
-### void maze_to_file(maze_t maze, char* filename)
+### **void maze_to_file(maze_t maze, char\* filename)**
 Fonction qui écrit un labyrinthe dans un fichier.
 Ecrase le fichier si il existe déjà.
 
@@ -474,7 +474,7 @@ Ecrase le fichier si il existe déjà.
 
 `filename` : nom du fichier à écrire.
 
-### void way_to_file(way* w, char* filename)
+### **void way_to_file(way\* w, char\* filename)**
 Fonction qui écrit un chemin dans un fichier.
 
 `w` : chemin à écrire.
@@ -483,12 +483,12 @@ Fonction qui écrit un chemin dans un fichier.
 
 ## Fonctions de lecture
 
-### maze_t maze_from_file(char* filename)
+### **maze_t maze_from_file(char\* filename)**
 Fonction qui lit un labyrinthe depuis un fichier et le renvoie.
 
 `filename` : nom du fichier à lire.
 
-### way* way_from_file(char* filename)
+### **way\* way_from_file(char\* filename)**
 Fonction qui lit un chemin depuis un fichier et le renvoie.
 
 `filename` : nom du fichier à lire.
