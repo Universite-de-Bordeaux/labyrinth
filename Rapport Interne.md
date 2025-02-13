@@ -267,7 +267,7 @@ Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 
 
 ## Fonctions principales
-Toutes les fonctions de générations de labyrinthes suivent la déclarations suivante :
+Toutes les fonctions de générations de labyrinthes suivent la déclaration suivante :
 
 ```maze_t *nom_de_la_fonction(int width, int height)```
 où `width` et `height` sont les dimensions du labyrinthe à générer.
@@ -279,20 +279,20 @@ Fonction qui crée un labyrinthe parfait en supprimant tous les murs internes ho
 Fonction qui crée un labyrinthe parfait en supprimant tous les murs internes verticaux et un mur horizontal par ligne.
 
 ### one_way_maze
-Fonction qui crée un labyrinthe parfait à partir d'un chemin principal. Semblable à un hunt-and-kill
+Fonction qui crée un labyrinthe parfait à partir d'un chemin principal. Semblable à un hunt-and-kill.
 
 ### octopus_maze
 Fonction qui crée un labyrinthe parfait en partant d'un point central et en créant des branches.
-Les branches sont crées en partant du centre et en allant vers les bords linéairement, ce qui donne un labyrinthes prévisible et intéressant.
+Les branches sont crées en partant du centre et en allant vers les bords linéairement, ce qui donne un labyrinthe prévisible et inintéressant.
 N'est pas compilé dans le programme final.
 
 ### my_octopus_maze
 Version améliorée de `octopus_maze` qui impose un choix aléatoire pour la direction des branches, permettant de créer des labyrinthes plus variés.
-est compilé sous le nom `octopus_maze` dans le programme final.
+Elle est compilé sous le nom `octopus_maze` dans le programme final.
 
 ### comb_maze
 Fonction qui crée un labyrinthe parfait en ne cassant des murs que vers le bas ou la droite.
-Toute cases de coordonnées `(x, y)` est donc accessible depuis la case `(0, 0)` via un chemin de x + y cases. (pire cas possible d'un parcours en largeur).
+Toute case de coordonnées `(x, y)` est donc accessible depuis la case `(0, 0)` via un chemin de x + y cases (pire cas possible d'un parcours en largeur).
 
 ###  proto_comb_maze
 Fonction destinée à remplacer `comb_maze` dans le programme final, elle n'a jamais été terminée et n'est pas compilée.
@@ -301,12 +301,13 @@ Fonction destinée à remplacer `comb_maze` dans le programme final, elle n'a ja
 Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs aléatoirement jusqu'à ce que le labyrinthe soit parfait.
 
 ### by_path_maze
-Fonction qui crée un labyrinthe parfait à partir de la case 0 0 en murant des couloirs puis sélectionne la prochaine case de haut en bas qui créera un couloir.
+Fonction qui crée un labyrinthe parfait à partir de la case `(0, 0)` en murant des couloirs puis sélectionne la prochaine case de haut en bas qui créera un couloir.
+@micky
 
 ### cross_maze
 Fonction qui crée un labyrinthe parfait en deux étapes :
-1. Perforation de murs autours de cases aléatoires sans créer de cycle (les perforations sont en forme de croix, d'où le nom)
-2. perforation de murs pour connecter les cases entre elles.
+1. Perforation de murs autour de cases aléatoires sans créer de cycle (les perforations sont en forme de croix, d'où le nom)
+2. Perforation de murs pour connecter les cases entre elles.
 
 ## Autres fonctions
 
