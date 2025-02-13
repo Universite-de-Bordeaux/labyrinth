@@ -12,13 +12,15 @@ test.c : fonctions d'évaluation de labyrinthes.
 
 solveur.c : fonctions de résolution de labyrinthes.
 
+escape.c : fonctions de visite de labyrinthes.
+
 outside.c : fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
 
 testing.c : fonctions de gestion de la ligne de commande de l'exécutable de tests.
 
 le CMakeLists.txt est utilisé pour compiler les fichiers sources en deux exécutables :
-- maze : exécutable principal (creation, résolution, affichage, écriture et lecture de labyrinthes)
-- test_interne : exécutable de tests (à usage interne, pour tester les fonctions de génération de labyrinthes)
+- maze : exécutable principal (creation, résolution, visite, affichage, écriture et lecture de labyrinthes)
+- test_interne : exécutable de tests (pour tester les fonctions de génération de labyrinthes)
 
 # Fichier " struct.c "
 Ce fichier contient la définition de l'ensemble des structures de données utilisées ainsi que leurs primitives.
@@ -39,15 +41,13 @@ width : largeur du labyrinthe
 
 height : hauteur du labyrinthe
 ### **maze_t create_basic_maze(int width, int height)**
-Fonction qui crée et renvoie un labyrinthe avec uniquement les murs extérieurs.
+Fonction qui crée et renvoie un labyrinthe de taille `width` par `heigth` avec uniquement les murs extérieurs.
 
 ### **maze_t create_wall_maze(int width, int height)**
-Fonction qui crée et renvoie un labyrinthe avec tous les murs internes et externes.
+Fonction qui crée et renvoie un labyrinthe de taille `width` par `heigth` avec tous les murs internes et externes.
 
 ### **void free_maze(maze_t maze)**
-Fonction qui libère la mémoire allouée pour un labyrinthe.
-
-maze : labyrinthe à libérer
+Fonction qui libère la mémoire allouée pour le labyrinth `maze`.
 
 ## Primitives pour la gestion des murs
 paramètres :
@@ -62,7 +62,7 @@ Fonction qui ajoute un mur dans la direction donnée de la case `(x, y)`.
 Fonction qui retire un mur dans la direction donnée de la case `(x, y)`.
 
 ### **bool has_wall_up(down/left/right)(maze_t maze, int x, int y)**
-Fonction qui renvoie `true` si la case `(x, y)` a un mur dans la directoin donnée, `false` sinon.
+Fonction qui renvoie `true` si la case `(x, y)` a un mur dans la direction donnée, `false` sinon.
 
 ## Primitives affichage
 paramètres :
@@ -80,10 +80,15 @@ dh : pointeur sur la hauteur d'une cellule
 Fonction qui affiche le labyrinthe. Retourne 1 si l'affichage a réussi, -1 sinon.
 Les murs de l'entrée sont bleus, les murs de la sortie sont verts.
 La taille de chaque cellule est automatiquement ajustée en fonction de la taille de la fenêtre, si la taille du labyrinthe est trop grande, l'affichage peut ne pas fonctionner correctement.
-Le programme s'arrête quand quand la fenêtre est fermée (en pressant `ESCAPE` ou `ENTER`).
+Le programme s'arrête quand la fenêtre est fermée (en pressant `ESCAPE` ou `ENTER`).
+
+### **int pre_print_maze(maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
+Fonction pour afficher le labyrinthe dans une fenêtre SDL.
+Initialise les données nécessaires pour l'affichage et sa modification.
+Renvoie 1 en cas de succès, un nombre négatif en cas d'échec.
 
 ### **int initial_print_maze(maze_t maze, SDL_Renderer\*\* renderer, SDL_Window\*\* window, int\* dw, int\* dh)**
-Fonction pour afficher le labyrinth et ses murs dans une fenêtre SDL.
+Fonction pour afficher le labyrinthe et ses murs dans une fenêtre SDL.
 Initialise les données nécessaires pour l'affichage et sa modification.
 Renvoie 1 en cas de succès, un nombre négatif en cas d'échec.
 
@@ -97,71 +102,45 @@ Fontion qui attend que l'utilisateur ferme la fenêtre avant de libérer la mém
 ### **bool_tab create_bool_tab(int width, int height)**
 Fonction qui crée et renvoie un tableau de booléens de dimensions `width` par `height`.
 
-width : largeur du tableau
+`width` : largeur du tableau
 
-height : hauteur du tableau
+`height` : hauteur du tableau
 
 ### **void free_bool_tab(bool_tab tab)**
 Fonction qui libère la mémoire allouée pour un tableau de booléens.
 
-tab : tableau de booléens à libérer
+`tab` : tableau de booléens à libérer
 
 ### **void set_true/false(bool_tab tab, int x, int y)**
-Fonction qui met à `true` (respectivement à `false`) la case `(x, y)` du tableau `tab`.
-
-tab : tableau de booléens
-
-x, y : les coordonnées de la case
+Fonction qui met à `true` (respectivement à `false`) la case `(x, y)` du tableau de booléens `tab`.
 
 ### **bool get_bool(bool_tab tab, int x, int y)**
-Fonction qui renvoie la valeur de la case `(x, y)` du tableau `tab`.
-
-tab : tableau de booléens
-
-x, y : les coordonnées de la case
+Fonction qui renvoie la valeur de la case `(x, y)` du tableau de booléens `tab`.
 
 ## Primitives `waytab`
 ### **waytab create_waytab(int width, int height)**
 Fonction qui crée et renvoie un tableau de `way` de dimensions `width` par `height`.
 
-width : largeur du tableau
+`width` : largeur du tableau
 
-height : hauteur du tableau
+`height` : hauteur du tableau
 
 ### **void free_waytab(waytab tab)**
 Fonction qui libère la mémoire allouée pour un tableau de `way`.
 
-tab : tableau de `way` à libérer
+`tab` : tableau de `way` à libérer
 
 ### **bool has_way(waytab tab, int x, int y);**
-Fonction qui renvoie `true` si la case `(x, y)` du tableau `tab` contient un chemin vers la case `(0, 0)`, `false` sinon.
-
-tab : tableau de `way`
-
-x, y : les coordonnées de la case
+Fonction qui renvoie `true` si la case `(x, y)` du tableau de way `tab` contient un chemin vers la case `(0, 0)`, `false` sinon.
 
 ### **way\* get_way(waytab tab, int x, int y)**
-Fonction qui renvoie le chemin de la case `(x, y)` du tableau `tab`.
-
-tab : tableau de `way`
-
-x, y : les coordonnées de la case
+Fonction qui renvoie le chemin de la case `(x, y)` du tableau de way `tab`.
 
 ### **void connected_way(waytab tab, int x, int y, int dad_x, int dad_y)**
-Fonction qui connecte le chemin de la case `(x, y)` du tableau `tab` à la case `(dad_x, dad_y)`.
-
-tab : tableau de `way`
-
-x, y : les coordonnées de la case
-
-dad_x, dad_y : les coordonnées de la case à connecter
+Fonction qui connecte le chemin de la case `(x, y)` du tableau de way `tab` à la case `(dad_x, dad_y)`.
 
 ### **unsigned int length_waytab(waytab tab, int x, int y)**
-Fonction qui renvoie la longueur du chemin de la case `(x, y)` du tableau `tab`.
-
-tab : tableau de `way`
-
-x, y : les coordonnées de la case
+Fonction qui renvoie la longueur du chemin de la case `(x, y)` du tableau de way `tab`.
 
 ## Primitives `way`
 
@@ -184,7 +163,7 @@ Fonction qui copie un chemin `w` et renvoie la copie.
 
 ### **void free_way(way\* w)**
 Fonction qui libère la mémoire allouée pour un chemin `w`.
-Cette fonction ne doit jamais être utilisée sur un chemin issu d'un tableau de chemins.
+Cette fonction ne doit jamais être utilisée sur un chemin issu d'un tableau de way.
 
 ### **bool is_empty(way\* w)**
 Fonction qui renvoie `true` si le chemin `w` est vide, `false` sinon.
@@ -211,8 +190,8 @@ Des allocations de mémoire sont effectuées pour la file.
 Fonction qui libère la mémoire allouée pour une file `q`.
 
 ### **int size_queue(queue\* q)**
-Fonction qui renvoie le nombre d'éléments (coordonnées*2) dans la file `q`.
-note : coordonnées*2 car chaque coordonnée est un couple de deux entiers.
+Fonction qui renvoie le nombre d'éléments (paires de coordonnées \* 2) dans la file `q`.
+note : coordonnée\*2 car chaque coordonnée est un couple de deux entiers.
 
 ### **bool isempty_queue(queue\* q)**
 Fonction qui renvoie `true` si la file `q` est vide, `false` sinon.
@@ -222,10 +201,6 @@ Fonction qui ajoute les coordonnées `(x, y)` à la file `q`.
 
 ### **void dequeue(queue\* q, int\* x, int\* y)**
 Fonction qui renvoie les coordonnées en tête de la file `q` et les retire de la liste.
-Les coordonnées sont stockées dans `x` et `y`.
-
-### **void get_queue(queue\* q, int\* x, int\* y, int pos)**
-Fonction qui renvoie les coordonnées à la position donnée dans la file `q` et les retire de la liste.
 Les coordonnées sont stockées dans `x` et `y`.
 
 ### **void print_queue(queue\* q)**
@@ -243,8 +218,8 @@ Fonction qui libère la mémoire allouée pour une pile `s`.
 Fonction qui renvoie `true` si la pile `s` est vide, `false` sinon.
 
 ### **int size_stack(stack\* s)**
-Fonction qui renvoie le nombre d'éléments (coordonnées*2) dans la pile `s`.
-note : coordonnées*2 car chaque coordonnée est un couple de deux entiers.
+Fonction qui renvoie le nombre d'éléments (paires de coordonnées \* 2) dans la pile `s`.
+note : coordonnées\*2 car chaque coordonnée est un couple de deux entiers.
 
 ### **void pop(stack\* s, int\* x, int\* y)**
 Fonction qui renvoie les coordonnées en tête de la pile `s` et les retire de la liste.
@@ -262,30 +237,24 @@ Ce fichier contient les fonctions de génération de labyrinthes, ainsi que les 
 
 ## Macros
 ### **CAN_MOVE_LEFT (\*x > 0 && !get_bool(tab_visited, \*x - 1, \*y))**
-Macro qui nous permet de savoir si on peut se déplacer à gauche : si nous ne somme pas sur le bord gauche et que la case n'est pas visitée
+Macro qui nous permet de savoir si on peut se déplacer à gauche : si nous ne somme pas sur le bord gauche et que la case n'est pas visitée.
 
 ### **CAN_MOVE_RIGHT (\*x + 1 < maze->width && !get_bool(tab_visited, \*x + 1, \*y))**
-Macro qui nous permet de savoir si on peut se déplacer à droite : si nous ne somme pas sur le bord droit et que la case n'est pas visitée
+Macro qui nous permet de savoir si on peut se déplacer à droite : si nous ne somme pas sur le bord droit et que la case n'est pas visitée.
 
 ### **CAN_MOVE_UP (\*y > 0 && !get_bool(tab_visited, \*x, \*y - 1))**
-Macro qui nous permet de savoir si on peut se déplacer en haut : si ne nous somme pas sur le bord haut et que la case n'est pas visitée
+Macro qui nous permet de savoir si on peut se déplacer en haut : si ne nous somme pas sur le bord haut et que la case n'est pas visitée.
 
-###**CAN_MOVE_DOWN (\*y + 1 < maze->height && !get_bool(tab_visited, \*x, \*y + 1))**
-Macro qui nous permet de savoir si on peut se déplacer en bas : si nous ne somme pas sur le bord bas et que la case n'est pas visitée
+### **CAN_MOVE_DOWN (\*y + 1 < maze->height && !get_bool(tab_visited, \*x, \*y + 1))**
+Macro qui nous permet de savoir si on peut se déplacer en bas : si nous ne somme pas sur le bord bas et que la case n'est pas visitée.
 
 ## Fonctions auxilliaires
 
 ### **int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)**
-Fonction qui met à jour le tableau `is_connexe` en ajourant les cases connexes à la case `(dx, dy)`.
+Fonction qui met à jour le tableau de booléen `is_connexe` en ajourant les cases connexes à la case `(dx, dy)`.
 Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 
-maze : labyrinthe
-
-is_connexe : tableau de booléens
-
-dx : abscisse de la case
-
-dy : ordonnée de la case
+`maze` : labyrinthe
 
 ### **int can_move_dir(maze_t\* maze, int\* x, int\* y, bool_tab tab_visited, int dir)**
 @micky
