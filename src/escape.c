@@ -787,7 +787,7 @@ int right_hand_r(const maze_t maze, int x, int y)
                     getrandom(&dir, sizeof(dir), 0);
                     dir %= 4; // direction aléatoire
                 }
-                while ((visited_value(visited, x, y, dir) != min) || !can_go(x, y, maze, dir)); // on choisit une des cellules avec le moins de passages
+                while (!can_go(x, y, maze, dir) || (visited_value(visited, x, y, dir) != min)); // on choisit une des cellules avec le moins de passages
             }
         }
         else
