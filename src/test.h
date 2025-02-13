@@ -64,7 +64,7 @@ int evaluate_mazemaker(func_ptr f);
     while (0)
 
 // function to evaluate the time of a maze generator
-// générateur : pointer to the maze generator function
+// f : pointer to the maze generator function
 // name : name of the generator
 // print a score between 0 (bad) and 100 (good) of the generator
 int evaluate_time(func_ptr f, char* name);

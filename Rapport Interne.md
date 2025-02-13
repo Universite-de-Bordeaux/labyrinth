@@ -341,7 +341,7 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 
 ## Autres fonctions
 
-### void tear(maze_t maze, unsigned int prop)
+### **void tear(maze_t maze, unsigned int prop)**
 Fonction perforant des murs aléatoirement dans le labyrinthe `maze` en fonction de la proportion `prop` (en pourcentage) afin de créer des boucles.
 
 # Fichier " test.c "
@@ -350,19 +350,19 @@ Il est à usage interne.
 
 ## Fonctions
 
-do_made_solvable_maze(func_ptr f, int x, int y)
+### **bool do_made_solvable_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
 
-do_made_connected_maze(func_ptr f, int x, int y)
+### **do_made_connected_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est connexe.
 
-do_made_perfect_maze(func_ptr f, int x, int y)
+### **bool do_made_perfect_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
 
-evaluate_mazemaker(func_ptr f)
+### **int evaluate_mazemaker(func_ptr f)**
 Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant si ils sont solvables, connexes ou parfaits.
 
-evaluate_time(func_ptr f, char* name)
+### **int evaluate_time(func_ptr f, char\* name)**
 Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
 
 
