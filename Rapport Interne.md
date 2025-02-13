@@ -498,23 +498,21 @@ Fichier contenant les fonctions de gestion de la ligne de commande.
 
 ## Fonctions auxilliaires
 
-### bool safe_atoi(char* str, int* out)
+### **bool safe_atoi(char\* str, int\* out)**
 Fonction pour convertir en entier une chaine de caractères.
-La chaines de caractères, si elle est valide, est convertie puis stockée dans `out`.
+La chaines de caractères `str`, si elle est valide, est convertie puis stockée dans `out`.
 La fonction renvoie `true` si la conversion a réussie, `false` sinon.
 
-`str` : chaine de caractères à convertir.
+@vincent tu veux que je mette tous les defines?
 
-`out` : pointeur sur l'entier de stockage.
-
-### static void print_cmd_help(char* namefile)
+### **static void print_cmd_help(char\* namefile)**
 Fonction qui affiche l'aide de la ligne de commande.
 
 `namefile` : nom du fichier exécutable.
 
 ## Fonction principale
 
-### void cmd(char* argv[], int argc)
+### **int main (char\* argv[], int argc)**
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes.
 
 `argv` : tableau des arguments.
@@ -523,3 +521,5 @@ Interprète les commandes passées en argument du programme et appelle les fonct
 
 # Fichier " testing.c " :
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes pour l'exécutable de tests.
+
+@vincent ici faut rajouter un truc pour testing?
