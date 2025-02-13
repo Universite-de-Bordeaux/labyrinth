@@ -3,13 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/random.h>
 #include "escape.h"
 #include "mazemaker.h"
 #include "outside.h"
-
-#include <sys/random.h>
-
 #include "solveur.h"
+
+// --- FONCTIONS AUXILIAIRES ---
 
 // convert a string to an integer safely
 // str : string to convert
@@ -101,6 +101,8 @@ static void print_cmd_help(char* namefile)
 
     printf("See the README for more informations\n");
 }
+
+// --- MAIN ---
 
 int main(const int argc, char* argv[])
 {
