@@ -378,13 +378,15 @@ maze_t comb_maze(const int width, const int height)
     int y = 0;
     while (x != width - 1 || y != height - 1)
     {
+        unsigned int random_value;
+        getrandom(&random_value, sizeof(random_value), 0);
         if (y == height - 1)
         { // NOLINT(*-branch-clone)
             unwall_right(maze, x, y);
             set_true(visited, x, y);
             x++;
         }
-        else if (x == width - 1 || rand() % 2 == 0) // NOLINT(*-msc50-cpp)
+        else if (x == width - 1 || random_value % 2 == 0) // NOLINT(*-msc50-cpp)
         {
             unwall_down(maze, x, y);
             set_true(visited, x, y);
@@ -414,7 +416,9 @@ maze_t comb_maze(const int width, const int height)
                     is_done = false;
                     while (!get_bool(visited, x, y))
                     {
-                        if (rand() % 2 == 0 && i > 0) // NOLINT(*-msc50-cpp)
+                        unsigned int random_value;
+                        getrandom(&random_value, sizeof(random_value), 0);
+                        if (random_value % 2 == 0 && i > 0) // NOLINT(*-msc50-cpp)
                         {
                             unwall_left(maze, x, y);
                             set_true(visited, x, y);
@@ -453,13 +457,15 @@ maze_t proto_comb_maze(const int width, const int height)
             const bool right = x < width - 1;
             const bool down = y < height - 1;
             set_true(visited, x, y);
+            unsigned int random_value;
+            getrandom(&random_value, sizeof(random_value), 0);
             if (!right) // on ne peut que descendre
             { // NOLINT(*-branch-clone)
                 unwall_down(maze, x, y);
                 y++;
                 set_true(visited, x, y);
             }
-            else if (!down || rand() % 2 == 1) // on ne peut que aller à droite ou on le tire aléatoirement NOLINT(*-msc50-cpp)
+            else if (!down || random_value % 2 == 1) // on ne peut que aller à droite ou on le tire aléatoirement NOLINT(*-msc50-cpp)
             {
                 unwall_right(maze, x, y);
                 x++;
@@ -601,7 +607,9 @@ maze_t hunt_kill_maze(const int width, const int height)
             size = 4;
             while (size > 0) // tant qu'il reste des directions possibles et qu'on n'en a pas tiré de valide
             {
-                const int r = rand() % size; // NOLINT(*-msc50-cpp)
+                unsigned int r;
+                getrandom(&r, sizeof(r), 0);
+                r %= size;
                 c = dir[r];
                 if (c == 'R' && x + 1 < width && !get_bool(visited, x + 1, y)) // si on a tiré la direction droite et qu'on peut y aller
                 {
@@ -709,7 +717,9 @@ maze_t hunt_kill_maze(const int width, const int height)
                 size++;
             }
             // chercher une cellule visitée adjacente à notre cellule non visitée
-            c = dir[rand() % size]; // NOLINT(*-msc50-cpp)
+            unsigned int random_value;
+            getrandom(&random_value, sizeof(random_value), 0);
+            c = dir[random_value % size]; // NOLINT(*-msc50-cpp)
             if (c == 'R')
             {
                 unwall_right(maze, x, y);
@@ -780,9 +790,14 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
         return false;
     }
     // tant qu'il nous reste des directions
-    int choice = rand() % 4; // choix d'une direction NOLINT(*-msc50-cpp)
-    while (!can_move_dir(maze, x, y, tab_visited, choice)) // si notre direction n'est pas possible, on passe à la suivante
-        choice = rand() % 4;
+    unsigned int choice;
+    getrandom(&choice, sizeof(choice), 0);
+    choice %= 4; // choix d'une direction NOLINT(*-msc50-cpp)
+    while (!can_move_dir(maze, x, y, tab_visited, choice))
+    { // si notre direction n'est pas possible, on passe à la suivante
+        getrandom(&choice, sizeof(choice), 0);
+        choice %= 4;
+    }
     switch (choice)
     {
     case 0:
@@ -874,7 +889,9 @@ maze_t by_path_maze(const int width, const int height)
     }
     if (!get_bool(tab_visited, width - 1, height - 1))
     { // si on n'est jamais passé par la sortie, alors on passe
-        if (rand() % 2) // NOLINT(*-msc50-cpp)
+        unsigned int random_value;
+        getrandom(&random_value, sizeof(random_value), 0);
+        if (random_value % 2) // NOLINT(*-msc50-cpp)
             wall_up(maze, width - 1, height - 1);
         else
             wall_left(maze, width - 1, height - 1);
