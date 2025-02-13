@@ -275,7 +275,7 @@ Macro qui nous permet de savoir si on peut se déplacer en bas : si nous ne somm
 
 ## Fonctions auxilliaires
 
-### **static int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)**
+### **int set_connexion(maze_t maze, bool_tab is_connexe, int dx, int dy)**
 Fonction qui met à jour le tableau `is_connexe` en ajourant les cases connexes à la case `(dx, dy)`.
 Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 
@@ -287,13 +287,13 @@ dx : abscisse de la case
 
 dy : ordonnée de la case
 
-### **static int can_move_dir(maze_t\* maze, int\* x, int\* y, bool_tab tab_visited, int dir)**
+### **int can_move_dir(maze_t\* maze, int\* x, int\* y, bool_tab tab_visited, int dir)**
 @micky
 
-### **static bool lbp_path_move(const maze_t\* maze, int\* x, int\* y, const bool_tab tab_visited)**
+### **bool lbp_path_move(const maze_t\* maze, int\* x, int\* y, const bool_tab tab_visited)**
 @micky
 
-### **static void lbp_path(maze_t\* maze, int\* x, int\* y, int\* x_2, int\* y_2, const bool_tab tab_visited)**
+### **void lbp_path(maze_t\* maze, int\* x, int\* y, int\* x_2, int\* y_2, const bool_tab tab_visited)**
 @micky
 
 
@@ -499,7 +499,7 @@ La fonction renvoie `true` si la conversion a réussie, `false` sinon.
 
 les phrases d'explications des commandes sont stockées dans des macros pour faciliter la modification.
 
-### **static void print_cmd_help(char\* namefile)**
+### **void print_cmd_help(char\* namefile)**
 Fonction qui affiche l'aide de la ligne de commande.
 
 `namefile` : nom du fichier exécutable.
@@ -531,3 +531,73 @@ cf `cmd.c`
 
 ### **int main (char* argv[], int argc)**
 Interprète les commandes passées en argument du programme et appelle les fonctions correspondantes.
+
+# Fichier " escape.c " :
+Ce fichier contient les algorithmes de visite de labyrinthes.
+
+## Fonctions auxilliaires
+
+### **bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze)**
+Fonction qui renvoie `true` si la case `(x, y)` a des cases accessibles non visitées, `false` sinon.
+
+maze : le labyrinthe
+
+visited : tableau de booléens
+
+### **bool get_adj(int x, int y, int\* x_next, int\* y_next, maze_t maze, char dir)**
+Fonction qui renvoie true si la case `(x, y)` a une case accessible dans la direction `dir`, `false` sinon.
+Elle renvoie également les coordonnées de la case accessible dans `x_next` et `y_next`.
+
+### **bool can_go(int x, int y, maze_t maze, char dir)**
+Fonction qui renvoie `true` si la case `(x, y)` a une case accessible dans la direction `dir`, `false` sinon.
+
+### **void go(int\* x, int\* y, int dir)**
+Fonction qui déplace les coordonnées `(x, y)` dans la direction `dir`.
+
+### **int visited_value(int\*\* visited, int x, int y, int dir)**
+@micky
+
+## Fonctions principales
+
+Toutes les fonctions de visites de labyrinthes suivent la déclarations suivante :
+
+```int *nom_de_la_fonction(maze_t maze, int x, int y)```
+où `maze` est le labyrinth à visiter, `x` et `y` sont les coordonnées de départ.
+
+Elles renvoient le nombre d'étapes nécessaires pour trouver la sortie.
+
+Elles permettent toutes de visualiser le parcours dans le labyrinthe. Elles s'arrêtent quand la sortie est trouvée ou quand @vincent je suis bloquer là je ne sais plus le mot
+
+### random_escape
+Fonction qui visite un labyrinthe en choisissant aléatoirement la direction à suivre à chaque intersection.
+
+### cheat_escape
+Fonction qui visite un labyrinthe en passant à travers les murs.
+
+### hunt_kill_escape
+Fonction qui visite un labyrinthe en ayant une approche de type hunt-and-kill.
+Durant la visite, on connait les cases qu'on a visité et on cherche à visiter les cases non visitées.
+
+### right_hand
+Fonction qui visite un labyrinthe en suivant le mur à sa droite.
+
+### right_hand_r
+Fonction qui visite un labyrinthe en suivant le mur à sa droite, et en choisissant parfois une direction aléatoire.
+
+### right_hand_p
+@micky
+
+### right_hand_de
+@micky
+
+### right_hand_p_de
+@micky
+
+### random_p
+@micky
+
+### random_de
+@micky
+
+### random_p_de
+@micky
