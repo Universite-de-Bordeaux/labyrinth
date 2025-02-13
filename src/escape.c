@@ -7,11 +7,11 @@
 #include "limits.h"
 #include "struct.h"
 
-int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape, &cheat_escape,    &right_hand, &right_hand_r, &hunt_kill_escape, &right_hand_p,
-                                                  &right_hand_de, &right_hand_p_de, &random_p,   &random_de,    &random_p_de};
+int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape,   &right_hand, &right_hand_r, &hunt_kill_escape, &right_hand_p, &right_hand_de,
+                                                  &right_hand_p_de, &random_p,   &random_de,    &random_p_de,      &cheat_escape};
 
-const char* escape_name[SIZE] = {"random",        "cheat",           "right_hand", "right_hand_r", "hunt_kill",  "right_hand_p",
-                                 "right_hand_de", "right_hand_p_de", "random_p",   "random_de",    "random_p_de"};
+const char* escape_name[SIZE] = {"random",          "right_hand", "right_hand_r", "hunt_kill",   "right_hand_p", "right_hand_de",
+                                 "right_hand_p_de", "random_p",   "random_de",    "random_p_de", "cheat"};
 
 int ESCAPE_TYPE(const maze_t maze, int x, int y)
 {
