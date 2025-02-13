@@ -353,7 +353,7 @@ Il est à usage interne.
 ### **bool do_made_solvable_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
 
-### **do_made_connected_maze(func_ptr f, int x, int y)**
+### **bool do_made_connected_maze(func_ptr f, int x, int y)**
 Fonction indiquant si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est connexe.
 
 ### **bool do_made_perfect_maze(func_ptr f, int x, int y)**
@@ -365,17 +365,7 @@ Fonction évaluant les labyrinthes générés par la fonction `f` et renvoyant s
 ### **int evaluate_time(func_ptr f, char\* name)**
 Fonction évaluant le temps de génération de labyrinthes par la fonction `f` et renvoyant un score.
 
-
-# Fichier " solveur.c "
-Ce fichier contient les fonctions de résolution de labyrinthes.
-
-### bool do_made_solvable_maze(func_ptr f, int x, int y)
-Fonction qui analyse si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est solvable.
-
-### bool do_made_perfect_maze(func_ptr f, int x, int y)
-Fonction qui analyse si un labyrinthe généré par la fonction `f` de dimension inférieure ou égale à `x` par `y` est parfait.
-
-### int evaluate_mazemaker(func_ptr f)
+### **int evaluate_mazemaker(func_ptr f)**
 Fonction qui évalue les labyrinthes générés par la fonction `f` de dimension inférieure ou égale à `x` par `y`.
 la fonction renvoie :
 - 3 si le labyrinthe est parfait
@@ -383,9 +373,11 @@ la fonction renvoie :
 - 1 si le labyrinthe est solvable
 - 0 si le labyrinthe n'est pas solvable
 
+@vincent je ne comprends pas le x et y d'ou ils sortent... le programme à changé?
+
 Cette fonction est utilisée par la macro `EVALUATE_MAZEMAKER` afin de rendre un résultat plus lisible.
 
-### int evaluate_time(func_ptr f, char* name)
+### **int evaluate_time(func_ptr f, char\* name)**
 Fonction qui renvoie un score en fonction du temps de génération d'un labyrinthe par la fonction `f`.
 Les quatres critères de notation sont :
 - la durée de création de labyrinthes "standard" de dimension k x t avec k et t de 1 à 100. (/50)
@@ -395,9 +387,20 @@ Les quatres critères de notation sont :
 
 les critères sont évidemment ajustables et sujet à contextualisation.
 
+
+# Fichier " solveur.c "
+Ce fichier contient les fonctions de résolution de labyrinthes.
+
 ## Fonctions auxilliaires
 
 --- aucune pour l'instant ---
+@vincent il n'y en a toujours pas?
+
+Il y a 3 types de parcours pour la résolution de labyrinthes : en profondeur, en largeur et en tirage.
+
+Pour les parcours en profondeur, on utilise `deep` ; pour les parcours en largeur, on utilise `breadth` ; pour les parcours en tirage, on utilise `draw`.
+
+Pour chacun de ses trois types de parcours on a 4 fonctions de résolution et 4 fonctions de visualisation.
 
 ## Fonctions de résolution
 Toutes les fonctions de résolution de labyrinthes suivent la déclarations suivante :
@@ -405,112 +408,50 @@ Toutes les fonctions de résolution de labyrinthes suivent la déclarations suiv
 ```*nom_de_la_fonction(maze_t maze)```
 où `maze` est le labyrinthe à résoudre.
 
-### bool has_exit_deep_seeker
-Fonction qui cherche une sortie en profondeur, elle ne retourne pas le chemin mais indique si une sortie existe.
-Généralement plus rapide que la recherche en largeur.
+### bool has_exit_`*type_de_parcours`_seeker
+Fonction qui cherche une sortie en fonction du type de parcours, elle ne retourne pas le chemin mais indique si une sortie existe.
 
-### bool is_connexe_deep_inspector
-Fonction qui vérifie si le labyrinthe est connexe en profondeur.
+La recherche en `profondeur` est généralement plus rapide que la recherche en `largeur`.
+
+### bool is_connexe_`*type_de_parcours`_inspector
+Fonction qui vérifie si le labyrinthe est connexe en fonction du type de parcours.
 Elle ne donne pas d'indication en cas d'absence de connexité.
 
-### bool is_perfect_deep_inspector
-Fonction qui vérifie si le labyrinthe est parfait en profondeur.
+### bool is_perfect_`*type_de_parcours`_inspector
+Fonction qui vérifie si le labyrinthe est parfait en fonction du type de parcours.
 Elle ne donne pas d'indication en cas d'imperfection.
 
-### *way best_exit_deep_seeker
-Fonction qui cherche le meilleur chemin de sortie en profondeur.
+### way\* best_exit_`*type_de_parcours`_seeker
+Fonction qui cherche le meilleur chemin de sortie en fonction du type de parcours.
 Elle retourne un pointeur sur le chemin trouvé, ou NULL si aucun chemin n'a été trouvé.
 
-### *way has_exit_breadth_seeker
-Fonction qui cherche une sortie en largeur, elle ne retourne pas le chemin mais indique si une sortie existe.
-
-### bool is_connexe_breadth_inspector
-Fonction qui vérifie si le labyrinthe est connexe en largeur.
-Elle ne donne pas d'indication en cas d'absence de connexité.
-
-### bool is_perfect_breadth_inspector
-Fonction qui vérifie si le labyrinthe est parfait en largeur.
-Elle ne donne pas d'indication en cas d'imperfection.
-
-### *way best_exit_breadth_seeker
-Fonction qui cherche le meilleur chemin de sortie en largeur.
-Elle retourne un pointeur sur le chemin trouvé, ou NULL si aucun chemin n'a été trouvé.
-Généralement plus rapide que la recherche en profondeur.
-
-### bool has_exit_draw_seeker
-Fonction qui cherche une sortie en tirage.
-Elle ne retourne pas le chemin mais indique si une sortie existe.
-
-### bool is_connexe_draw_inspector
-Fonction qui vérifie si le labyrinthe est connexe en tirage.
-Elle ne donne pas d'indication en cas d'absence de connexité.
-
-### bool is_perfect_draw_inspector
-Fonction qui vérifie si le labyrinthe est parfait en tirage.
-Elle ne donne pas d'indication en cas d'imperfection.
-
-### *way best_exit_draw_seeker
-Fonction qui cherche le meilleur chemin de sortie en tirage.
-Elle retourne un pointeur sur le chemin trouvé, ou NULL si aucun chemin n'a été trouvé.
+La recherche en `largeur` est généralement plus rapide que la recherche en `profondeur`.
 
 ## Fonctions de visualisation
 La majorité des fonctions de visualisation suivent la déclarations suivante :
 
 ```int nom_de_la_fonction(maze_t maze)```
 où `maze` est le labyrinthe à visualiser.
-la sortie est un entier relatif au type d'erreur rencontré si la visualisation a échouée.
+La sortie est un entier relatif au type d'erreur rencontré si la visualisation a échouée.
 
-### show_has_exit_deep_seeker
-Fonction qui illustre la fonction `has_exit_deep_seeker`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
+Pour le parcours en `profondeur` et en `tirage`, le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
 
-### show_is_connexe_deep_inspector
-Fonction qui illustre la fonction `is_connexe_deep_inspector`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
+Pour le parcours en `largeur`, les cellules sont actualisées par génération.
 
-### show_is_perfect_deep_inspector
-Fonction qui illustre la fonction `is_perfect_deep_inspector`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
+### show_has_exit_`*type_de_parcours`_seeker
+Fonction qui illustre la fonction `has_exit_*type_de_parcours_seeker`.
 
-### show_best_exit_deep_seeker
-Fonction qui illustre la fonction `best_exit_deep_seeker`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
+### show_is_connexe_`*type_de_parcours`_inspector
+Fonction qui illustre la fonction `is_connexe_*type_de_parcours_inspector`.
+
+### show_is_perfect_`*type_de_parcours`_inspector
+Fonction qui illustre la fonction `is_perfect_*type_de_parcours_inspector`.
+
+### show_best_exit_`*type_de_parcours`_seeker
+Fonction qui illustre la fonction `best_exit_*type_de_parcours_seeker`.
 N'enregistre pas le chemin trouvé.
 
-### show_has_exit_breadth_seeker
-Fonction qui illustre la fonction `has_exit_breadth_seeker`.
-Actualise les cellules par génération.
-
-### show_is_connexe_breadth_inspector
-Fonction qui illustre la fonction `is_connexe_breadth_inspector`.
-Actualise les cellules par génération.
-
-### show_is_perfect_breadth_inspector
-Fonction qui illustre la fonction `is_perfect_breadth_inspector`.
-Actualise les cellules par génération.
-
-### show_best_exit_breadth_seeker
-Fonction qui illustre la fonction `best_exit_breadth_seeker`.
-Actualise les cellules par génération.
-
-### show_has_exit_draw_seeker
-Fonction qui illustre la fonction `has_exit_draw_seeker`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
-
-### show_is_connexe_draw_inspector
-Fonction qui illustre la fonction `is_connexe_draw_inspector`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
-
-### show_is_perfect_draw_inspector
-Fonction qui illustre la fonction `is_perfect_draw_inspector`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
-
-### show_best_exit_draw_seeker
-Fonction qui illustre la fonction `best_exit_draw_seeker`.
-Le nombre de cellules actualisées à la fois est proportionnel à la taille du labyrinthe.
-N'enregistre pas le chemin trouvé.
-
-### int show_the_way(maze_t maze, way* w)
+### **int show_the_way(maze_t maze, way\* w)**
 La seule fonction de visualisation à ne pas se baser sur un algorithme de résolution, elle illustre le chemin `way` dans le labyrinthe `maze`.
 Attention, cette fonction ne vérifie pas si le chemin est bien issu du labyrinthe donné.
 
