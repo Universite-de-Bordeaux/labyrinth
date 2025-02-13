@@ -412,12 +412,12 @@ La seule fonction de visualisation à ne pas se baser sur un algorithme de réso
 Attention, cette fonction ne vérifie pas si le chemin est bien issu du labyrinthe donné.
 
 # Fichier " outside.c "
-Ce fichiers contient les fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
+Ce fichier contient les fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
 
 ## Fonctions auxilliaires
 
 ### **void way_to_file_aux(way\* w, FILE\* file)**
-Permets d'inverser l'ordre des cases d'un chemin pour l'écriture dans un fichier.
+Fonction permettant d'inverser l'ordre des cases d'un chemin pour l'écriture dans un fichier.
 (les données de la structures sont écrites dans l'ordre inverse de leur lecture)
 
 ## Fonctions d'écriture
