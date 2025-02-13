@@ -378,7 +378,7 @@ maze_t comb_maze(const int width, const int height)
     int y = 0;
     while (x != width - 1 || y != height - 1)
     {
-        unsigned int random_value;
+        unsigned char random_value;
         getrandom(&random_value, sizeof(random_value), 0);
         if (y == height - 1)
         { // NOLINT(*-branch-clone)
@@ -416,7 +416,7 @@ maze_t comb_maze(const int width, const int height)
                     is_done = false;
                     while (!get_bool(visited, x, y))
                     {
-                        unsigned int random_value;
+                        unsigned char random_value;
                         getrandom(&random_value, sizeof(random_value), 0);
                         if (random_value % 2 == 0 && i > 0) // NOLINT(*-msc50-cpp)
                         {
@@ -457,7 +457,7 @@ maze_t proto_comb_maze(const int width, const int height)
             const bool right = x < width - 1;
             const bool down = y < height - 1;
             set_true(visited, x, y);
-            unsigned int random_value;
+            unsigned char random_value;
             getrandom(&random_value, sizeof(random_value), 0);
             if (!right) // on ne peut que descendre
             { // NOLINT(*-branch-clone)
@@ -638,7 +638,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                 }
                 // sinon on supprime la direction prise du tableau
                 {
-                    for (int i = r; i < size - 1; i++)
+                    for (unsigned int i = r; i < size - 1; i++)
                     {
                         dir[i] = dir[i + 1];
                     }
@@ -717,7 +717,7 @@ maze_t hunt_kill_maze(const int width, const int height)
                 size++;
             }
             // chercher une cellule visitée adjacente à notre cellule non visitée
-            unsigned int random_value;
+            unsigned char random_value;
             getrandom(&random_value, sizeof(random_value), 0);
             c = dir[random_value % size]; // NOLINT(*-msc50-cpp)
             if (c == 'R')
@@ -790,9 +790,9 @@ static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab
         return false;
     }
     // tant qu'il nous reste des directions
-    unsigned int choice;
+    int choice;
     getrandom(&choice, sizeof(choice), 0);
-    choice %= 4; // choix d'une direction NOLINT(*-msc50-cpp)
+    choice = abs(choice) % 4; // choix d'une direction NOLINT(*-msc50-cpp)
     while (!can_move_dir(maze, x, y, tab_visited, choice))
     { // si notre direction n'est pas possible, on passe à la suivante
         getrandom(&choice, sizeof(choice), 0);
@@ -889,7 +889,7 @@ maze_t by_path_maze(const int width, const int height)
     }
     if (!get_bool(tab_visited, width - 1, height - 1))
     { // si on n'est jamais passé par la sortie, alors on passe
-        unsigned int random_value;
+        unsigned char random_value;
         getrandom(&random_value, sizeof(random_value), 0);
         if (random_value % 2) // NOLINT(*-msc50-cpp)
             wall_up(maze, width - 1, height - 1);
