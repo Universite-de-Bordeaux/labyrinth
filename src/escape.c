@@ -7,97 +7,159 @@
 #include "limits.h"
 #include "struct.h"
 
+// FONCTIONS AUXILIAIRES
+
+// fonction pour savoir si une cellule a des cellules adjacentes accessibles
+// renvoie true si il y a des cellules accessibles sinon false
+// utilisée dans le hunt_kill_escape
+static bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze)
+{
+    if (!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
+    {
+        return true;
+    }
+    if (!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
+    {
+        return true;
+    }
+    if (!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
+    {
+        return true;
+    }
+    if (!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
+    {
+        return true;
+    }
+    return false;
+}
+
+enum direction
+{
+    DROITE = 0,
+    BAS,
+    GAUCHE,
+    HAUT
+};
+
+// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
+// elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante
+// utilisée dans le hunt_kill_escape
+static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char dir)
+{
+    switch (dir)
+    {
+    case DROITE:
+        if (!has_wall_right(maze, x, y))
+        {
+            *x_next = x + 1;
+            *y_next = y;
+            return true;
+        }
+        return false;
+    case BAS:
+        if (!has_wall_down(maze, x, y))
+        {
+            *x_next = x;
+            *y_next = y + 1;
+            return true;
+        }
+        return false;
+    case GAUCHE:
+        if (!has_wall_left(maze, x, y))
+        {
+            *x_next = x - 1;
+            *y_next = y;
+            return true;
+        }
+        return false;
+    case HAUT:
+        if (!has_wall_up(maze, x, y))
+        {
+            *x_next = x;
+            *y_next = y - 1;
+            return true;
+        }
+        return false;
+    default:
+        fprintf(stderr, "Error in get_adj, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
+// utilisée dans le hunt_kill_escape, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+static bool can_go(int x, int y, maze_t maze, char dir)
+{
+    // On renvoie faux si il y a un mur dans la direction donnée
+    switch (dir)
+    {
+    case DROITE:
+        return (!has_wall_right(maze, x, y));
+    case BAS:
+        return (!has_wall_down(maze, x, y));
+    case GAUCHE:
+        return (!has_wall_left(maze, x, y));
+    case HAUT:
+        return (!has_wall_up(maze, x, y));
+    default:
+        fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
+// Fonction change les valeurs de x et y en fonction de la direction donnée
+// utilisée dans le hunt_kill_escpae, right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+static void go(int* x, int* y, int dir)
+{
+    // On incrémente ou décrémente x ou y en fonction de la direction donnée
+    switch (dir)
+    {
+    case DROITE:
+        (*x)++;
+        break;
+    case BAS:
+        (*y)++;
+        break;
+    case GAUCHE:
+        (*x)--;
+        break;
+    case HAUT:
+        (*y)--;
+        break;
+    default:
+        fprintf(stderr, "Error in go, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
+//@micky
+// utilisée dans le right_hand, right_hand_r, right_hand_p, right_hand_de, right_hand_p_de, random_p, random_de, random_p_de
+static int visited_value(int** visited, int x, int y, int dir)
+{
+    // On renvoie la valeur de la case adjacente dans la direction donnée
+    switch (dir)
+    {
+    case DROITE:
+        return visited[x + 1][y];
+    case BAS:
+        return visited[x][y + 1];
+    case GAUCHE:
+        return visited[x - 1][y];
+    case HAUT:
+        return visited[x][y - 1];
+    default:
+        fprintf(stderr, "Error in visited_value, dir must be within 0 and 3, received %d\n", dir);
+        exit(EXIT_FAILURE);
+    }
+}
+
+// FONCTIONS PRINCIPALES
+
 int (*escape[SIZE])(maze_t maze, int x, int y) = {&random_escape,   &right_hand, &right_hand_r, &hunt_kill_escape, &right_hand_p, &right_hand_de,
                                                   &right_hand_p_de, &random_p,   &random_de,    &random_p_de,      &cheat_escape};
 
 const char* escape_name[SIZE] = {"random",          "right_hand", "right_hand_r", "hunt_kill",   "right_hand_p", "right_hand_de",
                                  "right_hand_p_de", "random_p",   "random_de",    "random_p_de", "cheat"};
-
-int ESCAPE_TYPE(const maze_t maze, int x, int y)
-{
-    SDL_Renderer* renderer;
-    SDL_Window* window;
-    int dw, dh;
-    if (initial_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
-    {
-        return -1;
-    }
-    SDL_SetWindowTitle(window, "escaping");
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255); // couleur customisable
-    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
-    SDL_RenderFillRect(renderer, &rect);
-    SDL_Delay(dm.refresh_rate);
-    SDL_RenderPresent(renderer); // on affiche la position actuelle
-    bool show = true;
-
-    // vos variables à déclarer avant la boucle
-    int truc = 18;
-    char machin = 5;
-
-    SDL_Event event = {0}; // on crée un event vide
-    while (SDL_PollEvent(&event))
-    {
-        // on vide la file d'attente des événements
-    }
-    int steps = 0;
-    while (x != maze.width - 1 || y != maze.height - 1)
-    {
-        if (show)
-        {
-            while (SDL_PollEvent(&event))
-            {
-                if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
-                    (event.type == SDL_KEYUP &&
-                     (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                      event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
-                {
-                    printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
-                    destroy_print_maze(renderer, window);
-                    return -1;
-                }
-                else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_SPACE)
-                {
-                    show = false;
-                    destroy_print_maze(renderer, window);
-                }
-            }
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
-            SDL_RenderFillRect(renderer, &rect);
-            SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
-        }
-
-        // le corps de l'algorithme
-        // votre déplacement
-        truc++;
-        if (truc == 49)
-        {
-            machin = 3;
-            truc = machin + 1;
-        }
-
-        if (show)
-        {
-            rect.x = x * dw + 1;
-            rect.y = y * dh + 1;
-            SDL_RenderFillRect(renderer, &rect);
-            SDL_Delay(dm.refresh_rate); // delay customisable (actuellement à sa vitesse maximale)
-            SDL_RenderPresent(renderer);
-        }
-        steps++;
-    }
-    if (show)
-    {
-        SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
-        SDL_RenderFillRect(renderer, &rect);
-        SDL_SetWindowTitle(window, "escaped");
-        SDL_Delay(dm.refresh_rate);
-        SDL_RenderPresent(renderer);
-        wait_and_destroy_print_maze(renderer, window);
-    }
-    return steps;
-}
 
 int random_escape(const maze_t maze, int x, int y)
 {
@@ -303,125 +365,6 @@ int cheat_escape(const maze_t maze, int x, int y)
     return steps;
 }
 
-// fonction pour savoir si une cellule a des cellules adjacentes accessibles
-// renvoie true si il y a des cellules accessibles sinon false
-static bool has_accessible_cells(int x, int y, bool_tab visited, maze_t maze)
-{
-    if (!has_wall_right(maze, x, y) && !get_bool(visited, x + 1, y))
-    {
-        return true;
-    }
-    if (!has_wall_down(maze, x, y) && !get_bool(visited, x, y + 1))
-    {
-        return true;
-    }
-    if (!has_wall_left(maze, x, y) && !get_bool(visited, x - 1, y))
-    {
-        return true;
-    }
-    if (!has_wall_up(maze, x, y) && !get_bool(visited, x, y - 1))
-    {
-        return true;
-    }
-    return false;
-}
-
-enum direction
-{
-    DROITE = 0,
-    BAS,
-    GAUCHE,
-    HAUT
-};
-
-// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-// elle modifie les variables x_next et y_next pour les coordonnées de la cellule suivante
-static bool get_adj(int x, int y, int* x_next, int* y_next, maze_t maze, char dir)
-{
-    switch (dir)
-    {
-    case DROITE:
-        if (!has_wall_right(maze, x, y))
-        {
-            *x_next = x + 1;
-            *y_next = y;
-            return true;
-        }
-        return false;
-    case BAS:
-        if (!has_wall_down(maze, x, y))
-        {
-            *x_next = x;
-            *y_next = y + 1;
-            return true;
-        }
-        return false;
-    case GAUCHE:
-        if (!has_wall_left(maze, x, y))
-        {
-            *x_next = x - 1;
-            *y_next = y;
-            return true;
-        }
-        return false;
-    case HAUT:
-        if (!has_wall_up(maze, x, y))
-        {
-            *x_next = x;
-            *y_next = y - 1;
-            return true;
-        }
-        return false;
-    default:
-        fprintf(stderr, "Error in get_adj, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Fonction qui retourne un booléen correspondant à la possibilité d'aller dans une direction donnée
-static bool can_go(int x, int y, maze_t maze, char dir)
-{
-    // On renvoie faux si il y a un mur dans la direction donnée
-    switch (dir)
-    {
-    case DROITE:
-        return (!has_wall_right(maze, x, y));
-    case BAS:
-        return (!has_wall_down(maze, x, y));
-    case GAUCHE:
-        return (!has_wall_left(maze, x, y));
-    case HAUT:
-        return (!has_wall_up(maze, x, y));
-    default:
-        fprintf(stderr, "Error in can_go, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
-}
-
-// Fonction change les valeurs de x et y en fonction de la direction donnée
-static void go(int* x, int* y, int dir)
-{
-    // On incrémente ou décrémente x ou y en fonction de la direction donnée
-    switch (dir)
-    {
-    case DROITE:
-        (*x)++;
-        break;
-    case BAS:
-        (*y)++;
-        break;
-    case GAUCHE:
-        (*x)--;
-        break;
-    case HAUT:
-        (*y)--;
-        break;
-    default:
-        fprintf(stderr, "Error in go, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
-}
-
 int hunt_kill_escape(maze_t maze, int x, int y)
 {
     SDL_Renderer* renderer;
@@ -569,25 +512,6 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         wait_and_destroy_print_maze(renderer, window);
     }
     return step;
-}
-
-static int visited_value(int** visited, int x, int y, int dir)
-{
-    // On renvoie la valeur de la case adjacente dans la direction donnée
-    switch (dir)
-    {
-    case DROITE:
-        return visited[x + 1][y];
-    case BAS:
-        return visited[x][y + 1];
-    case GAUCHE:
-        return visited[x - 1][y];
-    case HAUT:
-        return visited[x][y - 1];
-    default:
-        fprintf(stderr, "Error in visited_value, dir must be within 0 and 3, received %d\n", dir);
-        exit(EXIT_FAILURE);
-    }
 }
 
 // Algorithme de résolution main droite
