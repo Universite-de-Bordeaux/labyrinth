@@ -459,7 +459,7 @@ Fonction pour convertir en entier une chaine de caractères.
 La chaines de caractères `str`, si elle est valide, est convertie puis stockée dans `out`.
 La fonction renvoie `true` si la conversion a réussie, `false` sinon.
 
-les phrases d'explications des commandes sont stockées dans des macros pour faciliter la modification.
+Les phrases d'explications des commandes sont stockées dans des macros pour faciliter la modification.
 
 ### **void print_cmd_help(char\* namefile)**
 Fonction qui affiche l'aide de la ligne de commande.
