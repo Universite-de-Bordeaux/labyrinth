@@ -266,7 +266,9 @@ int cheat_escape(const maze_t maze, int x, int y)
 
         // le corps de l'algorithme
         // votre déplacement
-        if (x < maze.width - 1 && rand() % 2 == 0)
+        unsigned int random_value;
+        getrandom(&random_value, sizeof(random_value), 0);
+        if (x < maze.width - 1 && random_value % 2 == 0)
         {
             x++;
         }
@@ -449,7 +451,7 @@ int hunt_kill_escape(maze_t maze, int x, int y)
     int x_next = x;
     int y_next = y;
     int not_go;
-    char dir;
+    unsigned char dir;
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -527,7 +529,8 @@ int hunt_kill_escape(maze_t maze, int x, int y)
             }
             do
             {
-                dir = rand() % 4;
+                getrandom(&dir, sizeof(dir), 0);
+                dir %= 4;
             }
             while (dir == not_go || !get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(dead_end, x_next, y_next));
         }
@@ -538,7 +541,8 @@ int hunt_kill_escape(maze_t maze, int x, int y)
         {
             do
             {
-                dir = rand() % 4;
+                getrandom(&dir, sizeof(dir), 0);
+                dir %= 4;
             }
             while (!get_adj(x, y, &x_next, &y_next, maze, dir) || get_bool(visited, x_next, y_next));
         }
@@ -607,7 +611,9 @@ int right_hand(const maze_t maze, int x, int y)
     bool show = true;
 
     // vos variables à déclarer avant la boucle
-    int dir = 1; // on commence par aller à droite
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
 
     SDL_Event event = {0}; // on crée un event vide
     while (SDL_PollEvent(&event))
@@ -706,7 +712,9 @@ int right_hand_r(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0; // Compteur de direction disponibles
     int min = 0; // Valeur de la cellule avec la valeur plus basse disponible ajdacente à la cellule actuelle
     // Création d'un tableau de taille width.height pour savoir si on est déjà passé par une case initialisé à 0
@@ -776,7 +784,8 @@ int right_hand_r(const maze_t maze, int x, int y)
             {
                 do
                 {
-                    dir = rand() % 4;
+                    getrandom(&dir, sizeof(dir), 0);
+                    dir %= 4; // direction aléatoire
                 }
                 while ((visited_value(visited, x, y, dir) != min) || !can_go(x, y, maze, dir)); // on choisit une des cellules avec le moins de passages
             }
@@ -857,7 +866,9 @@ int right_hand_p(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     int min = 0;
@@ -1008,7 +1019,9 @@ int right_hand_de(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     for (int i = 0; i < maze.width; i++)
@@ -1158,7 +1171,9 @@ int right_hand_p_de(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     int min = 0;
@@ -1315,7 +1330,9 @@ int random_p(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     int min = 0;
@@ -1399,7 +1416,8 @@ int random_p(const maze_t maze, int x, int y)
 
         do
         {
-            dir = rand() % 4;
+            getrandom(&dir, sizeof(dir), 0);
+            dir %= 4; // direction aléatoire
         }
         while (!(can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) == min));
         visited[x][y] += 1;
@@ -1455,7 +1473,9 @@ int random_de(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     for (int i = 0; i < maze.width; i++)
@@ -1530,7 +1550,8 @@ int random_de(const maze_t maze, int x, int y)
 
         do
         {
-            dir = rand() % 4;
+            getrandom(&dir, sizeof(dir), 0);
+            dir %= 4; // direction aléatoire
         }
         while (!(can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) != INT_MAX));
         go(&x, &y, dir);
@@ -1585,7 +1606,9 @@ int random_p_de(const maze_t maze, int x, int y)
     bool show = true;
 
     // Variables à déclarer avant la boucle
-    int dir = rand() % 4; // on commence par une direction aléatoire
+    unsigned int dir;
+    getrandom(&dir, sizeof(dir), 0);
+    dir %= 4; // direction aléatoire
     int count = 0;
     int** visited = malloc(maze.width * sizeof(int*));
     int min = 0;
@@ -1676,7 +1699,8 @@ int random_p_de(const maze_t maze, int x, int y)
 
         do
         {
-            dir = rand() % 4;
+            getrandom(&dir, sizeof(dir), 0);
+            dir %= 4; // direction aléatoire
         }
         while (!(can_go(x, y, maze, dir) && visited_value(visited, x, y, dir) == min));
         if (visited[x][y] != INT_MAX)
