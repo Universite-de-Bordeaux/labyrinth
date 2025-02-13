@@ -783,7 +783,7 @@ static int can_move_dir(const maze_t* maze, const int* x, const int* y, const bo
 
 // Auxiliary functions for lab_by_path
 // To apply a random move to the current cell
-bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
+static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visited)
 {
     if (!(CAN_MOVE_LEFT || CAN_MOVE_RIGHT || CAN_MOVE_UP || CAN_MOVE_DOWN))
     {
@@ -828,7 +828,7 @@ bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab_visite
 
 // Auxiliary functions for lab_by_path
 // function to create a path in the maze by adding walls
-void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
+static void lbp_path(maze_t* maze, int* x, int* y, int* x_2, int* y_2, const bool_tab tab_visited)
 {
     set_true(tab_visited, *x, *y);
 
