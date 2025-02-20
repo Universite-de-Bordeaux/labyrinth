@@ -36,7 +36,7 @@ Les différents types d'analyse seront abrégés comme ceci :
 
 Il est impossible de traiter plusieurs labyrinthes ou chemins simultanément.  
 Seule la dernière occurernce de chaque argument est prise en compte.  
-Tout argument est inconnu est ignoré.
+Tout argument inconnu est ignoré.
 ### Afficher l'aide en cmd
 Afficher l'aide
 <span style="color:green">-h</span> : help
@@ -86,13 +86,22 @@ Analyser un labyrinthe :
 
 On peut préciser le solveur "solver" :
 
-
 <span style="color:green">-slv</span> <span style="color:red">inspection</span> <span style="color:red">solver</span>
 
 <span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
 <span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>, <span style="color:red">draw</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
 
+### Visite
 
+Visiter un labyrinthe :
+-ex
+
+On peut préciser la visite "type" et la position de départ "x" x "y":
+-ex type x y
+type : un type de visite parmis la liste suivante [random, cheat, right_hand, hunt_kill, right_hand_p_de, random_p_de]. Par défaut type vaut random
+x, y : valeurs positives entre 0 et la hauteur (resp. longueur) du labyrinthe, par défaut et en cas d'erreur aléatoire parmi les valeurs valides.
+
+Cette fonction utilise toujours la visualisation, pour la passer, il faut appuyer sur la touche "espace"
 
 ### Ecrire dans un fichier
 
