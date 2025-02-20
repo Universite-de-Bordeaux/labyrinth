@@ -1463,6 +1463,8 @@ maze_t four_maze(const int width, const int height)
         case 0:
             mazed[i] = weeping_willow_maze(size_x[i], size_y[i]);
             break;
+        case 14:
+            mazed[i] = four_maze(size_x[i], size_y[i]);
         default:
             fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
             exit(EXIT_FAILURE);
