@@ -257,13 +257,13 @@ Retourne le nombre de cases mise à jour (≠ nombre de cases connexes).
 `maze` : labyrinthe
 
 ### **int can_move_dir(maze_t\* maze, int\* x, int\* y, bool_tab tab_visited, int dir)**
-@micky
+Fonction qui renvoie le résultat de la macro `CAN_MOVE_dir` où `dir` est la direction de déplacement.
 
 ### **bool lbp_path_move(const maze_t\* maze, int\* x, int\* y, const bool_tab tab_visited)**
-@micky
+Fonction qui modifie `x` et `y` pour arriver sur une cellule adjacente non visitée si possible.
 
 ### **void lbp_path(maze_t\* maze, int\* x, int\* y, int\* x_2, int\* y_2, const bool_tab tab_visited)**
-@micky
+Fonction récursive qui ajoute les murs entres les cases visitées qui ne sont pas notre précédente (il y a un appel à lbp_path_move pour se déplacer).
 
 
 ## Fonctions principales
@@ -516,7 +516,7 @@ Fonction qui renvoie `true` si la case `(x, y)` a une case accessible dans la di
 Fonction qui déplace les coordonnées `(x, y)` dans la direction `dir`.
 
 ### **int visited_value(int\*\* visited, int x, int y, int dir)**
-@micky
+Fonction qui envoie la valeur du tableau visited du voisin de la cellule x y dans la direction dir
 
 ## Fonctions principales
 
@@ -543,23 +543,9 @@ Durant la visite, on connait les cases qu'on a visité et on cherche à visiter 
 ### right_hand
 Fonction qui visite un labyrinthe en suivant le mur à sa droite.
 
-### right_hand_r
-Fonction qui visite un labyrinthe en suivant le mur à sa droite, et en choisissant parfois une direction aléatoire.
-
-### right_hand_p
-@micky
-
-### right_hand_de
-@micky
-
 ### right_hand_p_de
-@micky
-
-### random_p
-@micky
-
-### random_de
-@micky
+Fonction qui visite un labyrinthe en respectant l'algorithme main droite
+en considérant uniquement les cases les moins parcourues qui ne sont pas des culs de sacs déjà détectés
 
 ### random_p_de
-@micky
+Fonction qui visite un labyrinthe en se déplaçant aléatoirement parmis les cases les moins parcourues qui ne sont pas des culs de sacs déjà détectés
