@@ -2,7 +2,7 @@
 #define ESCAPE_H
 #include "struct.h"
 
-#define SIZE 11
+#define SIZE 7
 extern int (*escape[SIZE])(maze_t maze, int x, int y);
 extern const char *escape_name[SIZE];
 
