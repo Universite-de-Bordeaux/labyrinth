@@ -940,7 +940,7 @@ int initial_print_maze(const maze_t maze, SDL_Renderer** renderer, SDL_Window** 
     {
         for (int y = 0; y < maze.height; y++)
         {
-            if ((x == 0 && y == 0) || (x == maze.width - 1 && y == maze.height - 1))
+            if ((x == maze.width - 1 && y == maze.height - 1))
             {
                 continue;
             }
