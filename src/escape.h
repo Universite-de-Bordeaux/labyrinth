@@ -2,7 +2,7 @@
 #define ESCAPE_H
 #include "struct.h"
 
-#define SIZE 7
+#define SIZE 6
 extern int (*escape[SIZE])(maze_t maze, int x, int y);
 extern const char *escape_name[SIZE];
 
@@ -37,15 +37,6 @@ int hunt_kill_escape(maze_t maze, int x, int y);
 // x, y : the coordinates of the starting point
 // return the number of steps
 int right_hand(maze_t maze, int x, int y);
-
-// function to find the exit of the maze using the right hand and sometimes random function
-// visualize the progression of the solver
-// stop when the exit is found or the corresponding command is entered
-// maze : the maze
-// x, y : the coordinates of the starting point
-// return the number of steps
-int right_hand_r(maze_t maze, int x, int y);
-
 
 // function to find the exit of the maze using the right hand among the less visited cells which are not detected dead ends
 // visualize the progression of the solver

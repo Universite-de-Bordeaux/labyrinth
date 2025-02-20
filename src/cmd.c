@@ -40,11 +40,11 @@ static bool safe_atoi(const char* str, int* out)
     "-slv <inspection> <solver> : said if the maze (inspection : isp, isc, he, she) with the (solver : deep, "                                                                     \
     "breadth, draw) algorithm"
 #define ESCAPE                                                                                                                                                                     \
-    "-ex <type> : escape the maze (type : random, cheat, right_hand, right_hand_r, hunt_kill, "                                                                                    \
+    "-ex <type> : escape the maze (type : random, cheat, right_hand, hunt_kill, "                                                                                                  \
     "right_hand_p_de, random_p_de) from the random position"
 #define ESCAPE_DEFAULT "-ex : escape the maze with the random algorithm from a random position"
 #define ESCAPE_POSITION                                                                                                                                                            \
-    "-ex <type> <x> <y> : escape the maze (type : random, cheat, right_hand, right_hand_r, hunt_kill, "                                                                            \
+    "-ex <type> <x> <y> : escape the maze (type : random, cheat, right_hand, hunt_kill, "                                                                                          \
     "right_hand_p_de, random_p_de) from the position x y"
 #define ESCAPE_WARNING                                                                                                                                                             \
     "Warning, the escape function are experimental and may not work as expected \nThe fonction will "                                                                              \

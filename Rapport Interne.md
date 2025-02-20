@@ -543,9 +543,6 @@ Durant la visite, on connait les cases qu'on a visité et on cherche à visiter 
 ### right_hand
 Fonction qui visite un labyrinthe en suivant le mur à sa droite.
 
-### right_hand_r
-Fonction qui visite un labyrinthe en suivant le mur à sa droite, et en choisissant parfois une direction aléatoire.
-
 ### right_hand_p_de
 Fonction qui visite un labyrinthe en respectant l'algorithme main droite
 en considérant uniquement les cases les moins parcourues qui ne sont pas des culs de sacs déjà détectés
