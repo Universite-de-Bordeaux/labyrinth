@@ -91,7 +91,7 @@ On peut préciser le solveur "solver" :
 <span style="color:red">inspection</span> : le type de recherche parmi [<span style="color:red">isp</span>, <span style="color:red">isc</span>, <span style="color:red">he</span>, <span style="color:red">she</span>]  
 <span style="color:red">solver</span> : un type d'algorithme parmis ceux de la liste [<span style="color:red">deep</span>, <span style="color:red">breadth</span>, <span style="color:red">draw</span>], la valeur par défaut est celui qui aura le meilleur résultat par rapport à "inspection"
 
-### Visite
+#### Visite
 
 Visiter un labyrinthe :
 -ex
