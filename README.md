@@ -96,12 +96,12 @@ On peut préciser le solveur "solver" :
 Visiter un labyrinthe :
 -ex
 
-On peut préciser la visite "type" et la position de départ "x" x "y":
--ex type x y
-type : un type de visite parmis la liste suivante [random, cheat, right_hand, hunt_kill, right_hand_p_de, random_p_de]. Par défaut type vaut random
-x, y : valeurs positives entre 0 et la hauteur (resp. longueur) du labyrinthe, par défaut et en cas d'erreur aléatoire parmi les valeurs valides.
+On peut préciser la visite "type" et la position de départ "x" x "y":  
+-ex type x y  
+type : un type de visite parmis la liste suivante [random, cheat, right_hand, hunt_kill, right_hand_p_de, random_p_de]. Par défaut type vaut random  
+x, y : valeurs positives entre 0 et la hauteur (resp. longueur) du labyrinthe, par défaut et en cas d'erreur aléatoire parmi les valeurs valides.  
 
-Cette fonction utilise toujours la visualisation, pour la passer, il faut appuyer sur la touche "espace"
+Cette fonction utilise toujours la visualisation, pour la passer, il faut appuyer sur la touche "espace"  
 
 ### Ecrire dans un fichier
 
