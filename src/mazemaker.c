@@ -1348,7 +1348,7 @@ maze_t weeping_willow_maze(const int width, const int height)
     }
     if (width < 4 || height < 10)
     {
-        printf("Weeping willow maze : les dimensions du labyrinthe sont trop petites\n");
+        printf("Weeping willow maze : les dimensions du labyrinthe sont trop petites, génération d'un labyrinthe snail\n");
         return snail_maze(width, height);
     }
     const maze_t maze = create_wall_maze(width, height);
@@ -1406,7 +1406,7 @@ maze_t four_maze(const int width, const int height)
     }
     if (height < 4 || width < 4)
     {
-        printf("Four maze : les dimensions du labyrinthe sont trop petites\n");
+        printf("Four maze : les dimensions du labyrinthe sont trop petites, génération d'un labyrinthe snail\n");
         return snail_maze(width, height);
     }
     int middle_x = width / 2;

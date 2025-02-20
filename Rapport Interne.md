@@ -336,8 +336,12 @@ Fonction qui crée un labyrinthe parfait sensé avoir la forme d'un saule pleure
 
 Le résultat est déterminsite (et ne ressemble pas vraiment à un saule pleureur).
 
+Les dimensions d'entrée doivent être d'au moins 4x10.
+
 ### four_maze
 Fonction qui demande à quatre autres fonctions de lui créer un labyrinthe parfait d'un quart de la taille du labyrinthe final, puis les connecte entre eux.
+
+Les dimensions d'entrée doivent être d'au moins 4x4.
 @Anna tu valide ? là c'est fini les modif le reste c'est bon
 
 ## Autres fonctions

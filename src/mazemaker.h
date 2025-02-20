@@ -93,13 +93,13 @@ maze_t reverse_comb_maze(const int width, const int height);
 maze_t reccursive_maze(const int width, const int height);
 
 // Creates a perfect maze in shape of weeping willow
-// width : width of the maze
-// height : height of the maze
+// width : width of the maze, must be at least 4
+// height : height of the maze, must be at least 10
 maze_t weeping_willow_maze(const int width, const int height);
 
 // Creates a perfect maze by merge four mazes (randomly)
-// width : width of the maze
-// height : height of the maze
+// width : width of the maze, must be at least 4
+// height : height of the maze, must be at least 4
 maze_t four_maze(const int width, const int height);
 
 //"tears" some walls of the maze
