@@ -1083,6 +1083,438 @@ maze_t cross_maze(const int width, const int height)
     return maze;
 }
 
+enum direction
+{
+    UP = 0,
+    DOWN,
+    RIGHT,
+    LEFT
+};
+
+maze_t snail_maze(const int width, const int height)
+{
+    if (width <= 1 || height <= 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    const maze_t maze = create_wall_maze(width, height);
+    bool_tab visited = create_booltab(width, height);
+    int x = 0, y = 0;
+    char tirage;
+    getrandom(&tirage, sizeof(tirage), 0);
+    if (tirage > 0)
+    {
+        x = tirage % width;
+    }
+    else
+    {
+        y = abs(tirage) % height;
+    }
+    set_true(visited, x, y);
+    const int fx = x, fy = y;
+    char dir = UP;
+    char truth = 4;
+    while (truth)
+    {
+        switch (dir)
+        {
+        case UP :
+            if (y > 0 && !get_bool(visited, x, y - 1))
+            {
+                unwall_up(maze, x, y);
+                y--;
+                set_true(visited, x, y);
+                truth = 4;
+            }
+            else
+            {
+                dir = RIGHT;
+                truth--;
+            }
+            break;
+        case DOWN :
+            if (y < height - 1 && !get_bool(visited, x, y + 1))
+            {
+                unwall_down(maze, x, y);
+                y++;
+                set_true(visited, x, y);
+                truth = 4;
+            }
+            else
+            {
+                dir = LEFT;
+                truth--;
+            }
+            break;
+        case RIGHT :
+            if (x < width - 1 && !get_bool(visited, x + 1, y))
+            {
+                unwall_right(maze, x, y);
+                x++;
+                set_true(visited, x, y);
+                truth = 4;
+            }
+            else
+            {
+                dir = DOWN;
+                truth--;
+            }
+            break;
+        case LEFT :
+            if (x > 0 && !get_bool(visited, x - 1, y))
+            {
+                unwall_left(maze, x, y);
+                x--;
+                set_true(visited, x, y);
+                truth = 4;
+            }
+            else
+            {
+                dir = UP;
+                truth--;
+            }
+            break;
+        // ReSharper disable once CppDFAUnreachableCode
+        default: // on ne devrait jamais arriver ici
+            fprintf(stderr, "Erreur dans la fonction snail_maze : direction %d invalide\n", dir);
+            free_booltab(visited);
+            free_maze(maze);
+            exit(EXIT_FAILURE);
+        }
+        if (truth == 0 && (fx != x || fy != y))
+        {
+            truth = 4;
+            x = fx;
+            y = fy;
+        }
+    }
+    free_booltab(visited);
+    return maze;
+}
+
+maze_t snake_maze(const int width, const int height)
+{
+    const maze_t maze = create_basic_maze(width, height);
+    if (height == 1 || width == 1)
+    {
+        return maze;
+    }
+    int break_wall;
+    getrandom(&break_wall, sizeof(break_wall), 0);
+    if (break_wall > 0)
+    {
+        break_wall = break_wall % 2 ? 0 : height - 1;
+        for (int i = 0; i < width - 1; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (j != break_wall)
+                {
+                    wall_right(maze, i, j);
+                }
+            }
+            break_wall = break_wall == 0 ? height - 1 : 0;
+        }
+    }
+    else
+    {
+        break_wall = break_wall % 2 ? 0 : width - 1;
+        for (int i = 0; i < height - 1; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                if (j != break_wall)
+                {
+                    wall_down(maze, j, i);
+                }
+            }
+            break_wall = break_wall == 0 ? width - 1 : 0;
+        }
+    }
+    return maze;
+}
+
+maze_t reverse_comb_maze(const int width, const int height)
+{
+    if (height == 1 || width == 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    const maze_t maze = create_wall_maze(width, height);
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            if (x == width - 1 && y == height - 1)
+            {
+                return maze;
+            }
+            if (x == width - 1)
+            {
+                unwall_down(maze, x, y);
+            }
+            else if (y == height - 1)
+            {
+                unwall_right(maze, x, y);
+            }
+            else
+            {
+                unsigned char random_value;
+                getrandom(&random_value, sizeof(random_value), 0);
+                if (random_value % 2 == 0)
+                {
+                    unwall_right(maze, x, y);
+                }
+                else
+                {
+                    unwall_down(maze, x, y);
+                }
+            }
+        }
+    }
+    return maze; // pour le warning
+}
+/*
+static void true_reccursive_maze(maze_t maze, int x, int y, int size_x, int size_y)
+{
+    if (size_x <= 1 || size_y <= 1)
+    {
+        return;
+    }
+    int wall;
+    if (size_x > size_y)
+    {
+        const int middle = x + size_x / 2;
+        getrandom(&wall, sizeof(wall), 0);
+        wall = y + abs(wall) % size_y;
+        unwall_left(maze, middle, wall);
+        true_reccursive_maze(maze, x, y, middle - x, size_y);
+        true_reccursive_maze(maze, middle, y, x + size_x - middle, size_y);
+    }
+    else
+    {
+        const int middle = y + size_y / 2;
+        getrandom(&wall, sizeof(wall), 0);
+        wall = x + abs(wall) % size_x;
+        unwall_up(maze, wall, middle);
+        true_reccursive_maze(maze, x, y, size_x, middle - y);
+        true_reccursive_maze(maze, x, middle, size_x, y + size_y - middle);
+    }
+}*/
+
+static void maze_rec(maze_t m, const int x, const int y, const int w, const int h)
+{
+    if (w == 1 && h == 1)
+    {
+        return;
+    }
+    int wall;
+    if (w > h)
+    {
+        const int middle = x + w / 2; //la coordonnée x du mur à casser
+        getrandom(&wall, sizeof(wall), 0);
+        wall = y + abs(wall) % h; //la coordonné y du mur à casser
+        unwall_left(m, middle, wall);
+        maze_rec(m, x, y, middle - x, h);
+        maze_rec(m, middle, y, x + w - middle, h);
+    }
+    else
+    {
+        const int middle = y + h / 2; //la coordonnée y du mur à casser
+        getrandom(&wall, sizeof(wall), 0);
+        wall = x + abs(wall) % w; //la coordonné x du mur à casser
+        unwall_up(m, wall, middle);
+        maze_rec(m, x, y, w, middle - y);
+        maze_rec(m, x, middle, w, y + h - middle);
+    }
+}
+
+maze_t reccursive_maze(const int width, const int height)
+{
+    if (height == 1 || width == 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    const maze_t maze = create_wall_maze(width, height);
+    maze_rec(maze, 0, 0, width, height);
+    return maze;
+}
+
+maze_t weeping_willow_maze(const int width, const int height)
+{
+    if (height == 1 || width == 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    if (width < 4 || height < 10)
+    {
+        printf("Weeping willow maze : les dimensions du labyrinthe sont trop petites\n");
+        return snail_maze(width, height);
+    }
+    const maze_t maze = create_wall_maze(width, height);
+
+    //on dessine le tronc
+    const int middle = width / 2;
+    const int trunk = width / 4;
+    const int root = height * 9 / 10;
+
+    for (int y = root; y > 0; y--)
+    {
+        unwall_up(maze, middle, y);
+        for (int x = middle - trunk + 1; x <= middle; x++)
+        {
+            unwall_left(maze, x, y);
+        }
+        for (int x = middle; x < middle + trunk; x++)
+        {
+            unwall_right(maze, x, y);
+        }
+    }
+    //on dessine les racines (et au passage le sommet des branches)
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = root; y < height - 1; y++)
+        {
+            unwall_down(maze, x, y);
+        }
+        if (x != width - 1)
+        {
+            unwall_right(maze, x, root);
+            unwall_right(maze, x, 0);
+        }
+    }
+
+    //on dessine les branches tombantes
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < root - 1; y++)
+        {
+            if (abs(x - middle) > trunk)
+            {
+                unwall_down(maze, x, y);
+            }
+        }
+    }
+    return maze;
+}
+
+maze_t four_maze(const int width, const int height)
+{
+    if (height == 1 || width == 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    if (height < 4 || width < 4)
+    {
+        printf("Four maze : les dimensions du labyrinthe sont trop petites\n");
+        return snail_maze(width, height);
+    }
+    int middle_x = width / 2;
+    int middle_y = height / 2;
+    int size_x[4] = {middle_x, middle_x, width - middle_x, width - middle_x};
+    int size_y[4] = {middle_y, height - middle_y, middle_y, height - middle_y};
+    maze_t mazed[4];
+    unsigned char tirage;
+    for (int i = 0; i < 4; i++)
+    {
+        getrandom(&tirage, sizeof(tirage), 0);
+        tirage %= 14;
+        switch (tirage)
+        {
+        case 1:
+            mazed[i] = line_maze(size_x[i], size_y[i]);
+            break;
+        case 2:
+            mazed[i] = column_maze(size_x[i], size_y[i]);
+            break;
+        case 3:
+            mazed[i] = one_way_maze(size_x[i], size_y[i]);
+            break;
+        case 4:
+            mazed[i] = octopus_maze(size_x[i], size_y[i]);
+            break;
+        case 5:
+            mazed[i] = my_octopus_maze(size_x[i], size_y[i]);
+            break;
+        case 6:
+            mazed[i] = comb_maze(size_x[i], size_y[i]);
+            break;
+        case 7:
+            mazed[i] = hunt_kill_maze(size_x[i], size_y[i]);
+            break;
+        case 8:
+            mazed[i] = by_path_maze(size_x[i], size_y[i]);
+            break;
+        case 9:
+            mazed[i] = cross_maze(size_x[i], size_y[i]);
+            break;
+        case 10:
+            mazed[i] = snail_maze(size_x[i], size_y[i]);
+            break;
+        case 11:
+            mazed[i] = snake_maze(size_x[i], size_y[i]);
+            break;
+        case 12:
+            mazed[i] = reverse_comb_maze(size_x[i], size_y[i]);
+            break;
+        case 13:
+            mazed[i] = reccursive_maze(size_x[i], size_y[i]);
+            break;
+        case 0:
+            mazed[i] = weeping_willow_maze(size_x[i], size_y[i]);
+            break;
+        default:
+            fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
+            exit(EXIT_FAILURE);
+        }
+    }
+    const maze_t maze = create_basic_maze(width, height);
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            if (x < middle_x && y < middle_y)
+            {
+                maze.walls[x][y] = mazed[0].walls[x][y];
+            }
+            else if (x >= middle_x && y < middle_y)
+            {
+                maze.walls[x][y] = mazed[1].walls[x - middle_x][y];
+            }
+            else if (x < middle_x && y >= middle_y)
+            {
+                maze.walls[x][y] = mazed[2].walls[x][y - middle_y];
+            }
+            else
+            {
+                maze.walls[x][y] = mazed[3].walls[x - middle_x][y - middle_y];
+            }
+        }
+    }
+
+    //0 -> 1
+    int wall;
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_x;
+    unwall_up(maze, wall, middle_y);
+
+    //0 -> 2
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_y;
+    unwall_left(maze, middle_x, wall);
+
+    //1 -> 3
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_y + middle_y;
+    unwall_right(maze, middle_x - 1, wall);
+
+    free_maze(mazed[0]);
+    free_maze(mazed[1]);
+    free_maze(mazed[2]);
+    free_maze(mazed[3]);
+    return maze;
+}
+
 void tear(const maze_t maze, const unsigned int prop)
 {
     if (prop == 0)

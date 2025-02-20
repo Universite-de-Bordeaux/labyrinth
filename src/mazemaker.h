@@ -70,6 +70,38 @@ maze_t by_path_maze(int width, int height);
 // height : height of the maze
 maze_t cross_maze(const int width, const int height);
 
+// --- special mazes (only for fun, may cause error) ---
+
+// Creates a perfect maze in shape of a snail's shell
+// width : width of the maze
+// height : height of the maze
+maze_t snail_maze(const int width, const int height);
+
+// Creates a perfect maze in shape of a snake
+// width : width of the maze
+// height : height of the maze
+maze_t snake_maze(const int width, const int height);
+
+// Creates a perfect maze reflecting a comb one
+// width : width of the maze
+// height : height of the maze
+maze_t reverse_comb_maze(const int width, const int height);
+
+// Creates a perfect maze reccursiveley
+// width : width of the maze
+// height : height of the maze
+maze_t reccursive_maze(const int width, const int height);
+
+// Creates a perfect maze in shape of weeping willow
+// width : width of the maze
+// height : height of the maze
+maze_t weeping_willow_maze(const int width, const int height);
+
+// Creates a perfect maze by merge four mazes (randomly)
+// width : width of the maze
+// height : height of the maze
+maze_t four_maze(const int width, const int height);
+
 //"tears" some walls of the maze
 // maze : the maze to modify
 // prop : the proportion of cells with a wall to remove
