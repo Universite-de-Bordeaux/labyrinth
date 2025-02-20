@@ -462,7 +462,7 @@ int main(const int argc, char* argv[])
         }
         else if (!strcmp(generator, "stm"))
         {
-            unsigned short int r;
+            char r;
             getrandom(&r, sizeof(r), 0);
             if (r % 2)
             {
@@ -476,6 +476,44 @@ int main(const int argc, char* argv[])
         else if (!strcmp(generator, "crm"))
         {
             maze = cross_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose"))
+        {
+            printf("Easter egg ! Un générateur caché va être choisit au hasard : \t");
+            char r;
+            getrandom(&r, sizeof(r), 0);
+            r %= 7;
+            switch (r)
+            {
+            case 0:
+                printf("Labyrinthe escargot\n");
+                maze = snail_maze(width, height);
+                break;
+            case 1:
+                printf("Labyrinthe serpent (on ne peut pas toujours gagner)\n");
+                maze = snake_maze(width, height);
+                break;
+            case 2:
+                printf("Labyrinthe Comb inversé\n");
+                maze = reverse_comb_maze(width, height);
+                break;
+            case 3:
+                printf("Labyrinthe récursif (vive les carrés)\n");
+                maze = reccursive_maze(width, height);
+                break;
+            case 4:
+                printf("Labyrinthe saule pleureur (si si, c'est très resseblant)\n");
+                maze =weeping_willow_maze(width, height);
+                break;
+            case 5:
+                printf("Labyrinthe octopus (mais en plus raide)\n");
+                maze = octopus_maze(width, height);
+                break;
+            default: // mon chouchou
+                printf("Fusion !\n");
+                maze = four_maze(width, height);
+                break;
+            }
         }
         else
         {
