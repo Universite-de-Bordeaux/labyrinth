@@ -25,13 +25,13 @@ maze_t create_basic_maze(const int width, const int height)
         {
             start[i][j] = 0;
         }
-        start[i][width - 1] += 8; // cellules bordure droite
-        start[i][0] += 4; // cellules bordure gauche
+        start[i][width - 1] += 0b1000; // cellules bordure droite
+        start[i][0] += 0b0100; // cellules bordure gauche
     }
     for (int j = 0; j < width; j++)
     {
-        start[height - 1][j] += 2; // cellules bordure bas
-        start[0][j] += 1; // cellules bordure haut
+        start[height - 1][j] += 0b0010; // cellules bordure bas
+        start[0][j] += 0b0001; // cellules bordure haut
     }
 
     const maze_t maze = {width, height, start};
@@ -57,7 +57,7 @@ maze_t create_wall_maze(const int width, const int height)
     {
         for (int j = 0; j < width; j++)
         {
-            start[i][j] = 15; // toutes les cellules ont les 4 murs
+            start[i][j] = 0b1111; // toutes les cellules ont les 4 murs
         }
     }
     const maze_t maze = {width, height, start};
@@ -85,8 +85,8 @@ void wall_up(maze_t const maze, const int x, const int y)
     }
     if (y > 0)
     {
-        maze.walls[y][x] |= 1; // ajoute le mur du haut
-        maze.walls[y - 1][x] |= 2; // ajoute le mur du bas de la cellule du haut
+        maze.walls[y][x] |= 0b0001; // ajoute le mur du haut
+        maze.walls[y - 1][x] |= 0b0010; // ajoute le mur du bas de la cellule du haut
     }
     else
     {
@@ -106,8 +106,8 @@ void wall_down(const maze_t maze, const int x, const int y)
     }
     if (y < maze.height - 1)
     {
-        maze.walls[y][x] |= 2; // ajoute le mur du bas
-        maze.walls[y + 1][x] |= 1; // ajoute le mur du haut de la cellule du bas
+        maze.walls[y][x] |= 0b0010; // ajoute le mur du bas
+        maze.walls[y + 1][x] |= 0b0001; // ajoute le mur du haut de la cellule du bas
     }
     else
     {
@@ -127,8 +127,8 @@ void wall_left(const maze_t maze, const int x, const int y)
     }
     if (x > 0)
     {
-        maze.walls[y][x] |= 4; // ajoute le mur de gauche
-        maze.walls[y][x - 1] |= 8; // ajoute le mur de droite de la cellule de gauche
+        maze.walls[y][x] |= 0b0100; // ajoute le mur de gauche
+        maze.walls[y][x - 1] |= 0b1000; // ajoute le mur de droite de la cellule de gauche
     }
     else
     {
@@ -148,8 +148,8 @@ void wall_right(const maze_t maze, const int x, const int y)
     }
     if (x < maze.width - 1)
     {
-        maze.walls[y][x] |= 8; // ajoute le mur de droite
-        maze.walls[y][x + 1] |= 4; // ajoute le mur de gauche de la cellule de droite
+        maze.walls[y][x] |= 0b1000; // ajoute le mur de droite
+        maze.walls[y][x + 1] |= 0b0100; // ajoute le mur de gauche de la cellule de droite
     }
     else
     {
@@ -169,8 +169,8 @@ void unwall_up(const maze_t maze, const int x, const int y)
     }
     if (y > 0)
     {
-        maze.walls[y][x] &= 14; // retire le mur du haut
-        maze.walls[y - 1][x] &= 13; // retire le mur du bas de la cellule du haut
+        maze.walls[y][x] &= 0b1110; // retire le mur du haut
+        maze.walls[y - 1][x] &= 0b1101; // retire le mur du bas de la cellule du haut
     }
     else
     {
@@ -190,8 +190,8 @@ void unwall_down(const maze_t maze, const int x, const int y)
     }
     if (y < maze.height - 1)
     {
-        maze.walls[y][x] &= 13; // retire le mur du bas
-        maze.walls[y + 1][x] &= 14; // retire le mur du haut de la cellule du bas
+        maze.walls[y][x] &= 0b1101; // retire le mur du bas
+        maze.walls[y + 1][x] &= 0b1110; // retire le mur du haut de la cellule du bas
     }
     else
     {
@@ -211,8 +211,8 @@ void unwall_left(const maze_t maze, const int x, const int y)
     }
     if (x > 0)
     {
-        maze.walls[y][x] &= 11; // retire le mur de gauche
-        maze.walls[y][x - 1] &= 7; // retire le mur de droite de la cellule de gauche
+        maze.walls[y][x] &= 0b1011; // retire le mur de gauche
+        maze.walls[y][x - 1] &= 0b0111; // retire le mur de droite de la cellule de gauche
     }
     else
     {
@@ -232,8 +232,8 @@ void unwall_right(const maze_t maze, const int x, const int y)
     }
     if (x < maze.width - 1)
     {
-        maze.walls[y][x] &= 7; // retire le mur de droite
-        maze.walls[y][x + 1] &= 11; // retire le mur de gauche de la cellule de droite
+        maze.walls[y][x] &= 0b0111; // retire le mur de droite
+        maze.walls[y][x + 1] &= 0b1011; // retire le mur de gauche de la cellule de droite
     }
     else
     {
@@ -251,7 +251,7 @@ bool has_wall_up(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.walls[y][x] & 1;
+    return maze.walls[y][x] & 0b0001;
 }
 
 bool has_wall_down(const maze_t maze, const int x, const int y)
@@ -264,7 +264,7 @@ bool has_wall_down(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.walls[y][x] & 2;
+    return maze.walls[y][x] & 0b0010;
 }
 
 bool has_wall_left(const maze_t maze, const int x, const int y)
@@ -277,7 +277,7 @@ bool has_wall_left(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.walls[y][x] & 4;
+    return maze.walls[y][x] & 0b0100;
 }
 
 bool has_wall_right(const maze_t maze, const int x, const int y)
@@ -290,7 +290,7 @@ bool has_wall_right(const maze_t maze, const int x, const int y)
                 x, y);
         exit(EXIT_FAILURE);
     }
-    return maze.walls[y][x] & 8;
+    return maze.walls[y][x] & 0b1000;
 }
 
 
