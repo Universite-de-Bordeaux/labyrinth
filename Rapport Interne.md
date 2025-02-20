@@ -308,6 +308,38 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 1. Perforation de murs autour de cases aléatoires sans créer de cycle (les perforations sont en forme de croix, d'où le nom)
 2. Perforation de murs pour connecter les cases entre elles.
 
+@Anna tu valide ? Je t'ai re @ à la fin
+## Fonctions principales innutilisées
+Ces fonctions ne sont accessible à l'utilisateur que via l'easter egg `goose`
+
+Elles ne sont pas vérifier et peuvent causer des erreurs, mais devraient être valide et générer des labyrinthes parfaits.
+
+### snail_maze
+Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs en spirales.
+
+Si la céllule de départ touche un mur extérieur, génère une seule spirale, sinon, en génère deux.
+
+### snake_maze
+Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs en zigzag.
+
+Forme particulière d'un line_maze ou column_maze.
+
+### reverse_comb_maze
+Fonction qui crée un labyrinthe parfait en ne cassant des murs que vers le haut ou la gauche.
+
+### reccursive_maze
+Fonction qui crée un labyrinthe parfait en réduisant le problème à une taille plus petite à chaque étape. Quand le problème est réduit à une taille de 1x1, le labyrinthe est parfait.
+Il suffit de briser un murs entre deux labyrinthe parfaits voisins pour obtenir un labyrinthe parfait.
+
+### weeping_willow_maze
+Fonction qui crée un labyrinthe parfait sensé avoir la forme d'un saule pleureur (un tronc au centre, des racines en bas et des branches en haut).
+
+Le résultat est déterminsite (et ne ressemble pas vraiment à un saule pleureur).
+
+### four_maze
+Fonction qui demande à quatre autres fonctions de lui créer un labyrinthe parfait d'un quart de la taille du labyrinthe final, puis les connecte entre eux.
+@Anna tu valide ? là c'est fini les modif le reste c'est bon
+
 ## Autres fonctions
 
 ### **void tear(maze_t maze, unsigned int prop)**
