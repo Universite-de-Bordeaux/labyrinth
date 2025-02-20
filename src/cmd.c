@@ -502,7 +502,7 @@ int main(const int argc, char* argv[])
                 maze = reccursive_maze(width, height);
                 break;
             case 4:
-                printf("Labyrinthe saule pleureur (si si, c'est très resseblant)\n");
+                printf("Labyrinthe saule pleureur (si si, c'est très ressemblant)\n");
                 maze =weeping_willow_maze(width, height);
                 break;
             case 5:
