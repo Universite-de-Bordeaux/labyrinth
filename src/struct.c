@@ -989,8 +989,6 @@ int print_maze(const maze_t maze)
     int dh = 0;
     if (initial_print_maze(maze, &renderer, &window, &dw, &dh) == -1)
     {
-        // ReSharper disable twice CppDFANullDereference
-        destroy_print_maze(renderer, window);
         return -1;
     }
     wait_and_destroy_print_maze(renderer, window);
