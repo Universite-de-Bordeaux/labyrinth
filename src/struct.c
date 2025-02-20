@@ -23,7 +23,7 @@ maze_t create_basic_maze(const int width, const int height)
     {
         for (int j = 0; j < width; j++) // cellules non bordure
         {
-            start[i][j] = 0;
+            start[i][j] = 0b0000;
         }
         start[i][width - 1] += 0b1000; // cellules bordure droite
         start[i][0] += 0b0100; // cellules bordure gauche
