@@ -297,6 +297,7 @@ Toute case de coordonnées `(x, y)` est donc accessible depuis la case `(0, 0)` 
 ###  proto_comb_maze
 Fonction destinée à remplacer `comb_maze` dans le programme final, elle n'a jamais été terminée et n'est pas compilée.
 
+Il a été ajouté parmis les easter eggs malgré ses lacunes. Il s'agit du seul générateur de labyrinthe qui ne soit pas parfait.
 ### hunt_kill_maze
 Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs aléatoirement jusqu'à ce que le labyrinthe soit parfait.
 
