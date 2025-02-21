@@ -525,6 +525,42 @@ int main(const int argc, char* argv[])
                 break;
             }
         }
+        else if (!strcmp(generator, "goose1"))
+        {
+            maze = snail_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose2"))
+        {
+            maze = snake_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose3"))
+        {
+            maze = reverse_comb_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose4"))
+        {
+            maze = reccursive_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose5"))
+        {
+            maze = weeping_willow_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose6"))
+        {
+            maze = octopus_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose7"))
+        {
+            maze = golden_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose8"))
+        {
+            maze = proto_comb_maze(width, height);
+        }
+        else if (!strcmp(generator, "goose9"))
+        {
+            maze = four_maze(width, height);
+        }
         else
         {
             fprintf(stderr, "Error : -g <type> : %s is not a valid type\n", generator);
