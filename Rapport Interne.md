@@ -308,16 +308,15 @@ Fonction qui crée un labyrinthe parfait en deux étapes :
 1. Perforation de murs autour de cases aléatoires sans créer de cycle (les perforations sont en forme de croix, d'où le nom)
 2. Perforation de murs pour connecter les cases entre elles.
 
-@Anna tu valide ? Je t'ai re @ à la fin
 ## Fonctions principales innutilisées
 Ces fonctions ne sont accessible à l'utilisateur que via l'easter egg `goose`
 
-Elles ne sont pas vérifier et peuvent causer des erreurs, mais devraient être valide et générer des labyrinthes parfaits.
+Elles ne sont pas vérifiées et peuvent causer des erreurs, mais devraient être valides et générer des labyrinthes parfaits.
 
 ### snail_maze
-Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs en spirales.
+Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs en spirale.
 
-Si la céllule de départ touche un mur extérieur, génère une seule spirale, sinon, en génère deux.
+Si la cellule de départ touche un mur extérieur, génère une seule spirale, sinon, en génère deux.
 
 ### snake_maze
 Fonction qui crée un labyrinthe parfait en partant d'une case aléatoire et en cassant des murs en zigzag.
@@ -336,13 +335,12 @@ Fonction qui crée un labyrinthe parfait sensé avoir la forme d'un saule pleure
 
 Le résultat est déterminsite (et ne ressemble pas vraiment à un saule pleureur).
 
-Les dimensions d'entrée doivent être d'au moins 4x10.
+Les dimensions d'entrée doivent être d'au moins 4 par 10.
 
 ### four_maze
 Fonction qui demande à quatre autres fonctions de lui créer un labyrinthe parfait d'un quart de la taille du labyrinthe final, puis les connecte entre eux.
 
-Les dimensions d'entrée doivent être d'au moins 4x4.
-@Anna tu valide ? là c'est fini les modif le reste c'est bon
+Les dimensions d'entrée doivent être d'au moins 4 par 4. bon
 
 ## Autres fonctions
 
