@@ -503,7 +503,7 @@ int main(const int argc, char* argv[])
                 break;
             case 4:
                 printf("Labyrinthe saule pleureur (si si, c'est très ressemblant)\n");
-                maze =weeping_willow_maze(width, height);
+                maze = weeping_willow_maze(width, height);
                 break;
             case 5:
                 printf("Labyrinthe octopus (mais en plus raide)\n");

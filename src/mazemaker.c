@@ -1118,7 +1118,7 @@ maze_t snail_maze(const int width, const int height)
     {
         switch (dir)
         {
-        case UP :
+        case UP:
             if (y > 0 && !get_bool(visited, x, y - 1))
             {
                 unwall_up(maze, x, y);
@@ -1132,7 +1132,7 @@ maze_t snail_maze(const int width, const int height)
                 truth--;
             }
             break;
-        case DOWN :
+        case DOWN:
             if (y < height - 1 && !get_bool(visited, x, y + 1))
             {
                 unwall_down(maze, x, y);
@@ -1146,7 +1146,7 @@ maze_t snail_maze(const int width, const int height)
                 truth--;
             }
             break;
-        case RIGHT :
+        case RIGHT:
             if (x < width - 1 && !get_bool(visited, x + 1, y))
             {
                 unwall_right(maze, x, y);
@@ -1160,7 +1160,7 @@ maze_t snail_maze(const int width, const int height)
                 truth--;
             }
             break;
-        case LEFT :
+        case LEFT:
             if (x > 0 && !get_bool(visited, x - 1, y))
             {
                 unwall_left(maze, x, y);
@@ -1311,18 +1311,18 @@ static void maze_rec(maze_t m, const int x, const int y, const int w, const int 
     int wall;
     if (w > h)
     {
-        const int middle = x + w / 2; //la coordonnée x du mur à casser
+        const int middle = x + w / 2; // la coordonnée x du mur à casser
         getrandom(&wall, sizeof(wall), 0);
-        wall = y + abs(wall) % h; //la coordonné y du mur à casser
+        wall = y + abs(wall) % h; // la coordonné y du mur à casser
         unwall_left(m, middle, wall);
         maze_rec(m, x, y, middle - x, h);
         maze_rec(m, middle, y, x + w - middle, h);
     }
     else
     {
-        const int middle = y + h / 2; //la coordonnée y du mur à casser
+        const int middle = y + h / 2; // la coordonnée y du mur à casser
         getrandom(&wall, sizeof(wall), 0);
-        wall = x + abs(wall) % w; //la coordonné x du mur à casser
+        wall = x + abs(wall) % w; // la coordonné x du mur à casser
         unwall_up(m, wall, middle);
         maze_rec(m, x, y, w, middle - y);
         maze_rec(m, x, middle, w, y + h - middle);
@@ -1353,7 +1353,7 @@ maze_t weeping_willow_maze(const int width, const int height)
     }
     const maze_t maze = create_wall_maze(width, height);
 
-    //on dessine le tronc
+    // on dessine le tronc
     const int middle = width / 2;
     const int trunk = width / 4;
     const int root = height * 9 / 10;
@@ -1370,7 +1370,7 @@ maze_t weeping_willow_maze(const int width, const int height)
             unwall_right(maze, x, y);
         }
     }
-    //on dessine les racines (et au passage le sommet des branches)
+    // on dessine les racines (et au passage le sommet des branches)
     for (int x = 0; x < width; x++)
     {
         for (int y = root; y < height - 1; y++)
@@ -1384,7 +1384,7 @@ maze_t weeping_willow_maze(const int width, const int height)
         }
     }
 
-    //on dessine les branches tombantes
+    // on dessine les branches tombantes
     for (int x = 0; x < width; x++)
     {
         for (int y = 0; y < root - 1; y++)
@@ -1414,7 +1414,7 @@ maze_t four_maze(const int width, const int height)
     const int size_x[4] = {middle_x, width - middle_x, middle_x, width - middle_x};
     const int size_y[4] = {middle_y, middle_y, height - middle_y, height - middle_y};
 
-    //on crée les 4 labyrinthes
+    // on crée les 4 labyrinthes
     maze_t mazed[4];
     unsigned char tirage;
     for (int i = 0; i < 4; i++)
@@ -1466,14 +1466,14 @@ maze_t four_maze(const int width, const int height)
             mazed[i] = weeping_willow_maze(size_x[i], size_y[i]);
             break;
         case 14:
-            mazed[i] = four_maze(size_x[i], size_y[i]); //inception
+            mazed[i] = four_maze(size_x[i], size_y[i]); // inception
         default:
             fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
             exit(EXIT_FAILURE);
         }
     }
 
-    //on crée le labyrinthe final
+    // on crée le labyrinthe final
     const maze_t maze = create_basic_maze(width, height);
     for (int x = 0; x < width; x++)
     {
@@ -1498,18 +1498,18 @@ maze_t four_maze(const int width, const int height)
         }
     }
 
-    //0 -> 1
+    // 0 -> 1
     int wall;
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_x;
     unwall_up(maze, wall, middle_y);
 
-    //0 -> 2
+    // 0 -> 2
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_y;
     unwall_left(maze, middle_x, wall);
 
-    //1 -> 3
+    // 1 -> 3
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_y + middle_y;
     unwall_right(maze, middle_x - 1, wall);
@@ -1521,7 +1521,7 @@ maze_t four_maze(const int width, const int height)
     return maze;
 }
 
-//grosso moodo une copie de la fonction four_maze
+// grosso moodo une copie de la fonction four_maze
 maze_t fractal_maze_aux(const int width, const int height, const int index)
 {
     if (height == 1 || width == 1)
@@ -1638,18 +1638,18 @@ maze_t fractal_maze_aux(const int width, const int height, const int index)
         }
     }
 
-    //0 -> 1
+    // 0 -> 1
     int wall;
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_x;
     unwall_up(maze, wall, middle_y);
 
-    //0 -> 2
+    // 0 -> 2
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_y;
     unwall_left(maze, middle_x, wall);
 
-    //1 -> 3
+    // 1 -> 3
     getrandom(&wall, sizeof(wall), 0);
     wall = abs(wall) % middle_y + middle_y;
     unwall_right(maze, middle_x - 1, wall);
@@ -1661,10 +1661,7 @@ maze_t fractal_maze_aux(const int width, const int height, const int index)
     return maze;
 }
 
-maze_t golden_maze(const int width, const int height)
-{
-    return fractal_maze_aux(width, height, 3);
-}
+maze_t golden_maze(const int width, const int height) { return fractal_maze_aux(width, height, 3); }
 
 void tear(const maze_t maze, const unsigned int prop)
 {

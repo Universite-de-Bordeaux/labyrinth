@@ -214,7 +214,7 @@ int print_maze(maze_t maze);
 // the walls of the entrance are in blue, the walls of the exit in green
 // the size of each cell is automatically adjusted to fill the window if possible (may not be possible if the maze is
 // too large)
-//do not print interieur of the maze
+// do not print interieur of the maze
 int pre_print_maze(maze_t maze, SDL_Renderer** renderer, SDL_Window** window, int* dw, int* dh);
 
 // display the maze, returns -1 in case of error, 1 otherwise

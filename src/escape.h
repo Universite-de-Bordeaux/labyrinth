@@ -4,7 +4,7 @@
 
 #define SIZE 6
 extern int (*escape[SIZE])(maze_t maze, int x, int y);
-extern const char *escape_name[SIZE];
+extern const char* escape_name[SIZE];
 
 // function to find the exit of the maze from an random case
 // visualize the progression of the solver
