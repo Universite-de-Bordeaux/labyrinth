@@ -162,3 +162,6 @@ Enregistrer un labyrinthe et écrire le chemin le plus court pour le résoudre e
 
 Récupérer le labyrinthe et le chemin avant de les afficher
 ./maze -r temp -rw temp_c -shw
+
+Lancer une visite sur le labyrinthe
+./maze -r temp -ex hunt_kill
