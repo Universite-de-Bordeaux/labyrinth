@@ -1409,10 +1409,12 @@ maze_t four_maze(const int width, const int height)
         printf("Four maze : les dimensions du labyrinthe sont trop petites, génération d'un labyrinthe snail\n");
         return snail_maze(width, height);
     }
-    int middle_x = width / 2;
-    int middle_y = height / 2;
-    int size_x[4] = {middle_x, middle_x, width - middle_x, width - middle_x};
-    int size_y[4] = {middle_y, height - middle_y, middle_y, height - middle_y};
+    const int middle_x = width / 2;
+    const int middle_y = height / 2;
+    const int size_x[4] = {middle_x, width - middle_x, middle_x, width - middle_x};
+    const int size_y[4] = {middle_y, middle_y, height - middle_y, height - middle_y};
+
+    //on crée les 4 labyrinthes
     maze_t mazed[4];
     unsigned char tirage;
     for (int i = 0; i < 4; i++)
@@ -1464,12 +1466,14 @@ maze_t four_maze(const int width, const int height)
             mazed[i] = weeping_willow_maze(size_x[i], size_y[i]);
             break;
         case 14:
-            mazed[i] = four_maze(size_x[i], size_y[i]);
+            mazed[i] = four_maze(size_x[i], size_y[i]); //inception
         default:
             fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
             exit(EXIT_FAILURE);
         }
     }
+
+    //on crée le labyrinthe final
     const maze_t maze = create_basic_maze(width, height);
     for (int x = 0; x < width; x++)
     {
@@ -1477,19 +1481,19 @@ maze_t four_maze(const int width, const int height)
         {
             if (x < middle_x && y < middle_y)
             {
-                maze.walls[x][y] = mazed[0].walls[x][y];
+                maze.walls[y][x] = mazed[0].walls[y][x];
             }
             else if (x >= middle_x && y < middle_y)
             {
-                maze.walls[x][y] = mazed[1].walls[x - middle_x][y];
+                maze.walls[y][x] = mazed[1].walls[y][x - middle_x];
             }
             else if (x < middle_x && y >= middle_y)
             {
-                maze.walls[x][y] = mazed[2].walls[x][y - middle_y];
+                maze.walls[y][x] = mazed[2].walls[y - middle_y][x];
             }
             else
             {
-                maze.walls[x][y] = mazed[3].walls[x - middle_x][y - middle_y];
+                maze.walls[y][x] = mazed[3].walls[y - middle_y][x - middle_x];
             }
         }
     }
@@ -1526,13 +1530,13 @@ maze_t fractal_maze_aux(const int width, const int height, const int index)
     }
     if (height < 4 || width < 4)
     {
-        printf("Four maze : les dimensions du labyrinthe sont trop petites, génération d'un labyrinthe snail\n");
         return snail_maze(width, height);
     }
-    int middle_x = width / 2;
-    int middle_y = height / 2;
-    int size_x[4] = {middle_x, middle_x, width - middle_x, width - middle_x};
-    int size_y[4] = {middle_y, height - middle_y, middle_y, height - middle_y};
+    const int middle_x = width / 2;
+    const int middle_y = height / 2;
+    const int size_x[4] = {middle_x, width - middle_x, middle_x, width - middle_x};
+    const int size_y[4] = {middle_y, middle_y, height - middle_y, height - middle_y};
+
     maze_t mazed[4];
     unsigned char tirage;
     int i, size;
@@ -1602,7 +1606,7 @@ maze_t fractal_maze_aux(const int width, const int height, const int index)
         case 14:
             mazed[i] = four_maze(size_x[i], size_y[i]);
         default:
-            fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
+            fprintf(stderr, "Erreur dans la fonction fractal_maze_aux : tirage %d invalide\n", tirage);
             exit(EXIT_FAILURE);
         }
     }
@@ -1617,19 +1621,19 @@ maze_t fractal_maze_aux(const int width, const int height, const int index)
         {
             if (x < middle_x && y < middle_y)
             {
-                maze.walls[x][y] = mazed[0].walls[x][y];
+                maze.walls[y][x] = mazed[0].walls[y][x];
             }
             else if (x >= middle_x && y < middle_y)
             {
-                maze.walls[x][y] = mazed[1].walls[x - middle_x][y];
+                maze.walls[y][x] = mazed[1].walls[y][x - middle_x];
             }
             else if (x < middle_x && y >= middle_y)
             {
-                maze.walls[x][y] = mazed[2].walls[x][y - middle_y];
+                maze.walls[y][x] = mazed[2].walls[y - middle_y][x];
             }
             else
             {
-                maze.walls[x][y] = mazed[3].walls[x - middle_x][y - middle_y];
+                maze.walls[y][x] = mazed[3].walls[y - middle_y][x - middle_x];
             }
         }
     }
