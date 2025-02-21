@@ -1517,6 +1517,151 @@ maze_t four_maze(const int width, const int height)
     return maze;
 }
 
+//grosso moodo une copie de la fonction four_maze
+maze_t fractal_maze_aux(const int width, const int height, const int index)
+{
+    if (height == 1 || width == 1)
+    {
+        return create_basic_maze(width, height);
+    }
+    if (height < 4 || width < 4)
+    {
+        printf("Four maze : les dimensions du labyrinthe sont trop petites, génération d'un labyrinthe snail\n");
+        return snail_maze(width, height);
+    }
+    int middle_x = width / 2;
+    int middle_y = height / 2;
+    int size_x[4] = {middle_x, middle_x, width - middle_x, width - middle_x};
+    int size_y[4] = {middle_y, height - middle_y, middle_y, height - middle_y};
+    maze_t mazed[4];
+    unsigned char tirage;
+    int i, size;
+    if (size_x[index] < 4 || size_y[index] < 4)
+    {
+        i = 0;
+        size = 4;
+    }
+    else if (index == 0)
+    {
+        i = 1;
+        size = 4;
+    }
+    else
+    {
+        i = 0;
+        size = 3;
+    }
+    for (; i < size; i++)
+    {
+        getrandom(&tirage, sizeof(tirage), 0);
+        tirage %= 14;
+        switch (tirage)
+        {
+        case 1:
+            mazed[i] = line_maze(size_x[i], size_y[i]);
+            break;
+        case 2:
+            mazed[i] = column_maze(size_x[i], size_y[i]);
+            break;
+        case 3:
+            mazed[i] = one_way_maze(size_x[i], size_y[i]);
+            break;
+        case 4:
+            mazed[i] = octopus_maze(size_x[i], size_y[i]);
+            break;
+        case 5:
+            mazed[i] = my_octopus_maze(size_x[i], size_y[i]);
+            break;
+        case 6:
+            mazed[i] = comb_maze(size_x[i], size_y[i]);
+            break;
+        case 7:
+            mazed[i] = hunt_kill_maze(size_x[i], size_y[i]);
+            break;
+        case 8:
+            mazed[i] = by_path_maze(size_x[i], size_y[i]);
+            break;
+        case 9:
+            mazed[i] = cross_maze(size_x[i], size_y[i]);
+            break;
+        case 10:
+            mazed[i] = snail_maze(size_x[i], size_y[i]);
+            break;
+        case 11:
+            mazed[i] = snake_maze(size_x[i], size_y[i]);
+            break;
+        case 12:
+            mazed[i] = reverse_comb_maze(size_x[i], size_y[i]);
+            break;
+        case 13:
+            mazed[i] = reccursive_maze(size_x[i], size_y[i]);
+            break;
+        case 0:
+            mazed[i] = weeping_willow_maze(size_x[i], size_y[i]);
+            break;
+        case 14:
+            mazed[i] = four_maze(size_x[i], size_y[i]);
+        default:
+            fprintf(stderr, "Erreur dans la fonction four_maze : tirage %d invalide\n", tirage);
+            exit(EXIT_FAILURE);
+        }
+    }
+    if (size_x[index] >= 4 && size_y[index] >= 4)
+    {
+        mazed[index] = fractal_maze_aux(size_x[index], size_y[index], index == 3 ? 0 : 3);
+    }
+    const maze_t maze = create_basic_maze(width, height);
+    for (int x = 0; x < width; x++)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            if (x < middle_x && y < middle_y)
+            {
+                maze.walls[x][y] = mazed[0].walls[x][y];
+            }
+            else if (x >= middle_x && y < middle_y)
+            {
+                maze.walls[x][y] = mazed[1].walls[x - middle_x][y];
+            }
+            else if (x < middle_x && y >= middle_y)
+            {
+                maze.walls[x][y] = mazed[2].walls[x][y - middle_y];
+            }
+            else
+            {
+                maze.walls[x][y] = mazed[3].walls[x - middle_x][y - middle_y];
+            }
+        }
+    }
+
+    //0 -> 1
+    int wall;
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_x;
+    unwall_up(maze, wall, middle_y);
+
+    //0 -> 2
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_y;
+    unwall_left(maze, middle_x, wall);
+
+    //1 -> 3
+    getrandom(&wall, sizeof(wall), 0);
+    wall = abs(wall) % middle_y + middle_y;
+    unwall_right(maze, middle_x - 1, wall);
+
+    free_maze(mazed[0]);
+    free_maze(mazed[1]);
+    free_maze(mazed[2]);
+    free_maze(mazed[3]);
+    return maze;
+}
+
+maze_t golden_maze(const int width, const int height)
+{
+    return fractal_maze_aux(width, height, 3);
+}
+
 void tear(const maze_t maze, const unsigned int prop)
 {
     if (prop == 0)

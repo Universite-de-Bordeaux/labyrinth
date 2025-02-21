@@ -480,9 +480,9 @@ int main(const int argc, char* argv[])
         else if (!strcmp(generator, "goose"))
         {
             printf("Easter egg ! Un générateur caché va être choisit au hasard : \t");
-            char r;
+            int r;
             getrandom(&r, sizeof(r), 0);
-            r %= 7;
+            r %= 9;
             switch (r)
             {
             case 0:
@@ -508,6 +508,14 @@ int main(const int argc, char* argv[])
             case 5:
                 printf("Labyrinthe octopus (mais en plus raide)\n");
                 maze = octopus_maze(width, height);
+                break;
+            case 6:
+                printf("Fusion de labyrinthe ! (est-ce un nombre d'or ?\n");
+                maze = golden_maze(width, height);
+                break;
+            case 7:
+                printf("Un prototype dont l'utilité a été oublié il y a longtemp...\n");
+                maze = proto_comb_maze(width, height);
                 break;
             default: // mon chouchou
                 printf("Fusion !\n");
