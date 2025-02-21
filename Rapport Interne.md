@@ -340,7 +340,12 @@ Les dimensions d'entrée doivent être d'au moins 4 par 10.
 ### four_maze
 Fonction qui demande à quatre autres fonctions de lui créer un labyrinthe parfait d'un quart de la taille du labyrinthe final, puis les connecte entre eux.
 
-Les dimensions d'entrée doivent être d'au moins 4 par 4. bon
+Les dimensions d'entrée doivent être d'au moins 4 par 4.
+
+### golden_maze
+Fonction qui demande à d'autre fonction de lui créer des labyrinthe parfait avant de les connecter en une forme rappellant une coquille de nautile.
+
+Les dimensions d'entrée doivent être d'au moins 4 par 4.
 
 ## Autres fonctions
 
