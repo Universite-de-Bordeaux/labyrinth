@@ -202,8 +202,9 @@ way* best_exit_deep_seeker(const maze_t maze)
         {
             continue;
         }
-        const unsigned int l = length_waytab(ways, x, y) + 1;
-        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        const unsigned int l = length_waytab(ways, x, y) + 1; // on récupère la longueur du chemin actuel
+        const int abs_dist = -x + maze.width - 1 - y + maze.height - 1; // distance de Manhattan à la sortie
+        if (l + abs_dist > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
         }
@@ -696,8 +697,9 @@ way* best_exit_draw_seeker(const maze_t maze)
         {
             continue;
         }
-        const unsigned int l = length_waytab(ways, x, y) + 1;
-        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        const unsigned int l = length_waytab(ways, x, y) + 1; // on récupère la longueur du chemin actuel
+        const int abs_dist = -x + maze.width - 1 - y + maze.height - 1; // distance de Manhattan à la sortie
+        if (l + abs_dist > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
         }
@@ -1218,8 +1220,9 @@ int show_best_exit_deep_seeker(const maze_t maze)
         {
             continue;
         }
-        const unsigned int l = length_waytab(ways, x, y) + 1;
-        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        const unsigned int l = length_waytab(ways, x, y) + 1; // longueur du chemin actuel
+        const int abs_dist = -x + maze.width - 1 - y + maze.height - 1; // distance de Manhattan à la sortie
+        if (l + abs_dist > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
         }
@@ -2361,8 +2364,9 @@ int show_best_exit_draw_seeker(const maze_t maze)
         {
             continue;
         }
-        const unsigned int l = length_waytab(ways, x, y) + 1;
-        if (l > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
+        const unsigned int l = length_waytab(ways, x, y) + 1; // longueur du chemin actuel
+        const int abs_dist = -x + maze.width - 1 - y + maze.height - 1; // distance de Manhattan à la sortie
+        if (l + abs_dist > length_waytab(ways, maze.width - 1, maze.height - 1)) // si on a déjà trouvé un chemin plus court
         {
             continue;
         }
