@@ -109,7 +109,7 @@ static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab
     while (!can_move_dir(maze, x, y, tab_visited, choice))
     { // si notre direction n'est pas possible, on passe à la suivante
         getrandom(&choice, sizeof(choice), 0);
-        choice %= 4;
+        choice = abs(choice) % 4;
     }
     switch (choice)
     {
