@@ -1,5 +1,6 @@
 #include "game.h"
 
+//show every wall of the maze
 static void reprint_maze(const maze_t maze, SDL_Renderer *renderer, const int dh, const int dw)
 {
     SDL_DisplayMode displayMode;
@@ -33,6 +34,7 @@ static void reprint_maze(const maze_t maze, SDL_Renderer *renderer, const int dh
     SDL_RenderPresent(renderer); // on met à jour l'affichage
 }
 
+//find the best way to exit the maze
 static way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, const int end_y)
 {
     const waytab ways = create_waytab(maze.width,
@@ -85,6 +87,7 @@ static way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, c
     return create_way(); // si on n'a pas trouvé de chemin, on renvoie un chemin vide
 }
 
+//draw the path to the exit
 static void local_show_the_way(const maze_t maze, const way *w, SDL_Renderer* renderer, const int dh, const int dw)
 {
     SDL_SetRenderDrawColor(renderer, 25, 100, 20, 255); // on dessine en bleu
@@ -122,6 +125,7 @@ static void local_show_the_way(const maze_t maze, const way *w, SDL_Renderer* re
     SDL_RenderPresent(renderer);
 }
 
+// draw the unwalled part of the designeted cell
 static void draw_border(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
 {
     if (!has_wall_right(maze, x, y))
@@ -142,6 +146,7 @@ static void draw_border(const maze_t maze, SDL_Renderer *renderer, const int x, 
     }
 }
 
+// draw the walls designeted cell
 static void draw_wall(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
 {
     if (has_wall_right(maze, x, y))
@@ -156,14 +161,36 @@ static void draw_wall(const maze_t maze, SDL_Renderer *renderer, const int x, co
     }
     if (has_wall_left(maze, x, y))
     {
-        SDL_RenderDrawLine(renderer, (x) * dw - 1, y * dh, (x) * dw - 1,
-                                   (y + 1) * dh - 1); // on dessine un mur à droite de la cellule de gauche
+        if (x == 0)
+        {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh, x * dw, (y + 1) * dh - 1); // on dessine un mur à gauche
+        }
+        else
+        {
+            SDL_RenderDrawLine(renderer, x * dw - 1, y * dh, x * dw - 1, (y + 1) * dh - 1); // on dessine un mur à droite de la cellule de gauche
+        }
     }
     if (has_wall_up(maze, x, y))
     {
-        SDL_RenderDrawLine(renderer, x * dw, (y) * dh - 1, (x + 1) * dw - 1,
-                                   (y) * dh - 1); // on dessine un mur en bas de la cellule du haut
+        if (y == 0)
+        {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh, (x + 1) * dw - 1, y * dh); // on dessine un mur en haut
+        }
+        else
+        {
+            SDL_RenderDrawLine(renderer, x * dw, y * dh - 1, (x + 1) * dw - 1, y * dh - 1); // on dessine un mur en bas de la cellule du haut
+        }
     }
+}
+
+// clear the screen and draw the exit
+static void clear(const maze_t maze, SDL_Renderer *renderer, const int dw, const int dh)
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on dessine en blanc
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, 0, 50, 255, 255); // on définit la couleur en bleu
+    SDL_RenderDrawLine(renderer, 0, 0, dw, 0);
+    SDL_RenderDrawLine(renderer, 0, 0, 0, dh);
 }
 
 void game_show(const maze_t maze, int x, int y){
@@ -280,8 +307,7 @@ void game_show(const maze_t maze, int x, int y){
                 }
                 else if (event.key.keysym.sym == SDLK_s)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderClear(renderer);
+                    clear(maze, renderer, dw, dh);
                     reprint_maze(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
@@ -315,6 +341,7 @@ void game(const maze_t maze, int x, int y){
     {
         return;
     }
+    const bool_tab visited = create_booltab(maze.width, maze.height);
     SDL_SetWindowTitle(window, "game");
     SDL_DisplayMode dm;
     SDL_GetCurrentDisplayMode(0, &dm);
@@ -338,9 +365,357 @@ void game(const maze_t maze, int x, int y){
                        maze.height * dh); // on dessine la sortie
     while (x != 0 || y != 0)
     {
+        set_true(visited, x, y);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
         SDL_RenderFillRect(renderer, &rect);
         draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        SDL_WaitEvent(&event);
+        {
+            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+            {
+                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                destroy_print_maze(renderer, window);
+                free_booltab(visited);
+                return;
+            }
+            if (event.type == SDL_KEYUP){
+                if (event.key.keysym.sym == SDLK_c)
+                {
+                    switch (direction)
+                    {
+                        case NORD:
+                            if (y > 0 && has_wall_up(maze, x, y))
+                            {
+                                y--;
+                            }
+                        break;
+                        case SUD:
+                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                            {
+                                y++;
+                            }
+                        break;
+                        case EST:
+                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                            {
+                                x++;
+                            }
+                        break;
+                        case OUEST:
+                            if (x > 0 && has_wall_left(maze, x, y))
+                            {
+                                x--;
+                            }
+                        break;
+                        // ReSharper disable once CppDFAUnreachableCode
+                        default:
+                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                            destroy_print_maze(renderer, window);
+                            exit(EXIT_FAILURE);
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_UP)
+                {
+                    direction = NORD;
+                    if (!has_wall_up(maze, x, y))
+                    {
+                        y--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_DOWN)
+                {
+                    direction = SUD;
+                    if (!has_wall_down(maze, x, y))
+                    {
+                        y++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_LEFT)
+                {
+                    direction = OUEST;
+                    if (!has_wall_left(maze, x, y))
+                    {
+                        x--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_RIGHT)
+                {
+                    direction = EST;
+                    if (!has_wall_right(maze, x, y))
+                    {
+                        x++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_s)
+                {
+                    clear(maze, renderer, dw, dh);
+                    SDL_Delay(dm.refresh_rate);
+                    SDL_RenderPresent(renderer);
+                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    local_show_the_way(maze, w, renderer, dh, dw);
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    for (int i = 0; i < maze.width; i++)
+                    {
+                        for (int j = 0; j < maze.height; j++)
+                        {
+                            if (get_bool(visited, i, j))
+                            {
+                                draw_wall(maze, renderer, i, j, dw, dh);
+                            }
+                        }
+                    }
+                    free_way(w);
+                }
+            }
+}
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        rect.x = x * dw + 1;
+        rect.y = y * dh + 1;
+        SDL_RenderFillRect(renderer, &rect); // on dessine la nouvelle position
+        draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        draw_wall(maze, renderer, x, y, dw, dh);
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+    }
+    reprint_maze(maze, renderer, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetWindowTitle(window, "escaped");
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer);
+    free_booltab(visited);
+    wait_and_destroy_print_maze(renderer, window);
+}
+
+#define size_half_blind 20
+
+void game_half_blind(const maze_t maze, int x, int y){
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+    int dw, dh;
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    {
+        return;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, dw, 0, dw * maze.width, 0);
+    SDL_RenderDrawLine(renderer, 0, dh, 0, dh * maze.height);
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, 0, maze.width * dw - 1, maze.height * dh);
+    SDL_RenderDrawLine(renderer, 0, maze.height * dh - 1, maze.width * dw, maze.height * dh - 1);
+    queue* q = create_queue();
+    SDL_SetWindowTitle(window, "game");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    draw_wall(maze, renderer, x, y, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
+    char direction = NORD;
+
+    SDL_Event event = {0}; // on crée un event vide
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
+    }
+    int px = -1, py = -1;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on dessine en blanc
+    SDL_RenderDrawLine(renderer, maze.width * dw - dw, maze.height * dh - 1, maze.width * dw,
+                       maze.height * dh - 1); // on dessine la sortie
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, maze.height * dh - dh, maze.width * dw - 1,
+                       maze.height * dh); // on dessine la sortie
+    while (x != 0 || y != 0)
+    {
+        if (px != x || py != y)
+        {
+            enqueue(x, y, q);
+            //on efface la cellule la plus ancienne mais on s'assure de garder les autres
+            if (size_queue(q) > size_half_blind * 2)
+            {
+                const int temp = size_queue(q) / 2 - 1;
+                int j, k;
+                dequeue(q, &j, &k);
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                draw_wall(maze, renderer, j, k, dw, dh);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                for (int i = 0; i < temp; i++)
+                {
+                    dequeue(q, &j, &k);
+                    draw_wall(maze, renderer, j, k, dw, dh);
+                    enqueue(j, k, q);
+                }
+            }
+        }
+        px = x;
+        py = y;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+        SDL_RenderFillRect(renderer, &rect);
+        draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        SDL_WaitEvent(&event);
+        {
+            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+            {
+                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                destroy_print_maze(renderer, window);
+                free_queue(q);
+                return;
+            }
+            if (event.type == SDL_KEYUP){
+                if (event.key.keysym.sym == SDLK_c)
+                {
+                    switch (direction)
+                    {
+                        case NORD:
+                            if (y > 0 && has_wall_up(maze, x, y))
+                            {
+                                y--;
+                            }
+                        break;
+                        case SUD:
+                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                            {
+                                y++;
+                            }
+                        break;
+                        case EST:
+                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                            {
+                                x++;
+                            }
+                        break;
+                        case OUEST:
+                            if (x > 0 && has_wall_left(maze, x, y))
+                            {
+                                x--;
+                            }
+                        break;
+                        // ReSharper disable once CppDFAUnreachableCode
+                        default:
+                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                            destroy_print_maze(renderer, window);
+                            exit(EXIT_FAILURE);
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_UP)
+                {
+                    direction = NORD;
+                    if (!has_wall_up(maze, x, y))
+                    {
+                        y--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_DOWN)
+                {
+                    direction = SUD;
+                    if (!has_wall_down(maze, x, y))
+                    {
+                        y++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_LEFT)
+                {
+                    direction = OUEST;
+                    if (!has_wall_left(maze, x, y))
+                    {
+                        x--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_RIGHT)
+                {
+                    direction = EST;
+                    if (!has_wall_right(maze, x, y))
+                    {
+                        x++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_s)
+                {
+                    clear(maze, renderer, dw, dh);
+                    SDL_Delay(dm.refresh_rate);
+                    SDL_RenderPresent(renderer);
+                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    local_show_the_way(maze, w, renderer, dh, dw);
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                    const int temp = size_queue(q)/2;
+                    for (int i = 0; i < temp; i++)
+                    {
+                        int j, k;
+                        dequeue(q, &j, &k);
+                        draw_wall(maze, renderer, j, k, dw, dh);
+                        enqueue(j, k, q);
+                    }
+                    free_way(w);
+                }
+            }
+}
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        rect.x = x * dw + 1;
+        rect.y = y * dh + 1;
+        SDL_RenderFillRect(renderer, &rect); // on dessine la nouvelle position
+        draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        draw_wall(maze, renderer, x, y, dw, dh);
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+    }
+    reprint_maze(maze, renderer, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetWindowTitle(window, "escaped");
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer);
+    free_queue(q);
+    wait_and_destroy_print_maze(renderer, window);
+}
+
+void game_blind(const maze_t maze, int x, int y){
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+    int dw, dh;
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    {
+        return;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, dw, 0, dw * maze.width, 0);
+    SDL_RenderDrawLine(renderer, 0, dh, 0, dh * maze.height);
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, 0, maze.width * dw - 1, maze.height * dh);
+    SDL_RenderDrawLine(renderer, 0, maze.height * dh - 1, maze.width * dw, maze.height * dh - 1);
+    SDL_SetWindowTitle(window, "game");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    draw_wall(maze, renderer, x, y, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
+    char direction = NORD;
+
+    SDL_Event event = {0}; // on crée un event vide
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on dessine en blanc
+    SDL_RenderDrawLine(renderer, maze.width * dw - dw, maze.height * dh - 1, maze.width * dw,
+                       maze.height * dh - 1); // on dessine la sortie
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, maze.height * dh - dh, maze.width * dw - 1,
+                       maze.height * dh); // on dessine la sortie
+    while (x != 0 || y != 0)
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+        SDL_RenderFillRect(renderer, &rect);
+        draw_border(maze, renderer, x, y, dw, dh);
+        draw_wall(maze, renderer, x, y, dw, dh);
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         SDL_WaitEvent(&event);
         {
@@ -423,8 +798,7 @@ void game(const maze_t maze, int x, int y){
                 }
                 else if (event.key.keysym.sym == SDLK_s)
                 {
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-                    SDL_RenderClear(renderer);
+                    clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
                     way *w = local_best_exit_breadth_seeker(maze, x, y);
@@ -452,8 +826,406 @@ void game(const maze_t maze, int x, int y){
     wait_and_destroy_print_maze(renderer, window);
 }
 
-void game_half_blind(maze_t, int, int);
+void game_quarter_blind(const maze_t maze, int x, int y){
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+    int dw, dh;
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    {
+        return;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, dw, 0, dw * maze.width, 0);
+    SDL_RenderDrawLine(renderer, 0, dh, 0, dh * maze.height);
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, 0, maze.width * dw - 1, maze.height * dh);
+    SDL_RenderDrawLine(renderer, 0, maze.height * dh - 1, maze.width * dw, maze.height * dh - 1);
+    SDL_SetWindowTitle(window, "game");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    draw_wall(maze, renderer, x, y, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
+    char direction = NORD;
 
-void game_blind(maze_t, int, int);
+    SDL_Event event = {0}; // on crée un event vide
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on dessine en blanc
+    SDL_RenderDrawLine(renderer, maze.width * dw - dw, maze.height * dh - 1, maze.width * dw,
+                       maze.height * dh - 1); // on dessine la sortie
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, maze.height * dh - dh, maze.width * dw - 1,
+                       maze.height * dh); // on dessine la sortie
+    while (x != 0 || y != 0)
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+        SDL_RenderFillRect(renderer, &rect);
+        draw_border(maze, renderer, x, y, dw, dh);
+        draw_wall(maze, renderer, x, y, dw, dh);
+        if (x < maze.width - 1)
+        {
+            draw_wall(maze, renderer, x + 1, y, dw, dh);
+        }
+        if (y < maze.height - 1)
+        {
+            draw_wall(maze, renderer, x, y + 1, dw, dh);
+        }
+        if (x > 0)
+        {
+            draw_wall(maze, renderer, x - 1, y, dw, dh);
+        }
+        if (y > 0)
+        {
+            draw_wall(maze, renderer, x, y - 1, dw, dh);
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        SDL_WaitEvent(&event);
+        {
+            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+            {
+                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                destroy_print_maze(renderer, window);
+                return;
+            }
+            if (event.type == SDL_KEYUP){
+                if (event.key.keysym.sym == SDLK_c)
+                {
+                    switch (direction)
+                    {
+                        case NORD:
+                            if (y > 0 && has_wall_up(maze, x, y))
+                            {
+                                y--;
+                            }
+                        break;
+                        case SUD:
+                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                            {
+                                y++;
+                            }
+                        break;
+                        case EST:
+                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                            {
+                                x++;
+                            }
+                        break;
+                        case OUEST:
+                            if (x > 0 && has_wall_left(maze, x, y))
+                            {
+                                x--;
+                            }
+                        break;
+                        // ReSharper disable once CppDFAUnreachableCode
+                        default:
+                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                            destroy_print_maze(renderer, window);
+                            exit(EXIT_FAILURE);
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_UP)
+                {
+                    direction = NORD;
+                    if (!has_wall_up(maze, x, y))
+                    {
+                        y--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_DOWN)
+                {
+                    direction = SUD;
+                    if (!has_wall_down(maze, x, y))
+                    {
+                        y++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_LEFT)
+                {
+                    direction = OUEST;
+                    if (!has_wall_left(maze, x, y))
+                    {
+                        x--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_RIGHT)
+                {
+                    direction = EST;
+                    if (!has_wall_right(maze, x, y))
+                    {
+                        x++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_s)
+                {
+                    clear(maze, renderer, dw, dh);
+                    SDL_Delay(dm.refresh_rate);
+                    SDL_RenderPresent(renderer);
+                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    local_show_the_way(maze, w, renderer, dh, dw);
+                    free_way(w);
+                }
+            }
+}
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        rect.x = x * dw + 1;
+        rect.y = y * dh + 1;
+        SDL_RenderFillRect(renderer, &rect); // on dessine la nouvelle position
+        draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        if (x < maze.width - 1)
+        {
+            draw_wall(maze, renderer, x + 1, y, dw, dh);
+        }
+        if (y < maze.height - 1)
+        {
+            draw_wall(maze, renderer, x, y + 1, dw, dh);
+        }
+        if (x > 0)
+        {
+            draw_wall(maze, renderer, x - 1, y, dw, dh);
+        }
+        if (y > 0)
+        {
+            draw_wall(maze, renderer, x, y - 1, dw, dh);
+        }
+        draw_wall(maze, renderer, x, y, dw, dh);
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+    }
+    reprint_maze(maze, renderer, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetWindowTitle(window, "escaped");
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer);
+    wait_and_destroy_print_maze(renderer, window);
+}
 
-void game_quarter_blind(maze_t, int, int);
+void game_front_blind(const maze_t maze, int x, int y){
+    SDL_Renderer* renderer;
+    SDL_Window* window;
+    int dw, dh;
+    if (pre_print_maze(maze, &renderer, &window, &dw, &dh) != 1)
+    {
+        return;
+    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawLine(renderer, dw, 0, dw * maze.width, 0);
+    SDL_RenderDrawLine(renderer, 0, dh, 0, dh * maze.height);
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, 0, maze.width * dw - 1, maze.height * dh);
+    SDL_RenderDrawLine(renderer, 0, maze.height * dh - 1, maze.width * dw, maze.height * dh - 1);
+    SDL_SetWindowTitle(window, "game");
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+    draw_wall(maze, renderer, x, y, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+    SDL_Rect rect = {x * dw + 1, y * dh + 1, dw - 2, dh - 2}; // la position actuelle
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer); // on affiche la position actuelle
+    char direction = NORD;
+
+    SDL_Event event = {0}; // on crée un event vide
+    while (SDL_PollEvent(&event))
+    {
+        // on vide la file d'attente des événements
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // on dessine en blanc
+    SDL_RenderDrawLine(renderer, maze.width * dw - dw, maze.height * dh - 1, maze.width * dw,
+                       maze.height * dh - 1); // on dessine la sortie
+    SDL_RenderDrawLine(renderer, maze.width * dw - 1, maze.height * dh - dh, maze.width * dw - 1,
+                       maze.height * dh); // on dessine la sortie
+    while (x != 0 || y != 0)
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on efface la position actuelle
+        SDL_RenderFillRect(renderer, &rect);
+        draw_border(maze, renderer, x, y, dw, dh);
+        draw_wall(maze, renderer, x, y, dw, dh);
+        int i = x, j = y;
+        switch (direction)
+        {
+            case NORD:
+                while (j > 0)
+                {
+                    draw_wall(maze, renderer, i, j, dw, dh);
+                    j--;
+                }
+            break;
+            case SUD:
+                while (j < maze.height - 1)
+                {
+                    draw_wall(maze, renderer, i, j, dw, dh);
+                    j++;
+                }
+            break;
+            case EST:
+                while (i < maze.width - 1)
+                {
+                    draw_wall(maze, renderer, i, j, dw, dh);
+                    i++;
+                }
+            break;
+            case OUEST:
+                while (i > 0)
+                {
+                    draw_wall(maze, renderer, i, j, dw, dh);
+                    i--;
+                }
+            break;
+            // ReSharper disable once CppDFAUnreachableCode
+            default:
+                fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                destroy_print_maze(renderer, window);
+                exit(EXIT_FAILURE);
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        SDL_WaitEvent(&event);
+        {
+            if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
+                (event.type == SDL_KEYUP &&
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
+                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+            {
+                printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
+                destroy_print_maze(renderer, window);
+                return;
+            }
+            if (event.type == SDL_KEYUP){
+                if (event.key.keysym.sym == SDLK_c)
+                {
+                    switch (direction)
+                    {
+                        case NORD:
+                            if (y > 0 && has_wall_up(maze, x, y))
+                            {
+                                y--;
+                            }
+                        break;
+                        case SUD:
+                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                            {
+                                y++;
+                            }
+                        break;
+                        case EST:
+                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                            {
+                                x++;
+                            }
+                        break;
+                        case OUEST:
+                            if (x > 0 && has_wall_left(maze, x, y))
+                            {
+                                x--;
+                            }
+                        break;
+                        // ReSharper disable once CppDFAUnreachableCode
+                        default:
+                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                            destroy_print_maze(renderer, window);
+                            exit(EXIT_FAILURE);
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_UP)
+                {
+                    direction = NORD;
+                    if (!has_wall_up(maze, x, y))
+                    {
+                        y--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_DOWN)
+                {
+                    direction = SUD;
+                    if (!has_wall_down(maze, x, y))
+                    {
+                        y++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_LEFT)
+                {
+                    direction = OUEST;
+                    if (!has_wall_left(maze, x, y))
+                    {
+                        x--;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_RIGHT)
+                {
+                    direction = EST;
+                    if (!has_wall_right(maze, x, y))
+                    {
+                        x++;
+                    }
+                }
+                else if (event.key.keysym.sym == SDLK_s)
+                {
+                    clear(maze, renderer, dw, dh);
+                    SDL_Delay(dm.refresh_rate);
+                    SDL_RenderPresent(renderer);
+                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    local_show_the_way(maze, w, renderer, dh, dw);
+                    free_way(w);
+                }
+            }
+}
+        SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
+        rect.x = x * dw + 1;
+        rect.y = y * dh + 1;
+        SDL_RenderFillRect(renderer, &rect); // on dessine la nouvelle position
+        draw_border(maze, renderer, x, y, dw, dh);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        i = x, j = y;
+        switch (direction)
+        {
+        case NORD:
+            while (j > 0)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                j--;
+            }
+            break;
+        case SUD:
+            while (j < maze.height - 1)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                j++;
+            }
+            break;
+        case EST:
+            while (i < maze.width - 1)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                i++;
+            }
+            break;
+        case OUEST:
+            while (i > 0)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                i--;
+            }
+            break;
+            // ReSharper disable once CppDFAUnreachableCode
+        default:
+            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+            destroy_print_maze(renderer, window);
+            exit(EXIT_FAILURE);
+        }
+        draw_wall(maze, renderer, x, y, dw, dh);
+        SDL_Delay(dm.refresh_rate);
+        SDL_RenderPresent(renderer);
+    }
+    reprint_maze(maze, renderer, dw, dh);
+    SDL_SetRenderDrawColor(renderer, 0, 250, 0, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_SetWindowTitle(window, "escaped");
+    SDL_Delay(dm.refresh_rate);
+    SDL_RenderPresent(renderer);
+    wait_and_destroy_print_maze(renderer, window);
+}

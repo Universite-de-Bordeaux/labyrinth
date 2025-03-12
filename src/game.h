@@ -12,34 +12,52 @@ enum direction
 };
 
 // --- GAME FUNCTIONS ---
-// function to play the game
-// maze : the maze
-// x, y : the starting point
-// the player can't see the maze
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can't see the maze
+ */
 void game_blind(maze_t maze, int x, int y);
 
-// function to play the game
-// maze : the maze
-// x, y : the starting point
-// the maze is always shown
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can see the maze
+ */
 void game_show(maze_t, int, int);
 
-// function to play the game
-// maze : the maze
-// x, y : the starting point
-// the player can see all the cellules visited
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can see the visited cells
+ */
 void game(maze_t, int, int);
 
-// function to play the game
-// maze : the maze
-// x, y : the starting point
-// the player can see the thirteen cellules visited
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can see the twenty last visited cells
+ */
 void game_half_blind(maze_t, int, int);
 
-// function to play the game
-// maze : the maze
-// x, y : the starting point
-// the player can see 4 cellules around him
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can see 4 cells around him
+ */
 void game_quarter_blind(maze_t, int, int);
+
+/*
+ * Function to play the game
+ * maze : the maze
+ * x, y : the starting point
+ * the player can see the front cell
+ */
+void game_front_blind(maze_t, int, int);
 
 #endif //GAME_H
