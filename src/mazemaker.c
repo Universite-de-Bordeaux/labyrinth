@@ -103,9 +103,9 @@ static bool lbp_path_move(const maze_t* maze, int* x, int* y, const bool_tab tab
         return false;
     }
     // tant qu'il nous reste des directions
-    unsigned int choice;
+    int choice;
     getrandom(&choice, sizeof(choice), 0);
-    choice = choice % 4; // choix d'une direction NOLINT(*-msc50-cpp)
+    choice = abs(choice) % 4; // choix d'une direction NOLINT(*-msc50-cpp)
     while (!can_move_dir(maze, x, y, tab_visited, choice))
     { // si notre direction n'est pas possible, on passe à la suivante
         getrandom(&choice, sizeof(choice), 0);
