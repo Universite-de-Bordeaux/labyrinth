@@ -3,6 +3,14 @@
 
 #include "struct.h"
 
+enum direction
+{
+    NORD = 0,
+    SUD,
+    EST,
+    OUEST
+};
+
 // --- GAME FUNCTIONS ---
 // function to play the game
 // maze : the maze
