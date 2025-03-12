@@ -7,9 +7,12 @@ Pour compiler le projet il est nécessaire d'avoir
 - gcc, pour compiler pour le projet
 - SDL, la librairie graphique que nous utilisons
 
-## Installer les packages sur Debian
+## Installer les packages sur Debian/Ubuntu
 Utiliser cette commande pour télécharger et installer les dépendances
 ````sudo apt install gcc && sudo apt-get install libsdl2-dev````
+## Installer les packages sur MacOS
+Utiliser cette commande pour télécharger et installer les dépendances
+````brew install sdl2 sdl2_image sdl2_ttf````
 
 ## Pour Compiler et exécuter
 Ce positionner à la source du dépot puis entrer la commande suivante :
