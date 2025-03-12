@@ -1,7 +1,7 @@
 #include "game.h"
 
-//show every wall of the maze
-static void reprint_maze(const maze_t maze, SDL_Renderer *renderer, const int dh, const int dw)
+// show every wall of the maze
+static void reprint_maze(const maze_t maze, SDL_Renderer* renderer, const int dh, const int dw)
 {
     SDL_DisplayMode displayMode;
     if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0)
@@ -34,8 +34,8 @@ static void reprint_maze(const maze_t maze, SDL_Renderer *renderer, const int dh
     SDL_RenderPresent(renderer); // on met à jour l'affichage
 }
 
-//find the best way to exit the maze
-static way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, const int end_y)
+// find the best way to exit the maze
+static way* local_best_exit_breadth_seeker(const maze_t maze, const int end_x, const int end_y)
 {
     const waytab ways = create_waytab(maze.width,
                                       maze.height); // ce tableau nous permettra de connaitre le chemin le plus court pour arriver à une case
@@ -51,7 +51,7 @@ static way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, c
         if (x == end_x && y == end_y) // si on est à la sortie
         {
             way* w = copy_way(get_way(ways, end_x, end_y)); // on récupère le chemin pour arriver à la sortie (on
-                                                                               // le copie car on va libérer le tableau ways)
+                                                            // le copie car on va libérer le tableau ways)
             free_waytab(ways);
             free_queue(q);
             return w;
@@ -87,8 +87,8 @@ static way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, c
     return create_way(); // si on n'a pas trouvé de chemin, on renvoie un chemin vide
 }
 
-//draw the path to the exit
-static void local_show_the_way(const maze_t maze, const way *w, SDL_Renderer* renderer, const int dh, const int dw)
+// draw the path to the exit
+static void local_show_the_way(const maze_t maze, const way* w, SDL_Renderer* renderer, const int dh, const int dw)
 {
     SDL_SetRenderDrawColor(renderer, 25, 100, 20, 255); // on dessine en bleu
     while (w != NULL)
@@ -126,7 +126,7 @@ static void local_show_the_way(const maze_t maze, const way *w, SDL_Renderer* re
 }
 
 // draw the unwalled part of the designeted cell
-static void draw_border(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
+static void draw_border(const maze_t maze, SDL_Renderer* renderer, const int x, const int y, const int dw, const int dh)
 {
     if (!has_wall_right(maze, x, y))
     {
@@ -147,17 +147,17 @@ static void draw_border(const maze_t maze, SDL_Renderer *renderer, const int x, 
 }
 
 // draw the walls designeted cell
-static void draw_wall(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
+static void draw_wall(const maze_t maze, SDL_Renderer* renderer, const int x, const int y, const int dw, const int dh)
 {
     if (has_wall_right(maze, x, y))
     {
         SDL_RenderDrawLine(renderer, (x + 1) * dw - 1, y * dh, (x + 1) * dw - 1,
-                                   (y + 1) * dh - 1); // on dessine un mur à droite
+                           (y + 1) * dh - 1); // on dessine un mur à droite
     }
     if (has_wall_down(maze, x, y))
     {
         SDL_RenderDrawLine(renderer, x * dw, (y + 1) * dh - 1, (x + 1) * dw - 1,
-                                   (y + 1) * dh - 1); // on dessine un mur en bas
+                           (y + 1) * dh - 1); // on dessine un mur en bas
     }
     if (has_wall_left(maze, x, y))
     {
@@ -184,7 +184,7 @@ static void draw_wall(const maze_t maze, SDL_Renderer *renderer, const int x, co
 }
 
 // clear the screen and draw the exit
-static void clear(const maze_t maze, SDL_Renderer *renderer, const int dw, const int dh)
+static void clear(const maze_t maze, SDL_Renderer* renderer, const int dw, const int dh)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // on dessine en blanc
     SDL_RenderClear(renderer);
@@ -193,7 +193,8 @@ static void clear(const maze_t maze, SDL_Renderer *renderer, const int dw, const
     SDL_RenderDrawLine(renderer, 0, 0, 0, dh);
 }
 
-void game_show(const maze_t maze, int x, int y){
+void game_show(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -230,47 +231,47 @@ void game_show(const maze_t maze, int x, int y){
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -311,12 +312,12 @@ void game_show(const maze_t maze, int x, int y){
                     reprint_maze(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
@@ -333,7 +334,8 @@ void game_show(const maze_t maze, int x, int y){
     wait_and_destroy_print_maze(renderer, window);
 }
 
-void game(const maze_t maze, int x, int y){
+void game(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -374,48 +376,48 @@ void game(const maze_t maze, int x, int y){
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 free_booltab(visited);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -455,7 +457,7 @@ void game(const maze_t maze, int x, int y){
                     clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
                     for (int i = 0; i < maze.width; i++)
@@ -471,7 +473,7 @@ void game(const maze_t maze, int x, int y){
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
@@ -494,7 +496,8 @@ void game(const maze_t maze, int x, int y){
 
 #define size_half_blind 20
 
-void game_half_blind(const maze_t maze, int x, int y){
+void game_half_blind(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -534,7 +537,7 @@ void game_half_blind(const maze_t maze, int x, int y){
         if (px != x || py != y)
         {
             enqueue(x, y, q);
-            //on efface la cellule la plus ancienne mais on s'assure de garder les autres
+            // on efface la cellule la plus ancienne mais on s'assure de garder les autres
             if (size_queue(q) > size_half_blind * 2)
             {
                 const int temp = size_queue(q) / 2 - 1;
@@ -561,48 +564,48 @@ void game_half_blind(const maze_t maze, int x, int y){
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 free_queue(q);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -642,10 +645,10 @@ void game_half_blind(const maze_t maze, int x, int y){
                     clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                    const int temp = size_queue(q)/2;
+                    const int temp = size_queue(q) / 2;
                     for (int i = 0; i < temp; i++)
                     {
                         int j, k;
@@ -656,7 +659,7 @@ void game_half_blind(const maze_t maze, int x, int y){
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
@@ -677,7 +680,8 @@ void game_half_blind(const maze_t maze, int x, int y){
     wait_and_destroy_print_maze(renderer, window);
 }
 
-void game_blind(const maze_t maze, int x, int y){
+void game_blind(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -721,47 +725,47 @@ void game_blind(const maze_t maze, int x, int y){
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -801,12 +805,12 @@ void game_blind(const maze_t maze, int x, int y){
                     clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
@@ -826,7 +830,8 @@ void game_blind(const maze_t maze, int x, int y){
     wait_and_destroy_print_maze(renderer, window);
 }
 
-void game_quarter_blind(const maze_t maze, int x, int y){
+void game_quarter_blind(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -886,47 +891,47 @@ void game_quarter_blind(const maze_t maze, int x, int y){
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -966,12 +971,12 @@ void game_quarter_blind(const maze_t maze, int x, int y){
                     clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;
@@ -1007,7 +1012,8 @@ void game_quarter_blind(const maze_t maze, int x, int y){
     wait_and_destroy_print_maze(renderer, window);
 }
 
-void game_front_blind(const maze_t maze, int x, int y){
+void game_front_blind(const maze_t maze, int x, int y)
+{
     SDL_Renderer* renderer;
     SDL_Window* window;
     int dw, dh;
@@ -1049,86 +1055,86 @@ void game_front_blind(const maze_t maze, int x, int y){
         int i = x, j = y;
         switch (direction)
         {
-            case NORD:
-                while (j > 0)
-                {
-                    draw_wall(maze, renderer, i, j, dw, dh);
-                    j--;
-                }
+        case NORD:
+            while (j > 0)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                j--;
+            }
             break;
-            case SUD:
-                while (j < maze.height - 1)
-                {
-                    draw_wall(maze, renderer, i, j, dw, dh);
-                    j++;
-                }
+        case SUD:
+            while (j < maze.height - 1)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                j++;
+            }
             break;
-            case EST:
-                while (i < maze.width - 1)
-                {
-                    draw_wall(maze, renderer, i, j, dw, dh);
-                    i++;
-                }
+        case EST:
+            while (i < maze.width - 1)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                i++;
+            }
             break;
-            case OUEST:
-                while (i > 0)
-                {
-                    draw_wall(maze, renderer, i, j, dw, dh);
-                    i--;
-                }
+        case OUEST:
+            while (i > 0)
+            {
+                draw_wall(maze, renderer, i, j, dw, dh);
+                i--;
+            }
             break;
-            // ReSharper disable once CppDFAUnreachableCode
-            default:
-                fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                destroy_print_maze(renderer, window);
-                exit(EXIT_FAILURE);
+        // ReSharper disable once CppDFAUnreachableCode
+        default:
+            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+            destroy_print_maze(renderer, window);
+            exit(EXIT_FAILURE);
         }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         SDL_WaitEvent(&event);
         {
             if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE ||
                 (event.type == SDL_KEYUP &&
-                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER ||
-                  event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
+                 (event.key.keysym.sym == SDLK_ESCAPE || event.key.keysym.sym == SDLK_KP_ENTER || event.key.keysym.sym == SDLK_RETURN))) // si l'utilisateur veut fermer la fenêtre
             {
                 printf("L'utilisateur a demandé la fermeture de la fenêtre.\n");
                 destroy_print_maze(renderer, window);
                 return;
             }
-            if (event.type == SDL_KEYUP){
+            if (event.type == SDL_KEYUP)
+            {
                 if (event.key.keysym.sym == SDLK_c)
                 {
                     switch (direction)
                     {
-                        case NORD:
-                            if (y > 0 && has_wall_up(maze, x, y))
-                            {
-                                y--;
-                            }
+                    case NORD:
+                        if (y > 0 && has_wall_up(maze, x, y))
+                        {
+                            y--;
+                        }
                         break;
-                        case SUD:
-                            if (y < maze.height - 1 && has_wall_down(maze, x, y))
-                            {
-                                y++;
-                            }
+                    case SUD:
+                        if (y < maze.height - 1 && has_wall_down(maze, x, y))
+                        {
+                            y++;
+                        }
                         break;
-                        case EST:
-                            if (x < maze.width - 1 && has_wall_right(maze, x, y))
-                            {
-                                x++;
-                            }
+                    case EST:
+                        if (x < maze.width - 1 && has_wall_right(maze, x, y))
+                        {
+                            x++;
+                        }
                         break;
-                        case OUEST:
-                            if (x > 0 && has_wall_left(maze, x, y))
-                            {
-                                x--;
-                            }
+                    case OUEST:
+                        if (x > 0 && has_wall_left(maze, x, y))
+                        {
+                            x--;
+                        }
                         break;
-                        // ReSharper disable once CppDFAUnreachableCode
-                        default:
-                            fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
-                            destroy_print_maze(renderer, window);
-                            exit(EXIT_FAILURE);
+                    // ReSharper disable once CppDFAUnreachableCode
+                    default:
+                        fprintf(stderr, "Error : direction %c is not a valid direction\n", direction);
+                        destroy_print_maze(renderer, window);
+                        exit(EXIT_FAILURE);
                     }
                 }
                 else if (event.key.keysym.sym == SDLK_UP)
@@ -1168,12 +1174,12 @@ void game_front_blind(const maze_t maze, int x, int y){
                     clear(maze, renderer, dw, dh);
                     SDL_Delay(dm.refresh_rate);
                     SDL_RenderPresent(renderer);
-                    way *w = local_best_exit_breadth_seeker(maze, x, y);
+                    way* w = local_best_exit_breadth_seeker(maze, x, y);
                     local_show_the_way(maze, w, renderer, dh, dw);
                     free_way(w);
                 }
             }
-}
+        }
         SDL_SetRenderDrawColor(renderer, 0, 100, 200, 255);
         rect.x = x * dw + 1;
         rect.y = y * dh + 1;

@@ -5,10 +5,10 @@
 #include <string.h>
 #include <sys/random.h>
 #include "escape.h"
+#include "game.c"
 #include "mazemaker.h"
 #include "outside.h"
 #include "solveur.h"
-#include "game.c"
 
 // --- FONCTIONS AUXILIAIRES ---
 
@@ -905,7 +905,7 @@ int main(const int argc, char* argv[])
         case 2:
             game_front_blind(maze, x_game, y_game);
             break;
-        default: //include 5
+        default: // include 5
             game_blind(maze, x_game, y_game);
         }
     }

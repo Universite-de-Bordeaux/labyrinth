@@ -60,4 +60,4 @@ void game_quarter_blind(maze_t, int, int);
  */
 void game_front_blind(maze_t, int, int);
 
-#endif //GAME_H
+#endif // GAME_H
