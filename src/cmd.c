@@ -8,6 +8,7 @@
 #include "mazemaker.h"
 #include "outside.h"
 #include "solveur.h"
+#include "game.c"
 
 // --- FONCTIONS AUXILIAIRES ---
 
@@ -58,6 +59,9 @@ static bool safe_atoi(const char* str, int* out)
 #define SHOW_ARG_DEFAULT "-sh <inspection> : show if the maze (inspection : isp, isc, he, she) with the best algorithm we have"
 #define SHOW_WAY "-shw : show way (if way & maze)"
 #define HELP "-h : help (will override any other command)"
+#define GAME "-gme <difficulty> : play the game (difficulty : 0, 1, 2, 3, 4, 5)"
+#define GAME_DEFAULT "-gme : play the game with the default difficulty (1)"
+
 
 // print the help of the command
 static void print_cmd_help(char* namefile)
@@ -93,6 +97,10 @@ static void print_cmd_help(char* namefile)
     printf("\t%s\n", SHOW_DEFAULT);
     printf("\t%s\n", SHOW_ARG);
     printf("\t%s\n", SHOW_ARG_DEFAULT);
+
+    printf("\nTo play the game : \n");
+    printf("\t%s\n", GAME);
+    printf("\t%s\n", GAME_DEFAULT);
 
     printf("\n\t%s\n", HELP);
     printf("\nArguments order doesn't matter, but only one maze and one way are allowed\n");
@@ -160,6 +168,8 @@ int main(const int argc, char* argv[])
     int x = -1;
     int y = -1;
 
+    bool play = false; // -gme
+    int difficulty = 1; // <nb>
 
     // tri des arguments
     int i = 1;
@@ -428,6 +438,18 @@ int main(const int argc, char* argv[])
                     printf("Random y applied\n");
                     i++;
                 }
+            }
+        }
+        else if (!strcmp(argv[i], "-gme"))
+        {
+            play = true;
+            if (i < argc - 1 && safe_atoi(argv[i + 1], &difficulty))
+            {
+                i++;
+            }
+            else
+            {
+                difficulty = 1;
             }
         }
         else
@@ -832,6 +854,34 @@ int main(const int argc, char* argv[])
         if (step != -1)
         {
             printf("The exit has been found in %d steps\n", step);
+        }
+    }
+    if (play)
+    {
+        if (!is_maze)
+        {
+            fprintf(stderr, "Error : -gme : no maze to play\n");
+            return EXIT_FAILURE;
+        }
+        switch (difficulty)
+        {
+        case 0:
+            game_show(maze, maze.width - 1, maze.height - 1);
+            break;
+        case 1:
+            game(maze, maze.width - 1, maze.height - 1);
+            break;
+        case 2:
+            game_half_blind(maze, maze.width - 1, maze.height - 1);
+            break;
+        case 3:
+            game_quarter_blind(maze, maze.width - 1, maze.height - 1);
+            break;
+        case 4:
+            game_front_blind(maze, maze.width - 1, maze.height - 1);
+            break;
+        default: //include 5
+            game_blind(maze, maze.width - 1, maze.height - 1);
         }
     }
     if (is_maze)
