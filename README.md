@@ -107,6 +107,18 @@ x, y : valeurs positives entre 0 et la hauteur (resp. longueur) du labyrinthe, p
 
 Cette fonction utilise toujours la visualisation, pour la passer, il faut appuyer sur la touche "espace"  
 
+#### Mini-jeux
+
+Un mini-jeu est disponible avec plusieurs niveau de difficultés. Le joueur, représenté par un carré bleu, se retrouve dans un labyrinthe et doit s'en échapper en atteignant la cellule (0, 0).
+Le joueur peut se déplacer avec les flèches du clavier si aucun mur ne l'en empêche. Il peut également escalader un mur en face de lui en appuyant sur la touche "c" et afficher un chemin possible en appuyant sur la touche "s", mais ces deux fonctionnalités s'apparentent à de la triche.
+
+Jouer à un mini-jeu :
+-gme
+
+On peut préciser la difficulté "diff" et la position de départ "x" x "y":  
+-gme diff  
+-gme diff x y
+
 ### Ecrire dans un fichier
 
 Ecrire un labyrinthe dans un fichier :  
@@ -168,3 +180,6 @@ Récupérer le labyrinthe et le chemin avant de les afficher
 
 Lancer une visite sur le labyrinthe
 ./maze -r temp -ex hunt_kill
+
+Lancer un mini-jeu sur le labyrinthe
+./maze -r temp -gme

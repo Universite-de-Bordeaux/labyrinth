@@ -2,8 +2,6 @@
 
 Le projet Labyrinth est organisé dans les fichiers suivants :
 
-cmd.c : fonctions de gestion de la ligne de commande de l'exécutable principal.
-
 struct.c : définition des structures de données et de leurs primitives.
 
 mazemaker.c : fonctions de génération de labyrinthes.
@@ -14,7 +12,11 @@ solveur.c : fonctions de résolution de labyrinthes.
 
 escape.c : fonctions de visite de labyrinthes.
 
+game.c : fonctions de jeu.
+
 outside.c : fonctions d'écritures et de lectures de nos structures de données dans des fichiers.
+
+cmd.c : fonctions de gestion de la ligne de commande de l'exécutable principal.
 
 testing.c : fonctions de gestion de la ligne de commande de l'exécutable de tests.
 
@@ -589,3 +591,53 @@ en considérant uniquement les cases les moins parcourues qui ne sont pas des cu
 
 ### random_p_de
 Fonction qui visite un labyrinthe en se déplaçant aléatoirement parmis les cases les moins parcourues qui ne sont pas des culs de sacs déjà détectés
+
+# Fichier " game.c " :
+Ce fichier contient les fonctions de gestion de la fenêtre de jeu.
+
+## Fonctions auxilliaires
+
+### void reprint_maze(const maze_t maze, SDL_Renderer *renderer, const int dh, const int dw)
+Fonction qui affiche les murs du labyrinthe dans la fenêtre de jeu.
+
+### way *local_best_exit_breadth_seeker(const maze_t maze, const int end_x, const int end_y)
+Version modifié de best_exit_breadth_seeker qui donne le chemin entre l'entrée et la position actuelle du joueur.
+
+### void local_show_the_way(const maze_t maze, const way *w, SDL_Renderer* renderer, const int dh, const int dw)
+version modifié de show_the_way qui affiche le chemin dans la fenêtre de jeu plutôt que dans une nouvelle fenêtre.
+
+### void draw_border(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
+Fonction qui dessine les bordures d'une cellules sans dépasser sur les murs du labyrinthe.
+
+### void draw_wall(const maze_t maze, SDL_Renderer *renderer, const int x, const int y, const int dw, const int dh)
+Fonction qui dessine les murs d'une cellules.
+
+### void clear(const maze_t maze, SDL_Renderer *renderer, const int dw, const int dh)
+Fonction qui efface le contenu de la fenêtre de jeu à l'exception de la cellule de sortie.
+
+## Fonctions principales
+Toutes les fonction de jeu suivent la déclaration suivante :
+
+```void *nom_de_la_fonction(maze_t maze, int x, int y)``` où `maze` est le labyrinthe à visiter, `x` et `y` sont les coordonnées de départ.
+
+Le joueur est représneter par un carré bleu, la sortie est la cellule (0,0).  
+Le joueur peut se déplacer avec les flèches directionnelles, escalader un mur en face de lui avec la touche `c` et quitter le jeu avec les touches `ESCAPE` ou `ENTER`.
+Le joueur peut afficher le plus court chemin vers la sortie avec la touche `s`.
+
+### game_show
+Lance un jeu dans lequel le joueur voit tout le labyrinthe.
+
+### game
+Lance un jeu dans lequel le joueur ne voit que les murs des cellules déjà visitées.
+
+### game_front_blind
+Lance un jeu dans lequel le joueur ne voit que les murs des cellules situées devant lui.
+
+### game_half_blind
+Lance un jeu dans lequel le joueur ne voit que les murs des vingt dernières cellules visitées.
+
+### game_quarter_blind
+Lance un jeu dans lequel le joueur ne voit que les murs de la cellule actuelle et des quatres cellules adjacentes.
+
+### game_blind
+Lance un jeu dans lequel le joueur ne voit que les murs de la cellule actuelle.

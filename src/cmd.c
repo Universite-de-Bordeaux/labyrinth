@@ -61,6 +61,7 @@ static bool safe_atoi(const char* str, int* out)
 #define HELP "-h : help (will override any other command)"
 #define GAME "-gme <difficulty> : play the game (difficulty : 0, 1, 2, 3, 4, 5)"
 #define GAME_DEFAULT "-gme : play the game with the default difficulty (1)"
+#define GAME_POSITION "-gme <difficulty> <x> <y> : play the game with the default difficulty (1) from the position x y"
 
 
 // print the help of the command
@@ -101,6 +102,7 @@ static void print_cmd_help(char* namefile)
     printf("\nTo play the game : \n");
     printf("\t%s\n", GAME);
     printf("\t%s\n", GAME_DEFAULT);
+    printf("\t%s\n", GAME_POSITION);
 
     printf("\n\t%s\n", HELP);
     printf("\nArguments order doesn't matter, but only one maze and one way are allowed\n");
@@ -170,6 +172,8 @@ int main(const int argc, char* argv[])
 
     bool play = false; // -gme
     int difficulty = 1; // <nb>
+    int x_game = -1;
+    int y_game = -1;
 
     // tri des arguments
     int i = 1;
@@ -450,6 +454,19 @@ int main(const int argc, char* argv[])
             else
             {
                 difficulty = 1;
+            }
+            if (i < argc - 1 && safe_atoi(argv[i + 1], &x_game))
+            {
+                if (i < argc - 2 && safe_atoi(argv[i + 2], &y_game))
+                {
+                    i += 2;
+                }
+                else
+                {
+                    fprintf(stderr, "Error : -gme <difficulty> <x> <y> : <y> hasn't been found or is not an integer\n");
+                    printf("Default y applied\n");
+                    i++;
+                }
             }
         }
         else
@@ -863,25 +880,33 @@ int main(const int argc, char* argv[])
             fprintf(stderr, "Error : -gme : no maze to play\n");
             return EXIT_FAILURE;
         }
+        if (x_game < 0 || x_game >= maze.width)
+        {
+            x_game = maze.width - 1;
+        }
+        if (y_game < 0 || y_game >= maze.height)
+        {
+            y_game = maze.height - 1;
+        }
         switch (difficulty)
         {
         case 0:
-            game_show(maze, maze.width - 1, maze.height - 1);
+            game_show(maze, x_game, y_game);
             break;
         case 1:
-            game(maze, maze.width - 1, maze.height - 1);
-            break;
-        case 2:
-            game_half_blind(maze, maze.width - 1, maze.height - 1);
+            game(maze, x_game, y_game);
             break;
         case 3:
-            game_quarter_blind(maze, maze.width - 1, maze.height - 1);
+            game_half_blind(maze, x_game, y_game);
             break;
         case 4:
-            game_front_blind(maze, maze.width - 1, maze.height - 1);
+            game_quarter_blind(maze, x_game, y_game);
+            break;
+        case 2:
+            game_front_blind(maze, x_game, y_game);
             break;
         default: //include 5
-            game_blind(maze, maze.width - 1, maze.height - 1);
+            game_blind(maze, x_game, y_game);
         }
     }
     if (is_maze)
