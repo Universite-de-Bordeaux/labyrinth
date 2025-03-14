@@ -24,6 +24,15 @@ static void usage(const char* name)
     printf("\t bpm : by path maze\n");
     printf("\t sm : straight maze\n");
     printf("\t cm : cross maze\n");
+    printf("\t goose1 : snail maze\n");
+    printf("\t goose2 : snake maze\n");
+    printf("\t goose3 : reverse comb maze\n");
+    printf("\t goose4 : recursive maze\n");
+    printf("\t goose5 : weeping willow maze\n");
+    printf("\t goose6 : octopus maze\n");
+    printf("\t goose7 : golden maze\n");
+    printf("\t goose8 : proto comb maze\n");
+    printf("\t goose9 : four maze\n");
 
     printf("\noptions :\n");
     printf("\nfixed tests :\n");
