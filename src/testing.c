@@ -170,6 +170,51 @@ int main(const int argc, char* argv[])
         f = cross_maze;
         generator_name = "cross generator";
     }
+    else if (!strcmp(generator, "goose1"))
+    {
+        f = snail_maze;
+        generator_name = "snail generator";
+    }
+    else if (!strcmp(generator, "goose2"))
+    {
+        f = snake_maze;
+        generator_name = "snake generator";
+    }
+    else if (!strcmp(generator, "goose3"))
+    {
+        f = reverse_comb_maze;
+        generator_name = "reverse comb generator";
+    }
+    else if (!strcmp(generator, "goose4"))
+    {
+        f = reccursive_maze;
+        generator_name = "recursive generator";
+    }
+    else if (!strcmp(generator, "goose5"))
+    {
+        f = weeping_willow_maze;
+        generator_name = "weeping willow generator";
+    }
+    else if (!strcmp(generator, "goose6"))
+    {
+        f = octopus_maze;
+        generator_name = "octopus generator";
+    }
+    else if (!strcmp(generator, "goose7"))
+    {
+        f = golden_maze;
+        generator_name = "golden generator";
+    }
+    else if (!strcmp(generator, "goose8"))
+    {
+        f = proto_comb_maze;
+        generator_name = "proto comb generator";
+    }
+    else if (!strcmp(generator, "goose9"))
+    {
+        f = four_maze;
+        generator_name = "four generator";
+    }
     else
     {
         printf("Error : %s is not a valid generator\n", generator);
